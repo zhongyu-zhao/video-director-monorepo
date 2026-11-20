@@ -101,7 +101,7 @@ Crayotter 先走受控的 editing DAG，结构化规划或校验失败才 fallba
 ### 1.4 状态：artifact-first、幂等、可恢复
 
 - **工件即状态**：Crayotter 把检索报告、视频分析、剪辑蓝图、调度事件、工具调用、中间渲染都当 first-class artifact 落盘，前端可追踪、可诊断、可断点续跑。
-- **幂等缓存**：ViMax 每个阶段先看 `characters.json`、`character_portraits_registry.json` 是否存在，存在就跳过；MoneyPrinterTurbo 复用未变更的渲染产物。
+- **幂等缓存**：ViMax 的角色抽取/定妆阶段先看 `characters.json`、`character_portraits_registry.json` 是否存在，存在就跳过；MoneyPrinterTurbo 复用未变更的渲染产物。
 - **checkpoint + gate**：OpenMontage 的 `write_checkpoint` 会做 schema 校验，并拒绝“没记录人工批准却写成 completed”的 gated stage；被覆盖的 checkpoint 归档到 `history/`，保留审批轨迹。
 - **版本化**：MoneyPrinterTurbo 的 video-project 支持场景级修改、版本比较、只重渲变化部分。
 
@@ -136,7 +136,7 @@ Crayotter 先走受控的 editing DAG，结构化规划或校验失败才 fallba
 
 ### 1.8 LLM 怎么“看”视频：文本优先，按需看图
 
-video-use 的做法值得单独拎出来：它不逐帧喂模型，而是先用 Scribe 出一份 word-level transcript（含说话人、笑声/掌声等音频事件），把整段素材压成 ~12KB 的 `takes_packed.md`；只有遇到模糊停顿、重拍比较、切点确认时，才生成一张 `timeline_view`（filmstrip + 波形 + 词标签）的图。
+video-use 的做法值得单独拎出来：它不逐帧喂模型，而是先用 ElevenLabs Scribe 出一份 word-level transcript（含说话人、笑声/掌声等音频事件），把整段素材压成 ~12KB 的 `takes_packed.md`；只有遇到模糊停顿、重拍比较、切点确认时，才生成一张 `timeline_view`（filmstrip + 波形 + 词标签）的图。
 
 > 30,000 帧 × 1,500 token ≈ 45M token 的噪声；video-use 用 12KB 文本 + 几张图解决。
 
@@ -193,7 +193,7 @@ video-use 的做法值得单独拎出来：它不逐帧喂模型，而是先用 
 ### video-use（31.3k，MIT）
 
 - **定位**：给 coding agent 的剪辑 skill：丢素材 → 对话 → `final.mp4`。
-- **实现**：`SKILL.md` + `helpers/` 脚本 + ffmpeg；Scribe 转写 → `takes_packed.md` → LLM 产出 EDL → 渲染 → 每个切点 `timeline_view` 自检（最多重渲 3 次）→ `project.md` 记忆。
+- **实现**：`SKILL.md` + `helpers/` 脚本 + ffmpeg；ElevenLabs Scribe 转写 → `takes_packed.md` → LLM 产出 EDL → 渲染 → 每个切点 `timeline_view` 自检（最多重渲 3 次）→ `project.md` 记忆。
 - **值得抄**：文本优先的视频理解、先策略确认再动手、自评闭环、12 条硬规则（生产正确性不可协商，审美自由）。
 - **局限**：以口播/素材剪辑为主，不生成画面。
 
