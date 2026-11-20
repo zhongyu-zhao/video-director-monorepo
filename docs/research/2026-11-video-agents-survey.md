@@ -325,4 +325,4 @@ project/
 
 ---
 
-*说明：star 数为 2026-11-21 快照；项目描述以 README 与代码结构为准，未逐一实跑。*
+*调研方法：GitHub API 取 2026-11-21 的 star/license 快照；通读 17 个项目的 README，并实际拉取 OpenMontage、ViMax、MoneyPrinterTurbo 的代码结构做交叉验证；论文与综述以 arXiv 摘要为准。项目描述以 README 与代码结构为准，未逐一实跑。*
