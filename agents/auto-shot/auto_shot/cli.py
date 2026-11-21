@@ -20,6 +20,7 @@ from .report import render_report
 from .review import ReviewError, apply_review, render_review_html
 from .scene_reduce import SceneReduceError, reduce_scenes, save_plan, summarize_existing
 from .scenes import SceneError, build_scenes
+from .screenplay import ScreenplayError, build_screenplay, translate_segments
 from .verify import (
     VerificationError,
     collect_boundaries,
@@ -164,6 +165,20 @@ def build_parser() -> argparse.ArgumentParser:
     scenes_parser.add_argument("--max-tokens", type=int, default=8000, help="narrative reduce response budget")
     scenes_parser.add_argument("--summarize", action="store_true", help="add VLM narrative titles/summaries to the chosen scene grouping")
     scenes_parser.add_argument("--review-out", default=None, help="also write an enriched review.html here")
+
+    screenplay_parser = commands.add_parser(
+        "screenplay",
+        help="reconstruct a screenplay draft from shots, labels, scenes and ASR",
+    )
+    screenplay_parser.add_argument("--shots", required=True, help="shots.json")
+    screenplay_parser.add_argument("--labels", default=None, help="labels.json")
+    screenplay_parser.add_argument("--scenes", default=None, help="scenes.json")
+    screenplay_parser.add_argument("--asr", default=None, help="asr.json with faster-whisper segments")
+    screenplay_parser.add_argument("--evidence", default=None, help="evidence.json")
+    screenplay_parser.add_argument("--out", default=None, help="output directory (default: shots parent/screenplay)")
+    screenplay_parser.add_argument("--translate-zh", action="store_true", help="add an automatic Chinese translation of ASR dialogue")
+    screenplay_parser.add_argument("--env-file", default=None, help="dotenv file for translation")
+    screenplay_parser.add_argument("--model", default=None, help="translation model override")
     return parser
 
 
@@ -184,6 +199,8 @@ def main(argv: list[str] | None = None) -> int:
             return _command_evidence(arguments)
         if arguments.command == "scenes":
             return _command_scenes(arguments)
+        if arguments.command == "screenplay":
+            return _command_screenplay(arguments)
     except (
         ProbeError,
         DetectError,
@@ -192,6 +209,7 @@ def main(argv: list[str] | None = None) -> int:
         VerificationError,
         EvidenceError,
         SceneError,
+        ScreenplayError,
         LabelError,
         VlmError,
         ValueError,
@@ -280,6 +298,32 @@ def _command_apply_review(arguments: argparse.Namespace) -> int:
     print(f"wrote: {destination}")
     print(f"wrote: {report_path}")
     return 0 if quality.ok else 1
+
+
+def _command_screenplay(arguments: argparse.Namespace) -> int:
+    shots_path = Path(arguments.shots)
+    table = ShotTable.load(shots_path)
+    output = Path(arguments.out) if arguments.out else shots_path.parent / "screenplay"
+    asr = _load_json_arg(arguments.asr)
+    if asr is not None and arguments.translate_zh:
+        config = resolve_config(env_file=arguments.env_file, model=arguments.model)
+        asr = dict(asr)
+        asr["segments"] = translate_segments(asr.get("segments", []), DeepSeekVlmClient(config))
+        Path(arguments.asr).with_name("asr-zh.json").write_text(
+            json.dumps(asr, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+        )
+    result = build_screenplay(
+        table,
+        output,
+        labels=_load_json_arg(arguments.labels),
+        scenes=_load_json_arg(arguments.scenes),
+        asr=asr,
+        evidence=_load_json_arg(arguments.evidence),
+    )
+    print(f"scenes={len(result.scenes)}")
+    print(f"wrote: {result.markdown_path}")
+    print(f"wrote: {result.json_path}")
+    return 0
 
 
 def _command_scenes(arguments: argparse.Namespace) -> int:
