@@ -25,6 +25,7 @@ from typing import Any
 from .models import Shot, ShotTable, round_time
 from .quality import validate_shot_table
 from .report import render_report
+from .review import render_review_html
 from .vlm import VlmClient, VlmError
 
 VERIFICATION_SCHEMA_VERSION = 1
@@ -69,6 +70,8 @@ class VerificationResult:
     verifications_path: Path
     report_path: Path
     verified_paths: dict[str, Path]
+    review_paths: dict[str, Path]
+    review_path: Path | None
     boundaries: dict[float, BoundaryVerdict]
     removed: dict[str, list[float]]
     errors: list[dict[str, str]]
@@ -298,6 +301,8 @@ def verify_short_shots(
     _write_verifications(verifications_path, identity, first, model, verdicts, errors)
     removed: dict[str, list[float]] = {}
     verified_paths: dict[str, Path] = {}
+    review_paths: dict[str, Path] = {}
+    review_path: Path | None = None
     for table, source in zip(tables, _source_names(tables)):
         table_boundaries = short_shot_boundaries(table, window, max_duration)
         false_times = [
@@ -324,6 +329,12 @@ def verify_short_shots(
             raise VerificationError(f"verified table {source} failed quality gates: {failed}")
         report = render_report(corrected, quality)
         (destination / f"{source}-verified-report.md").write_text(report, encoding="utf-8")
+        table_review = destination / f"{source}-review.html"
+        render_review_html(corrected, video, table_review, status="VLM 短镜头兜底")
+        review_paths[source] = table_review
+        if review_path is None:
+            review_path = destination / "review.html"
+            render_review_html(corrected, video, review_path, status="VLM 短镜头兜底")
 
     _write_report(
         report_path,
@@ -335,12 +346,16 @@ def verify_short_shots(
         verdicts,
         errors,
         removed,
+        review_paths,
+        review_path,
     )
     return VerificationResult(
         output_dir=destination,
         verifications_path=verifications_path,
         report_path=report_path,
         verified_paths=verified_paths,
+        review_paths=review_paths,
+        review_path=review_path,
         boundaries=verdicts,
         removed=removed,
         errors=errors,
@@ -506,7 +521,7 @@ def _write_verifications(
 
 
 def _write_report(
-    path: Path,
+    report_file: Path,
     table: ShotTable,
     window: tuple[float, float] | None,
     max_duration: float,
@@ -515,6 +530,8 @@ def _write_report(
     verdicts: dict[float, BoundaryVerdict],
     errors: list[dict[str, str]],
     removed: dict[str, list[float]],
+    review_paths: dict[str, Path],
+    review_path: Path | None,
 ) -> None:
     lines = [
         "# 短镜头切点 VLM 复核",
@@ -541,8 +558,14 @@ def _write_report(
     lines += ["", "## 应用结果", ""]
     for source, times in removed.items():
         lines.append(f"- {source}: 合并 {len(times)} 个切点")
+    if review_paths:
+        lines += ["", "复核页："]
+        for source, review_file in review_paths.items():
+            lines.append(f"- {source}: `{review_file.name}`")
+        if review_path is not None:
+            lines.append(f"- 合并结果总览：`{review_path.name}`")
     lines.append("")
-    path.write_text("\n".join(lines), encoding="utf-8")
+    report_file.write_text("\n".join(lines), encoding="utf-8")
 
 
 def _source_names(tables: Sequence[ShotTable]) -> list[str]:

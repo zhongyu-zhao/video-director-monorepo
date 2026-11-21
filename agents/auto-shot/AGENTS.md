@@ -26,7 +26,7 @@ python3 -m auto_shot scenes --shots <shots.json> [--evidence <evidence.json>] [-
 - `auto_shot/detectors.py`：ffmpeg / PySceneDetect / TransNetV2 适配器与运动路由；`detection.json` 记录选择依据。
 - `auto_shot/quality.py`：确定性验收；`skipped` 不等于 `passed`。
 - `auto_shot/report.py`：镜头表的一个视图，不引入新事实。
-- `auto_shot/review.py`：复核页生成 + 应用人工修正；不修改原 `shots.json`。
+- `auto_shot/review.py`：复核页生成 + 应用人工修正；`analyze`/`verify-short` 自动刷新，页面头带阶段/生成时间；不修改原 `shots.json`。
 - `auto_shot/vlm.py` / `label.py`：VLM 客户端、逐镜标注、缓存；标签只写独立 `labels.json`。
 - `auto_shot/verify.py`：<1s 边界的 VLM 同一镜头判断、保守合并、多表共享缓存；只写 `*-verified.json`。
 - `auto_shot/evidence.py` / `vision.py` / `asr.py`：M1 代理、黑边、关键帧/联系表、测量、音频；人脸/ASR 可选降级。

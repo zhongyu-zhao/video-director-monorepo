@@ -6,7 +6,7 @@
 
 - **M0 镜头表**：切分镜头、生成镜头表、跑质量门、出 Markdown 报告。
 - **多检测器 + 运动路由**：ffmpeg、PySceneDetect、TransNetV2 三种切分器，按素材运动量自动选择。
-- **人工复核闭环**：生成本地播放器检查页，标记误切/漏切，应用后得到修正镜头表。
+- **人工复核闭环**：analyze/verify-short 自动刷新本地播放器检查页，标记误切/漏切，应用后得到修正镜头表；页面头显示阶段/生成时间。
 - **VLM 多帧标注（M2）**：逐镜取三帧联系表，让 VLM 填景别/角度/运镜/构图/光线/色彩/景深 + 证据 + 置信度。
 - **VLM 短镜头兜底**：对 <1s shot 的入/出点取前后帧，判断是否同一镜头，合并短镜头伪切以提高 precision。
 - **M1 证据层**：代理转码、黑边检测、每镜 3 帧/联系表、亮度/对比度/色彩/运动/人脸测量、静音/音量事件；ASR 可选。
@@ -117,7 +117,7 @@ out/
   quality.json            # 质量门
   report.md               # 镜头表报告
   detection.json          # requested/selected/route/profile/latency/notes
-  review.html             # 本地复核页（review 生成）
+  review.html             # 本地复核页（analyze/verify-short 自动刷新）
   review-flags.json       # 页面导出：误切/漏切
   shots-reviewed.json     # 应用复核后的镜头表（原 shots.json 不变）
   shots-reviewed-report.md
@@ -142,7 +142,7 @@ out/
 
 ## 复核页怎么用
 
-`review.html` 左侧是播放器，右侧是全部镜头：
+`review.html` 左侧是播放器，右侧是全部镜头；页面头显示阶段、检测器和生成时间：
 
 - 点击镜头或按 `←`/`→` 跳到该切点前 0.6 秒播放；空格暂停。
 - 切点前后其实是同一镜时，勾选该行的“误切”。

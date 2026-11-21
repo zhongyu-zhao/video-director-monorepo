@@ -12,6 +12,7 @@ import hashlib
 import html
 import json
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -28,8 +29,13 @@ def render_review_html(
     table: ShotTable,
     video: str | Path,
     output: str | Path,
+    status: str = "自动检测",
 ) -> Path:
-    """Write a self-contained review page and return its path."""
+    """Write a self-contained review page and return its path.
+
+    ``status`` is shown in the header so a page cannot silently look
+    current while representing an older detection/verification stage.
+    """
 
     destination = Path(output)
     destination.parent.mkdir(parents=True, exist_ok=True)
@@ -56,6 +62,10 @@ def render_review_html(
     page = page.replace("__SOURCE__", html.escape(table.video.path))
     page = page.replace("__COUNT__", str(len(table.shots)))
     page = page.replace("__DURATION__", f"{table.video.duration:.3f}")
+    page = page.replace("__DETECTOR__", html.escape(table.detector.name))
+    page = page.replace("__THRESHOLD__", f"{table.detector.threshold:.3f}")
+    page = page.replace("__STATUS__", html.escape(status))
+    page = page.replace("__GENERATED__", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     destination.write_text(page, encoding="utf-8")
     return destination
 
@@ -229,6 +239,7 @@ _TEMPLATE = """<!doctype html>
   <div class="player-pane">
     <h1>auto-shot 切点检查</h1>
     <div class="source">__SOURCE__</div>
+    <div class="source">__STATUS__ · 检测器 __DETECTOR__ (threshold __THRESHOLD__) · 生成于 __GENERATED__</div>
     <div class="source">__COUNT__ 镜 · __DURATION__s · 点击右侧行跳到切点前 0.6 秒；←/→ 逐切点，空格播放/暂停。</div>
     <video id="player" controls preload="metadata" src="__VIDEO_SRC__"></video>
     <div class="controls">

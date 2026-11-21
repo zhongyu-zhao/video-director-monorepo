@@ -7,7 +7,6 @@ from pathlib import Path
 
 from auto_shot.models import ShotTable, shots_from_cuts
 from auto_shot.review import ReviewError, apply_review, render_review_html
-
 from tests.support import sample_table
 
 
@@ -25,14 +24,15 @@ class ReviewPageTest(unittest.TestCase):
             video.write_bytes(b"not a real video")
             out = root / "out" / "review.html"
 
-            written = render_review_html(table(), video, out)
+            written = render_review_html(table(), video, out, status="测试阶段")
             page = written.read_text(encoding="utf-8")
 
         self.assertEqual(written, out)
         self.assertIn("auto-shot 切点检查", page)
+        self.assertIn("测试阶段", page)
         self.assertIn('"shot_id": "S001"', page)
         self.assertIn("input.mp4", page)
-        for placeholder in ("__SHOTS_JSON__", "__SOURCE_JSON__", "__REVIEW_KEY_JSON__", "__VIDEO_SRC__", "__COUNT__"):
+        for placeholder in ("__SHOTS_JSON__", "__SOURCE_JSON__", "__REVIEW_KEY_JSON__", "__VIDEO_SRC__", "__COUNT__", "__STATUS__", "__GENERATED__", "__DETECTOR__"):
             self.assertNotIn(placeholder, page)
 
 
