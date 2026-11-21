@@ -79,6 +79,14 @@ class ValidationTest(unittest.TestCase):
 
         self.assertEqual(statuses["assets_exist"], FAIL)
 
+    def test_odd_resolution_fails(self) -> None:
+        self.project.width = 321
+        self.project.height = 181
+
+        _, statuses = self.statuses()
+
+        self.assertEqual(statuses["resolution_even"], FAIL)
+
     def test_duplicate_asset_ids_fail(self) -> None:
         self.project.assets.append(Asset(id="A001", path="assets/a.mp4", duration=2.0))
 

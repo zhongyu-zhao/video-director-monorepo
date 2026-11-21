@@ -64,6 +64,7 @@ def validate_project(project: Project, root: str | Path) -> ValidationReport:
         _project_identity(project),
         _fps_positive(project),
         _resolution_positive(project),
+        _resolution_even(project),
         _asset_ids_unique(project),
         _clip_ids_unique(project),
         _assets_exist(project, root),
@@ -108,6 +109,16 @@ def _resolution_positive(project: Project) -> Check:
         "resolution_positive",
         FAIL,
         f"invalid resolution: {project.width}x{project.height}",
+    )
+
+
+def _resolution_even(project: Project) -> Check:
+    if project.width % 2 == 0 and project.height % 2 == 0:
+        return Check("resolution_even", PASS, f"{project.width}x{project.height}")
+    return Check(
+        "resolution_even",
+        FAIL,
+        f"M0 renders yuv420p and needs even dimensions, got {project.width}x{project.height}",
     )
 
 
