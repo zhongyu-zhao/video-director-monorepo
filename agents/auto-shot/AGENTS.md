@@ -30,7 +30,7 @@ python3 -m auto_shot scenes --shots <shots.json> [--evidence <evidence.json>] [-
 - `auto_shot/vlm.py` / `label.py`：VLM 客户端、逐镜标注、缓存；标签只写独立 `labels.json`。
 - `auto_shot/verify.py`：<1s 边界的 VLM 同一镜头判断、保守合并、多表共享缓存；只写 `*-verified.json`。
 - `auto_shot/evidence.py` / `vision.py` / `asr.py`：M1 代理、黑边、关键帧/联系表、测量、音频；人脸/ASR 可选降级。
-- `auto_shot/scenes.py`：M3 场景聚合、全片统计、证据回链；不写回镜头表。
+- `auto_shot/scenes.py` / `scene_reduce.py`：M3 叙事场景 reduce、聚合、全片统计、证据回链；不写回镜头表。
 - `auto_shot/taxonomy.py`：标签枚举校验，与 `docs/taxonomy.md` 同步。
 - `auto_shot/pipeline.py`：只编排，不藏业务规则。
 
@@ -46,7 +46,7 @@ python3 -m auto_shot scenes --shots <shots.json> [--evidence <evidence.json>] [-
 - 可选检测器缺失时 auto 可以回退 ffmpeg，但必须在 notes 里说明；显式指定缺失检测器要报错，不偷偷替换。
 - 单帧 VLM 标注里 `camera` 必须是 `unknown`；三帧联系表允许判断基本运镜，但不确定仍 `unknown`，不伪造运镜判断。默认走三帧。
 - M1 证据写独立 `evidence.json`，不改 `shots.json`；低层测量与 VLM 语义标签分开。人脸/ASR 缺失时是 skip 不是 0。
-- M3 场景边界首版是 12 镜/180s 基线，不是语义场景；报告统计必须从镜头表/证据/标签计算，不手写。
+- M3 场景优先用逐镜标签/动作做叙事 reduce（标题/摘要/连续覆盖校验）；失败才回退到标签/证据变长聚合，硬上限 30 镜/300s。场景计划不是固定 12 镜；报告统计必须从镜头表/证据/标签计算。
 - 短镜头兜底只处理 `<1s` 边界，`same_shot=true` 且 confidence 达阈值才合并；低置信度/错误保留边界，不能替代复核页。
 - `verify-short` 不覆盖原表，合并后 `source=vlm`，并重跑质量门；多张表用重复 `--shots` 共享判定，避免按方法重复调用 VLM。
 - 证据/场景产物可重跑；代理/帧/联系表是大资产，不提交 git，报告只写相对回链。

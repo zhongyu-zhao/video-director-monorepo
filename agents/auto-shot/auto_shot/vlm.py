@@ -30,7 +30,10 @@ class VlmConfig:
 
 
 class VlmClient(Protocol):
-    def label_image(self, image: bytes, prompt: str) -> dict[str, Any]:
+    def complete_text(self, prompt: str, max_tokens: int = 8000) -> dict[str, Any]:
+        """Return one parsed JSON object for a text prompt."""
+
+    def label_image(self, image: bytes, prompt: str, max_tokens: int = 3500) -> dict[str, Any]:
         """Return the model's parsed JSON response for one image."""
 
 
@@ -93,7 +96,46 @@ class DeepSeekVlmClient:
         self.config = config
         self.model = config.model
 
-    def label_image(self, image: bytes, prompt: str) -> dict[str, Any]:
+    def complete_text(self, prompt: str, max_tokens: int = 8000) -> dict[str, Any]:
+        payload = {
+            "model": self.config.model,
+            "messages": [
+                {"role": "system", "content": "你是影视叙事分析助手。只输出合法 JSON，不要 markdown 代码块。"},
+                {"role": "user", "content": prompt},
+            ],
+            "temperature": 0,
+            "max_tokens": max_tokens,
+        }
+        request = urllib.request.Request(
+            f"{self.config.base_url}/chat/completions",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {self.config.api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.config.timeout) as response:
+                body = json.loads(response.read().decode("utf-8"))
+        except urllib.error.HTTPError as error:
+            message = _http_error_message(error)
+            raise VlmError(f"VLM HTTP {error.code}: {message}") from error
+        except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as error:
+            raise VlmError(f"VLM request failed: {error}") from error
+        try:
+            choice = body["choices"][0]
+            content = choice["message"].get("content") or ""
+            finish = choice.get("finish_reason")
+        except (KeyError, IndexError, TypeError) as error:
+            raise VlmError("VLM response has no choices[0].message.content") from error
+        if not content.strip():
+            raise VlmError(f"VLM returned empty content (finish_reason={finish})")
+        if finish == "length":
+            raise VlmError("VLM response was truncated (finish_reason=length); increase max_tokens")
+        return parse_json_object(content)
+
+    def label_image(self, image: bytes, prompt: str, max_tokens: int = 3500) -> dict[str, Any]:
         encoded = base64.b64encode(image).decode("ascii")
         payload = {
             "model": self.config.model,
@@ -114,7 +156,7 @@ class DeepSeekVlmClient:
                 },
             ],
             "temperature": 0,
-            "max_tokens": 3500,
+            "max_tokens": max_tokens,
         }
         request = urllib.request.Request(
             f"{self.config.base_url}/chat/completions",

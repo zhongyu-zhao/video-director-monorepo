@@ -171,8 +171,9 @@ def _scene_for(shot: Shot, scenes: list[dict[str, Any]]) -> tuple[dict[str, Any]
 def _scene_title(scene: dict[str, Any] | None) -> str:
     if not scene:
         return ""
+    title = f" · {scene['title']}" if scene.get("title") else ""
     return (
-        f"{scene['scene_id']} · {_timecode(float(scene['start']))}–{_timecode(float(scene['end']))} · "
+        f"{scene['scene_id']}{title} · {_timecode(float(scene['start']))}–{_timecode(float(scene['end']))} · "
         f"{scene.get('stats', {}).get('shot_count', len(scene.get('shot_ids', [])))} 镜"
     )
 
@@ -194,6 +195,8 @@ def _scene_summary(scene: dict[str, Any] | None) -> str:
             measured.append(f"{label} {value:.2f}")
     if measured:
         parts.append(" / ".join(measured))
+    if scene.get("summary"):
+        parts.insert(0, str(scene["summary"]))
     return " · ".join(parts)
 
 

@@ -11,7 +11,7 @@
 - **VLM 短镜头兜底**：对 <1s shot 的入/出点取前后帧，判断是否同一镜头，合并短镜头伪切以提高 precision。
 - **M1 证据层**：代理转码、黑边检测、每镜 3 帧/联系表、亮度/对比度/色彩/运动/人脸测量、静音/音量事件；ASR 可选。
 - **M2 多帧标注**：VLM 默认看同一镜头的三帧联系表，允许判断基本运镜；标签独立缓存。
-- **M3 场景与报告**：镜头聚合为场景卡、全片统计、证据回链；场景边界首版为 12 镜/180s 基线。
+- **M3 场景与报告**：默认用 VLM 对逐镜标签/动作做叙事 reduce，按视听语言和叙事场景聚合；场景卡带标题/摘要，统计和证据回链。
 
 场景聚合和完整的逐镜叙事分析还没有实现，路线图见 [`docs/architecture.md`](docs/architecture.md)。
 
@@ -70,7 +70,8 @@ python3 -m auto_shot scenes \
   --shots /tmp/film-shots/shots.json \
   --evidence /tmp/film-shots/evidence/evidence.json \
   --labels /tmp/film-shots/labels.json \
-  --out /tmp/film-shots/scenes
+  --out /tmp/film-shots/scenes \
+  --reduce vlm --env-file /path/to/.env
 ```
 
 `analyze` 的关键参数是 `--detector` 和 `--threshold`：
@@ -135,7 +136,8 @@ out/
     contact-sheets/S001.jpg
     evidence.json         # 每镜测量/音频/ASR
   scenes/
-    scenes.json           # 场景卡
+    scenes.json           # 场景卡（含标题/叙事摘要）
+    narrative-scenes.json # VLM 叙事 reduce 计划
     stats.json            # 全片统计
     scenes.md             # 全片报告
 ```
@@ -174,7 +176,7 @@ python3 -m unittest discover -v
 ## 当前边界
 
 - auto 路由能减少高运动误切，但不保证正确；低对比度切点/渐变仍可能漏，复核闭环负责修正。路由阈值来自一集素材，其他片种需要校准。
-- VLM 三帧仍可能误判；短镜头兜底只处理 <1s 边界；场景边界首版是 12 镜/180s 基线，不是语义场景。
+- VLM 三帧仍可能误判；短镜头兜底只处理 <1s 边界；叙事 reduce 也会误判，需用场景卡/复核页校正。
 - 人脸/ASR 是可选依赖，缺失时是 skip 不是 0；证据/场景不阻塞基础切分。
 - 没有 ASR、OCR、人脸、音频事件；这些属于 M1 证据层。
 - 没有场景聚合和交互报告；复核页是切点检查工具，不是完整编辑器。
@@ -198,6 +200,7 @@ auto_shot/
   vision.py    # 可选 OpenCV 人脸测量
   asr.py       # 可选 faster-whisper 转写
   scenes.py    # M3 场景聚合、统计、证据回链
+  scene_reduce.py # 逐镜标签的叙事场景 reduce
   vlm.py       # OpenAI-compatible VLM 客户端 / env 读取
   taxonomy.py  # 标签枚举校验
 tests/         # 单元测试 + 合成视频集成测试
