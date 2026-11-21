@@ -23,7 +23,7 @@ class AnalysisResult:
     quality: QualityReport
 
 
-def analyze(input_path: str | Path, output_dir: str | Path, threshold: float = 0.3) -> AnalysisResult:
+def analyze(input_path: str | Path, output_dir: str | Path, threshold: float = 0.25) -> AnalysisResult:
     media = probe(input_path)
     cuts = detect_cuts(input_path, threshold=threshold)
     table = ShotTable(

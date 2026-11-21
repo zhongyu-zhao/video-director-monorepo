@@ -4,6 +4,16 @@ __pycache__/
 .venv/
 *.egg-info/
 
+# Secrets and local review/label artifacts
+.env
+.env.*
+!.env.example
+agents/*/review.html
+agents/*/review-flags.json
+agents/*/labels.json
+agents/*/labels.md
+agents/*/frames/
+
 # Generated project artifacts and media never belong in git
 agents/*/artifacts/
 agents/*/assets/

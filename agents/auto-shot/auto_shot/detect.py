@@ -30,7 +30,7 @@ class Cut:
     score: float | None = None
 
 
-def detect_cuts(path: str | Path, threshold: float = 0.3) -> list[Cut]:
+def detect_cuts(path: str | Path, threshold: float = 0.25) -> list[Cut]:
     if not 0.0 < threshold <= 1.0:
         raise ValueError("threshold must be in (0.0, 1.0]")
 

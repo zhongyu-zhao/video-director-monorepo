@@ -51,7 +51,7 @@ class ShotTableSerializationTest(unittest.TestCase):
                 height=240,
                 has_audio=True,
             ),
-            detector=DetectorInfo(name="ffmpeg-scene", threshold=0.3),
+            detector=DetectorInfo(name="ffmpeg-scene", threshold=0.25),
             shots=shots_from_cuts([2.0, 4.0], 6.0),
             manual_cuts=[3.5],
         )
