@@ -12,7 +12,7 @@
 
 1. **四层分离**：机器测量 → 模型判断 → 代码验收 → 人审/交付。镜头边界、时长、帧率、运动量、亮度、色彩、人脸比例等事实只由代码写入 `measured`；VLM 只填写枚举标签、画面描述、叙事功能、证据和置信度。
 2. **控制流是代码 DAG，不是 LLM 自由编排**：`ingest → detect → evidence → label → scenes → report`，每个阶段读取上一阶段工件、写出自己的工件，失败可只重跑该阶段。LLM 只在阶段内部做判断，不负责决定“下一步做什么”。拉片是覆盖和一致性问题，不是检索问题；批处理 + 分层 reduce 比“边看边找”的 agent 循环更合适。
-3. **工件即状态**：`media.json`、`shots.json`、`shot_labels.json`、`scenes.json`、`report.md`、`quality.json` 都是版本化文件。镜头表是唯一事实源，报告只是它的一个视图；播放器、CSV、HTML、问答都从同一份镜头表生成。
+3. **工件即状态**：`media.json`、`shots.json`、`scenes.json`、`report.md`、`quality.json` 都是版本化文件。模型批处理可以写中间缓存（如 `labels/`），但合并后的 `shots.json`（含测量、标签、证据）是唯一事实源，报告只是它的一个视图；播放器、CSV、HTML、问答都从同一份镜头表生成。
 4. **镜头卡分层字段**：`measured`（代码）、`labels`（模型枚举）、`content`（模型描述）、`function`（模型 + 上下文）、`evidence`、`confidence`、`provenance`（检测器/模型/prompt 版本、`detected`/`manual`）。字段契约见 `docs/decisions/proposed/architecture/2026-11-21-shot-table-contract.md`。
 5. **批处理 + 分层 reduce**：逐镜标注按 20–25 镜一批，配联系表；先出镜头卡，再聚场景，最后写全片报告。不把整片塞进单次调用，也不要求旗舰模型刷上千个镜头。
 6. **幂等与增量**：缓存 key 由 `video_hash + shot_hash + prompt_version + model` 组成；人工改过的切点或标签标记为 `manual`，后续自动重跑不覆盖。重跑只影响变更的下游。

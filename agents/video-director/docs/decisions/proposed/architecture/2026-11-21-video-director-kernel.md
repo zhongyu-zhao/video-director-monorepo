@@ -10,7 +10,7 @@ video-director 要把创作意图变成可核对、可编辑、可导出的视�
 
 ## 决定
 
-1. **先确定性内核，再 agent 外壳**：M0 先做项目/资产/时间线/版本内核（`Project → Asset → TimelineClip → Revision`），再在 M2 随规划层引入 `Scene → Shot`；渲染先做 FFmpeg/EDL，随后是 JSON 工件和版本历史；M1 做工具层；M2 做代码 DAG 编排；M3 做质检；M4 做 skill 化。没有稳定内核之前，不先做 UI 或生成能力。
+1. **先确定性内核，再 agent 外壳**：M0 先做项目/资产/时间线/版本内核（`Project → Asset → TimelineClip → Revision`）、FFmpeg 时间线渲染、JSON 工件和版本历史；`Scene → Shot` 在 M2 随规划层引入；M1 做工具层；M2 做代码 DAG 编排；M3 做质检；M4 做 skill 化。没有稳定内核之前，不先做 UI 或生成能力。
 2. **时间线是唯一事实源**：分镜/镜头表是可编辑层，预览和成片都从时间线渲染。修改走“工具 + receipt + revision”，不允许 LLM 直接改 JSON 或直接输出最终视频。
 3. **工件即状态**：项目目录固定为 `project.json` + `artifacts/` + `assets/` + `renders/` + `history/`。每个阶段读上一阶段工件、做 schema 校验、写 checkpoint；失败可断点续跑。被覆盖的版本归档到 `history/`，不丢审批轨迹。
 4. **混合控制流**：阶段骨架用代码 DAG；阶段内的创意决策、候选比较和异常重规划用 LLM。纯 LLM 编排只适合个人助理场景，不作为主路径。
