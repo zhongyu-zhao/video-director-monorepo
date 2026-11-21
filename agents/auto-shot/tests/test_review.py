@@ -6,7 +6,12 @@ import unittest
 from pathlib import Path
 
 from auto_shot.models import ShotTable, shots_from_cuts
-from auto_shot.review import ReviewError, apply_review, render_review_html
+from auto_shot.review import (
+    ReviewError,
+    apply_review,
+    build_review_annotations,
+    render_review_html,
+)
 from tests.support import sample_table
 
 
@@ -32,8 +37,63 @@ class ReviewPageTest(unittest.TestCase):
         self.assertIn("测试阶段", page)
         self.assertIn('"shot_id": "S001"', page)
         self.assertIn("input.mp4", page)
-        for placeholder in ("__SHOTS_JSON__", "__SOURCE_JSON__", "__REVIEW_KEY_JSON__", "__VIDEO_SRC__", "__COUNT__", "__STATUS__", "__GENERATED__", "__DETECTOR__"):
+        for placeholder in ("__SHOTS_JSON__", "__SOURCE_JSON__", "__REVIEW_KEY_JSON__", "__VIDEO_SRC__", "__COUNT__", "__STATUS__", "__GENERATED__", "__DETECTOR__", "__ANNOTATIONS_JSON__", "__SCENES_JSON__"):
             self.assertNotIn(placeholder, page)
+
+    def test_embeds_labels_scenes_and_evidence(self) -> None:
+        labels = {
+            "shots": {
+                "S001": {
+                    "labels": {"scale": "close", "angle": "eye-level", "camera": "static", "composition": "centered", "lighting": "low-key", "color": "warm", "dof": "shallow"},
+                    "content": {"subjects": ["女孩"], "action": "女孩抬头"},
+                    "function": {"beat": "unknown", "emotion": "unknown"},
+                    "evidence": {"scale": "占满画面"},
+                    "confidence": {"scale": 0.9, "angle": 0.8, "camera": 0.9, "composition": 0.8, "lighting": 0.8, "color": 0.9, "dof": 0.7},
+                }
+            }
+        }
+        scenes = {
+            "scenes": [
+                {
+                    "scene_id": "SC001",
+                    "start": 0.0,
+                    "end": 4.0,
+                    "shot_ids": ["S001", "S002"],
+                    "stats": {"shot_count": 2, "scale": {"close": 1}, "camera": {"static": 1}, "brightness": 0.4, "motion": 0.1},
+                }
+            ]
+        }
+        evidence = {
+            "shots": {
+                "S001": {
+                    "measured": {"brightness": 0.4, "motion": 0.1, "face_ratio": 0.05},
+                    "audio": {"silence_ratio": 0.0},
+                    "contact_sheet": None,
+                    "keyframes": [],
+                }
+            }
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            video = root / "input.mp4"
+            video.write_bytes(b"not a real video")
+            out = root / "out" / "review.html"
+            written = render_review_html(table(), video, out, labels=labels, scenes=scenes, evidence=evidence)
+            page = written.read_text(encoding="utf-8")
+
+        self.assertIn("SC001", page)
+        self.assertIn("scene-card", page)
+        self.assertIn("close", page)
+        self.assertIn("女孩抬头", page)
+        self.assertIn("brightness", page)
+
+    def test_maps_verified_shot_to_longest_source_shot(self) -> None:
+        source = table()
+        displayed = table()
+        displayed.shots = source.shots[:1]
+        labels = {"shots": {"S001": {"labels": {"scale": "close"}}}}
+        annotations, _cards = build_review_annotations(displayed, labels=labels, source_table=source)
+        self.assertEqual(annotations["S001"]["label_source"], "S001")
 
 
 class ApplyReviewTest(unittest.TestCase):

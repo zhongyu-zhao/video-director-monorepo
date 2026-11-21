@@ -30,6 +30,11 @@ def render_review_html(
     video: str | Path,
     output: str | Path,
     status: str = "自动检测",
+    labels: dict[str, Any] | None = None,
+    scenes: dict[str, Any] | None = None,
+    evidence: dict[str, Any] | None = None,
+    source_table: ShotTable | None = None,
+    evidence_dir: str | Path | None = None,
 ) -> Path:
     """Write a self-contained review page and return its path.
 
@@ -48,7 +53,22 @@ def render_review_html(
         ensure_ascii=False,
     ).replace("</", "<\\/")
 
+    annotations, scene_cards = build_review_annotations(
+        table,
+        labels=labels,
+        scenes=scenes,
+        evidence=evidence,
+        source_table=source_table,
+        evidence_dir=evidence_dir,
+        output_dir=destination.parent,
+    )
+    annotations_json = json.dumps(annotations, ensure_ascii=False).replace("</", "<\\/")
+    scenes_json = json.dumps(scene_cards, ensure_ascii=False).replace("</", "<\\/")
     page = _TEMPLATE.replace("__SHOTS_JSON__", shots_json)
+    page = page.replace("__ANNOTATIONS_JSON__", annotations_json)
+    page = page.replace("__SCENES_JSON__", scenes_json)
+    page = page.replace("__LABEL_COUNT__", str(sum(1 for item in annotations.values() if item["label"])))
+    page = page.replace("__SCENE_COUNT__", str(len(scene_cards)))
     page = page.replace("__VIDEO_SRC__", html.escape(video_src))
     page = page.replace("__SOURCE_JSON__", json.dumps(table.video.path, ensure_ascii=False).replace("</", "<\\/"))
     signature = "|".join(
@@ -68,6 +88,149 @@ def render_review_html(
     page = page.replace("__GENERATED__", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     destination.write_text(page, encoding="utf-8")
     return destination
+
+
+def build_review_annotations(
+    table: ShotTable,
+    labels: dict[str, Any] | None = None,
+    scenes: dict[str, Any] | None = None,
+    evidence: dict[str, Any] | None = None,
+    source_table: ShotTable | None = None,
+    evidence_dir: str | Path | None = None,
+    output_dir: str | Path | None = None,
+) -> tuple[dict[str, dict[str, Any]], list[dict[str, Any]]]:
+    """Map labels/scenes/evidence onto the displayed shot table.
+
+    Verified tables are renumbered, so annotations are matched by exact id
+    first and then by the longest source-shot overlap.  The selected source
+    shot is recorded so the UI can show which label/evidence was inherited.
+    """
+
+    labels_by = labels.get("shots", {}) if labels else {}
+    evidence_by = evidence.get("shots", {}) if evidence else {}
+    scene_list = scenes.get("scenes", []) if scenes else []
+    source_shots = source_table.shots if source_table else []
+    root = Path(output_dir).resolve() if output_dir else None
+    evidence_root = Path(evidence_dir).resolve() if evidence_dir else None
+
+    annotations: dict[str, dict[str, Any]] = {}
+    for shot in table.shots:
+        label = labels_by.get(shot.shot_id)
+        primary_id = shot.shot_id
+        merged_from: list[str] = []
+        if label is None and source_shots:
+            overlaps = [
+                source
+                for source in source_shots
+                if min(source.end, shot.end) - max(source.start, shot.start) > 0
+            ]
+            if overlaps:
+                primary = max(
+                    overlaps,
+                    key=lambda source: min(source.end, shot.end) - max(source.start, shot.start),
+                )
+                primary_id = primary.shot_id
+                label = labels_by.get(primary_id)
+                merged_from = [source.shot_id for source in overlaps if source.shot_id != primary_id]
+        entry = evidence_by.get(shot.shot_id) or evidence_by.get(primary_id)
+        scene, scene_overlap = _scene_for(shot, scene_list)
+        annotations[shot.shot_id] = {
+            "label": label,
+            "label_source": primary_id if label is not None else None,
+            "merged_from": merged_from,
+            "scene_id": scene["scene_id"] if scene else None,
+            "scene_title": _scene_title(scene) if scene else None,
+            "scene_summary": _scene_summary(scene) if scene else None,
+            "scene_overlap": round(scene_overlap, 3),
+            "evidence": _evidence_view(entry, evidence_root, root),
+        }
+
+    scene_cards = []
+    for scene in scene_list:
+        scene_cards.append(
+            {
+                "scene_id": scene["scene_id"],
+                "title": _scene_title(scene),
+                "summary": _scene_summary(scene),
+            }
+        )
+    return annotations, scene_cards
+
+
+def _scene_for(shot: Shot, scenes: list[dict[str, Any]]) -> tuple[dict[str, Any] | None, float]:
+    best = None
+    best_overlap = 0.0
+    for scene in scenes:
+        overlap = min(shot.end, float(scene["end"])) - max(shot.start, float(scene["start"]))
+        if overlap > best_overlap:
+            best = scene
+            best_overlap = overlap
+    return best, max(0.0, best_overlap)
+
+
+def _scene_title(scene: dict[str, Any] | None) -> str:
+    if not scene:
+        return ""
+    return (
+        f"{scene['scene_id']} · {_timecode(float(scene['start']))}–{_timecode(float(scene['end']))} · "
+        f"{scene.get('stats', {}).get('shot_count', len(scene.get('shot_ids', [])))} 镜"
+    )
+
+
+def _scene_summary(scene: dict[str, Any] | None) -> str:
+    if not scene:
+        return ""
+    stats = scene.get("stats", {})
+    parts = []
+    for field, label in (("scale", "景别"), ("camera", "运镜"), ("lighting", "光线"), ("color", "色彩")):
+        counts = stats.get(field, {})
+        if counts:
+            top = "、".join(f"{key} {value}" for key, value in list(counts.items())[:3])
+            parts.append(f"{label} {top}")
+    measured = []
+    for field, label in (("brightness", "亮度"), ("motion", "运动"), ("face_ratio", "人脸")):
+        value = stats.get(field)
+        if isinstance(value, (int, float)):
+            measured.append(f"{label} {value:.2f}")
+    if measured:
+        parts.append(" / ".join(measured))
+    return " · ".join(parts)
+
+
+def _evidence_view(
+    entry: dict[str, Any] | None,
+    evidence_root: Path | None,
+    output_root: Path | None,
+) -> dict[str, Any] | None:
+    if not entry:
+        return None
+    view = {
+        "measured": entry.get("measured", {}),
+        "audio": entry.get("audio", {}),
+        "contact_href": None,
+        "keyframe_hrefs": [],
+        "asr": entry.get("asr"),
+    }
+    if evidence_root and output_root:
+        contact = entry.get("contact_sheet")
+        if contact:
+            view["contact_href"] = _relative(evidence_root / contact, output_root)
+        view["keyframe_hrefs"] = [
+            _relative(evidence_root / keyframe, output_root)
+            for keyframe in entry.get("keyframes", [])
+        ]
+    return view
+
+
+def _relative(target: Path, output_root: Path) -> str:
+    return Path(os.path.relpath(target, output_root)).as_posix()
+
+
+def _timecode(seconds: float) -> str:
+    total = max(0, round(seconds))
+    minutes, sec = divmod(total, 60)
+    hours, minutes = divmod(minutes, 60)
+    return f"{hours:02d}:{minutes:02d}:{sec:02d}" if hours else f"{minutes:02d}:{sec:02d}"
 
 
 def apply_review(table: ShotTable, flags: dict[str, Any]) -> ShotTable:
@@ -226,7 +389,24 @@ _TEMPLATE = """<!doctype html>
   tbody tr { cursor: pointer; }
   tbody tr:hover { background: #1c2530; }
   tbody tr.active { background: #233f5c; }
+  tr.scene-row { cursor: default; }
+  tr.scene-row:hover { background: #18212b; }
+  tr.scene-row td { background: #18212b; color: #b9c9dc; font-weight: 600; border-top: 1px solid #3a4a5c; white-space: normal; }
   td.id { color: #9fc3e8; }
+  td.scene { color: #8fbfe8; font-size: 11px; }
+  td.label { color: #c9d3df; font-size: 11px; max-width: 92px; overflow: hidden; text-overflow: ellipsis; }
+  td.label.unknown { color: #6f7b89; }
+  .detail { margin-top: 10px; padding: 10px 12px; background: #1d232b; border: 1px solid #2b333d; border-radius: 8px; color: #cfd6df; font-size: 13px; line-height: 1.55; }
+  .detail-title { color: #f0c674; font-weight: 600; margin-bottom: 4px; }
+  .detail-line { color: #aeb8c5; }
+  .detail-line b { color: #e6e8eb; font-weight: 600; }
+  .detail a { color: #8fbfe8; }
+  .scene-cards { margin-top: 14px; }
+  .scene-cards h2 { font-size: 14px; color: #aeb8c5; margin: 0 0 6px; }
+  .scene-card { display: inline-block; vertical-align: top; width: 260px; margin: 0 6px 6px 0; padding: 7px 9px; background: #1b232d; border: 1px solid #2b3a4a; border-radius: 7px; cursor: pointer; font-size: 12px; color: #c8d4e2; }
+  .scene-card:hover { background: #223142; }
+  .scene-card b { color: #f0c674; }
+  .scene-card .scene-summary { color: #9aa4b2; margin-top: 3px; }
   td.dur.short { color: #ffb86b; }
   td.dur.very-short { color: #ff7a7a; }
   .flag { accent-color: #d98c8c; }
@@ -240,7 +420,7 @@ _TEMPLATE = """<!doctype html>
     <h1>auto-shot 切点检查</h1>
     <div class="source">__SOURCE__</div>
     <div class="source">__STATUS__ · 检测器 __DETECTOR__ (threshold __THRESHOLD__) · 生成于 __GENERATED__</div>
-    <div class="source">__COUNT__ 镜 · __DURATION__s · 点击右侧行跳到切点前 0.6 秒；←/→ 逐切点，空格播放/暂停。</div>
+    <div class="source">__COUNT__ 镜 · __DURATION__s · VLM 标签 __LABEL_COUNT__ 镜 · 场景 __SCENE_COUNT__ 个 · 点击右侧行跳到切点前 0.6 秒；←/→ 逐切点，空格播放/暂停。</div>
     <video id="player" controls preload="metadata" src="__VIDEO_SRC__"></video>
     <div class="controls">
       <button id="prev" title="上一个切点 (←)">← 上一镜</button>
@@ -257,6 +437,7 @@ _TEMPLATE = """<!doctype html>
       <button id="export" class="primary">导出标记 JSON</button>
     </div>
     <div id="status" class="status">选择一个切点开始检查。</div>
+    <div id="detail" class="detail">选择镜头查看 VLM 标签、场景和测量证据。</div>
     <p class="hint">检查方法：在切点前 0.6 秒开始看，确认画面是否真的换了一个镜头。快速剪辑、闪光、叠化、甩镜容易误切；如果切点前后其实是同一镜，勾选该行的“误切”。发现漏切时，播放到缺失切点处按“标记漏切”。</p>
   </div>
   <div class="list-pane">
@@ -266,21 +447,26 @@ _TEMPLATE = """<!doctype html>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>误切</th><th>镜号</th><th>入点</th><th>出点</th><th>时长</th></tr></thead>
+        <thead><tr><th>误切</th><th>场景</th><th>镜号</th><th>入点</th><th>出点</th><th>时长</th><th>景别</th><th>运镜</th><th>光线</th><th>色彩</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
     <div class="foot">标记只保存在本浏览器 localStorage，不会写回 shots.json。导出后可用 <code>auto-shot apply-review</code> 生成修正后的镜头表。</div>
+    <div class="scene-cards"><h2>场景聚合</h2><div id="scene-cards"></div></div>
   </div>
 </div>
 <script>
 const SOURCE = __SOURCE_JSON__;
 const REVIEW_KEY = __REVIEW_KEY_JSON__;
 const SHOTS = __SHOTS_JSON__;
+const ANNOTATIONS = __ANNOTATIONS_JSON__;
+const SCENES = __SCENES_JSON__;
 const VIDEO = document.getElementById('player');
 const ROWS = document.getElementById('rows');
 const FILTER = document.getElementById('filter');
 const STATUS = document.getElementById('status');
+const DETAIL = document.getElementById('detail');
+const SCENE_CARDS = document.getElementById('scene-cards');
 const COUNTS = document.getElementById('counts');
 const FALSE_COUNT = document.getElementById('false-count');
 const MISSED_COUNT = document.getElementById('missed-count');
@@ -318,11 +504,46 @@ function filtered() {
   if (mode === 'long') return SHOTS.filter(shot => shot.duration > 5);
   return SHOTS;
 }
+function ann(shot) {
+  return ANNOTATIONS[shot.shot_id] || {};
+}
+function labelValue(shot, key) {
+  const item = ann(shot);
+  if (!item.label || !item.label.labels) return '—';
+  return item.label.labels[key] || '—';
+}
+function labelTitle(shot, key) {
+  const item = ann(shot);
+  if (!item.label) return '未标注';
+  const value = item.label.labels[key] || 'unknown';
+  const confidence = item.label.confidence ? item.label.confidence[key] : null;
+  const action = item.label.content ? item.label.content.action : '';
+  return `${value}${confidence == null ? '' : ' · ' + Number(confidence).toFixed(2)}${action ? ' · ' + action : ''}`;
+}
+function appendCell(row, text, className) {
+  const cell = document.createElement('td');
+  cell.textContent = text;
+  if (className) cell.className = className;
+  row.appendChild(cell);
+}
 function render() {
   visible = filtered();
   ROWS.innerHTML = '';
   const fragment = document.createDocumentFragment();
+  let lastScene = null;
   visible.forEach((shot, index) => {
+    const item = ann(shot);
+    if (item.scene_id && item.scene_id !== lastScene) {
+      const header = document.createElement('tr');
+      header.className = 'scene-row';
+      header.id = 'scene-' + item.scene_id;
+      const cell = document.createElement('td');
+      cell.colSpan = 10;
+      cell.textContent = `${item.scene_title}${item.scene_summary ? ' · ' + item.scene_summary : ''}`;
+      header.appendChild(cell);
+      fragment.appendChild(header);
+      lastScene = item.scene_id;
+    }
     const tr = document.createElement('tr');
     tr.dataset.index = String(index);
     const flag = document.createElement('input');
@@ -341,17 +562,23 @@ function render() {
     });
     const flagCell = document.createElement('td');
     flagCell.appendChild(flag);
-    const idCell = document.createElement('td');
-    idCell.className = 'id';
-    idCell.textContent = shot.shot_id;
-    const startCell = document.createElement('td');
-    startCell.textContent = fmt(shot.start);
-    const endCell = document.createElement('td');
-    endCell.textContent = fmt(shot.end);
+    tr.appendChild(flagCell);
+    appendCell(tr, item.scene_id || '—', 'scene');
+    appendCell(tr, shot.shot_id, 'id');
+    appendCell(tr, fmt(shot.start));
+    appendCell(tr, fmt(shot.end));
     const durCell = document.createElement('td');
     durCell.className = 'dur' + (shot.duration < 0.5 ? ' very-short' : (shot.duration < 1 ? ' short' : ''));
     durCell.textContent = shot.duration.toFixed(3) + 's';
-    tr.append(flagCell, idCell, startCell, endCell, durCell);
+    tr.appendChild(durCell);
+    for (const key of ['scale', 'camera', 'lighting', 'color']) {
+      const value = labelValue(shot, key);
+      const cell = document.createElement('td');
+      cell.className = 'label' + (value === '—' || value === 'unknown' ? ' unknown' : '');
+      cell.textContent = value;
+      cell.title = labelTitle(shot, key);
+      tr.appendChild(cell);
+    }
     tr.addEventListener('click', () => seek(index));
     fragment.appendChild(tr);
   });
@@ -360,6 +587,99 @@ function render() {
   COUNTS.textContent = `显示 ${visible.length} / ${SHOTS.length} 镜`;
   updateCounts();
   highlight();
+}
+function renderDetail(shot) {
+  DETAIL.textContent = '';
+  if (!shot) {
+    DETAIL.textContent = '选择镜头查看 VLM 标签、场景和测量证据。';
+    return;
+  }
+  const item = ann(shot);
+  const title = document.createElement('div');
+  title.className = 'detail-title';
+  title.textContent = `${shot.shot_id} · ${item.scene_title || '未聚合场景'}`;
+  DETAIL.appendChild(title);
+  const labels = item.label && item.label.labels ? item.label.labels : null;
+  const confidence = item.label && item.label.confidence ? item.label.confidence : {};
+  if (!labels) {
+    const line = document.createElement('div');
+    line.className = 'detail-line';
+    line.textContent = '该镜头还没有 VLM 标签。';
+    DETAIL.appendChild(line);
+  } else {
+    const fields = [['scale', '景别'], ['angle', '角度'], ['camera', '运镜'], ['composition', '构图'], ['lighting', '光线'], ['color', '色彩'], ['dof', '景深']];
+    const line = document.createElement('div');
+    line.className = 'detail-line';
+    line.textContent = fields.map(([key, label]) => `${label} ${labels[key] || 'unknown'} (${(confidence[key] ?? 0).toFixed(2)})`).join(' · ');
+    DETAIL.appendChild(line);
+    const content = item.label.content || {};
+    if (content.action) {
+      const action = document.createElement('div');
+      action.className = 'detail-line';
+      action.textContent = `内容：${content.action}`;
+      DETAIL.appendChild(action);
+    }
+    if (Array.isArray(content.subjects) && content.subjects.length) {
+      const subjects = document.createElement('div');
+      subjects.className = 'detail-line';
+      subjects.textContent = `主体：${content.subjects.join('、')}`;
+      DETAIL.appendChild(subjects);
+    }
+    if (item.label.evidence && Object.keys(item.label.evidence).length) {
+      const evidence = document.createElement('div');
+      evidence.className = 'detail-line';
+      evidence.textContent = '标签证据：' + Object.entries(item.label.evidence).map(([key, value]) => `${key}: ${value}`).join('；');
+      DETAIL.appendChild(evidence);
+    }
+  }
+  if (item.merged_from && item.merged_from.length) {
+    const merged = document.createElement('div');
+    merged.className = 'detail-line';
+    merged.textContent = `合并来源：${item.merged_from.join('、')}（标签/证据取主镜头 ${item.label_source}）`;
+    DETAIL.appendChild(merged);
+  }
+  const measured = item.evidence && item.evidence.measured ? item.evidence.measured : null;
+  if (measured) {
+    const line = document.createElement('div');
+    line.className = 'detail-line';
+    line.textContent = `测量：亮度 ${(measured.brightness ?? 0).toFixed(2)} · 对比度 ${(measured.contrast ?? 0).toFixed(2)} · 饱和度 ${(measured.saturation ?? 0).toFixed(2)} · 运动 ${(measured.motion ?? 0).toFixed(3)} · 人脸 ${(measured.face_ratio == null ? '—' : Number(measured.face_ratio).toFixed(3))}`;
+    DETAIL.appendChild(line);
+  }
+  if (item.evidence && item.evidence.audio) {
+    const line = document.createElement('div');
+    line.className = 'detail-line';
+    line.textContent = `音频：静音比 ${(item.evidence.audio.silence_ratio ?? 0).toFixed(2)}`;
+    DETAIL.appendChild(line);
+  }
+  if (item.evidence && item.evidence.contact_href) {
+    const link = document.createElement('a');
+    link.href = item.evidence.contact_href;
+    link.target = '_blank';
+    link.rel = 'noreferrer';
+    link.textContent = '打开联系表 / 关键帧';
+    DETAIL.appendChild(link);
+  }
+}
+function renderSceneCards() {
+  SCENE_CARDS.textContent = '';
+  SCENES.forEach(scene => {
+    const card = document.createElement('div');
+    card.className = 'scene-card';
+    const title = document.createElement('b');
+    title.textContent = scene.title;
+    card.appendChild(title);
+    if (scene.summary) {
+      const summary = document.createElement('div');
+      summary.className = 'scene-summary';
+      summary.textContent = scene.summary;
+      card.appendChild(summary);
+    }
+    card.addEventListener('click', () => {
+      const header = document.getElementById('scene-' + scene.scene_id);
+      if (header) header.scrollIntoView({block: 'center', behavior: 'smooth'});
+    });
+    SCENE_CARDS.appendChild(card);
+  });
 }
 function seek(index) {
   if (index < 0 || index >= visible.length) return;
@@ -370,13 +690,18 @@ function seek(index) {
   highlight();
 }
 function highlight() {
-  [...ROWS.children].forEach((row, index) => row.classList.toggle('active', index === active));
+  [...ROWS.children].forEach(row => {
+    if (row.classList.contains('scene-row')) return;
+    row.classList.toggle('active', Number(row.dataset.index) === active);
+  });
   if (active < 0 || active >= visible.length) {
     STATUS.textContent = '选择一个切点开始检查。';
+    renderDetail(null);
     return;
   }
   const shot = visible[active];
   STATUS.textContent = `${shot.shot_id}  ${fmt(shot.start)} → ${fmt(shot.end)}  (${shot.duration.toFixed(3)}s)  · 当前 ${fmt(VIDEO.currentTime)}`;
+  renderDetail(shot);
 }
 function step(delta) {
   if (!visible.length) return;
@@ -451,11 +776,13 @@ window.addEventListener('keydown', event => {
     const index = flags.falseCuts.indexOf(shot.shot_id);
     if (index >= 0) flags.falseCuts.splice(index, 1); else flags.falseCuts.push(shot.shot_id);
     saveFlags();
-    const flag = ROWS.children[active] && ROWS.children[active].querySelector('.flag');
+    const row = ROWS.querySelector(`tr[data-index="${active}"]`);
+    const flag = row && row.querySelector('.flag');
     if (flag) flag.checked = index < 0;
   }
 });
 window.addEventListener('beforeunload', saveFlags);
+renderSceneCards();
 render();
 </script>
 </body>

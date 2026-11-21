@@ -148,7 +148,7 @@ M1/M2 再加入：标签枚举/证据质量门、运动与实测一致、描述�
 
 - **M0 镜头表内核（已完成）**：probe、基线切分、镜头表、质量门、Markdown 报告。
 - **多检测器与路由（已完成）**：ffmpeg/PySceneDetect/TransNetV2 适配，按运动画像自动路由，`detection.json` 记录选择与耗时。
-- **人工复核闭环（已完成）**：review HTML、误切/漏切标记、apply-review、manual_cuts；analyze/verify-short 自动刷新复核页。
+- **人工复核闭环（已完成）**：review HTML、误切/漏切标记、apply-review、manual_cuts；analyze/verify-short 自动刷新基础页，review 可嵌入标签/场景/证据。
 - **VLM 逐镜标注（三帧起步）**：三帧联系表 + 证据 + 置信度；上下文/叙事功能仍待补。
 - **VLM 短镜头兜底（已完成）**：<1s 边界的前后帧判断、保守合并、多表共享缓存；>1s 误切仍靠复核。
 - **M1 证据（已完成）**：代理/黑边/关键帧/测量/音频。

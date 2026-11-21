@@ -73,6 +73,10 @@ def build_parser() -> argparse.ArgumentParser:
     review_parser.add_argument("--video", required=True, help="source video")
     review_parser.add_argument("--out", default=None, help="output HTML (default: next to shots.json)")
     review_parser.add_argument("--status", default="自动检测", help="stage label shown in the page header")
+    review_parser.add_argument("--labels", default=None, help="labels.json to embed")
+    review_parser.add_argument("--scenes", default=None, help="scenes.json to embed")
+    review_parser.add_argument("--evidence", default=None, help="evidence.json to embed")
+    review_parser.add_argument("--source-shots", default=None, help="original shots.json for time-based label/scene mapping")
 
     apply_parser = commands.add_parser(
         "apply-review",
@@ -148,6 +152,7 @@ def build_parser() -> argparse.ArgumentParser:
     scenes_parser.add_argument("--labels", default=None, help="labels.json from the label command")
     scenes_parser.add_argument("--scene-shots", type=int, default=12, help="max shots per scene (default 12)")
     scenes_parser.add_argument("--scene-seconds", type=float, default=180.0, help="max scene seconds (default 180)")
+    scenes_parser.add_argument("--review-out", default=None, help="also write an enriched review.html here")
     return parser
 
 
@@ -215,6 +220,10 @@ def _command_analyze(arguments: argparse.Namespace) -> int:
     return 0
 
 
+def _load_json_arg(path: str | None) -> dict | None:
+    return json.loads(Path(path).read_text(encoding="utf-8")) if path else None
+
+
 def _command_review(arguments: argparse.Namespace) -> int:
     shots_path = Path(arguments.shots)
     video_path = Path(arguments.video)
@@ -224,7 +233,21 @@ def _command_review(arguments: argparse.Namespace) -> int:
         raise ReviewError(f"video not found: {video_path}")
     table = ShotTable.load(shots_path)
     destination = Path(arguments.out) if arguments.out else shots_path.parent / "review.html"
-    written = render_review_html(table, video_path, destination, status=arguments.status)
+    labels = _load_json_arg(arguments.labels)
+    scenes = _load_json_arg(arguments.scenes)
+    evidence = _load_json_arg(arguments.evidence)
+    source_table = ShotTable.load(Path(arguments.source_shots)) if arguments.source_shots else None
+    written = render_review_html(
+        table,
+        video_path,
+        destination,
+        status=arguments.status,
+        labels=labels,
+        scenes=scenes,
+        evidence=evidence,
+        source_table=source_table,
+        evidence_dir=Path(arguments.evidence).parent if arguments.evidence else None,
+    )
     print(f"review page: {written}")
     print("open it in a browser; export review-flags.json, then run apply-review")
     return 0
@@ -268,6 +291,19 @@ def _command_scenes(arguments: argparse.Namespace) -> int:
         max_shots=arguments.scene_shots,
         max_seconds=arguments.scene_seconds,
     )
+    if arguments.review_out:
+        scenes_payload = json.loads(result.scenes_path.read_text(encoding="utf-8"))
+        render_review_html(
+            table,
+            table.video.path,
+            arguments.review_out,
+            status="场景报告（最新）",
+            labels=labels,
+            scenes=scenes_payload,
+            evidence=evidence,
+            evidence_dir=evidence_path.parent if evidence_path else None,
+        )
+        print(f"wrote: {Path(arguments.review_out).resolve()}")
     print(f"scenes={len(result.scenes)} stats={len(result.stats)}")
     for path in (result.scenes_path, result.stats_path, result.report_path):
         print(f"wrote: {path}")
