@@ -75,7 +75,6 @@ def _parse_cuts(stderr: str) -> list[Cut]:
                 current_time = round_time(float(time_match.group(1)))
             except ValueError:
                 current_time = None
-            continue
 
         score_match = _SCENE_SCORE.search(line)
         if score_match and current_time is not None:
