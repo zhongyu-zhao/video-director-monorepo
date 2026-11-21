@@ -213,7 +213,7 @@ def profile_scores(
     ordered = sorted(scores)
     p95 = ordered[min(len(ordered) - 1, int(len(ordered) * 0.95))]
     high_motion_ratio = sum(1 for score in scores if score >= _HIGH_MOTION_SCORE) / len(scores)
-    candidates = [cut.time for cut in samples if (cut.score or 0.0) >= threshold]
+    candidates = [cut.time for cut in samples if (cut.score or 0.0) > threshold]
     minutes = max(info.duration / 60.0, 1e-9)
     profile = MotionProfile(
         frames=len(scores),
