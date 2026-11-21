@@ -35,9 +35,10 @@ input.mp4
 | `pipeline.py` | 串起分析阶段 | 已有 |
 | `review.py` | 复核 HTML 生成 + 应用人工修正 | 已有 |
 | `taxonomy.py` | 标签枚举校验 | 已有 |
-| `vlm.py` / `label.py` | VLM 客户端、逐镜标注、缓存 | 单帧起步 |
+| `vlm.py` / `label.py` | VLM 客户端、逐镜标注、缓存 | 三帧 |
 | `verify.py` | <1s 边界的 VLM 同一镜头判断与合并 | 已有 |
-| measure / scenes | 测量、场景聚合 | 计划中 |
+| `evidence.py` / `vision.py` / `asr.py` | 代理、黑边、关键帧/联系表、测量、音频；人脸/ASR 可选 | 已有 |
+| `scenes.py` | 场景聚合、全片统计、证据回链 | 已有 |
 
 ## 产物
 
@@ -58,6 +59,16 @@ out/
     verifications.json    # 短镜头边界判定与缓存
     table-N-verified.json # 多张表应用合并后的结果
     verification-report.md
+  evidence/
+    proxy-480.mp4
+    media.json
+    frames/S001-k1.jpg
+    contact-sheets/S001.jpg
+    evidence.json
+  scenes/
+    scenes.json
+    stats.json
+    scenes.md
 ```
 
 字段契约见 [`2026-11-21-shot-table-contract.md`](decisions/proposed/architecture/2026-11-21-shot-table-contract.md)。镜头表保持事实层；VLM 标签先放 `labels.json`，等字段稳定后再合并进镜头表。
@@ -91,12 +102,18 @@ out/
 
 第一版只给模型一帧（镜头中点，480 宽），要求输出：
 
-- `labels`：景别/角度/构图/光线/色彩/景深，只能取词表枚举值；单帧的 `camera` 固定 `unknown`。
+- `labels`：景别/角度/运镜/构图/光线/色彩/景深，只能取词表枚举值；单帧仍 `unknown`，三帧可判断基本运镜。
 - `content`：主体 + 一句可核对的动作描述。
 - `evidence`：至少一条观察依据。
 - `confidence`：每个维度 0–1。
 
 标签写入独立 `labels.json`，带 `shot_hash`、`prompt_version`、模型名和 `provenance`；缓存 key 是 `video identity + shot_hash + prompt_version + model`。模型返回非法枚举、缺字段或伪造运镜时，该镜记为错误，不写入标签。详见 [`2026-11-21-vlm-shot-labeling.md`](decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)。
+
+## M1 证据 / M2 多帧 / M3 场景
+
+- **M1**：`evidence` 生成代理、黑边/内容区、每镜 3 帧和联系表、亮度/对比度/饱和度/色调/运动测量、静音/音量事件；人脸和 ASR 走可选适配器，缺失是 skip。测量写独立 `evidence.json`，不回写镜头表。
+- **M2**：`label` 默认用三帧联系表（15%/50%/85%），prompt `vlm-labels-v2`；三帧允许判断基本运镜，不确定仍 `unknown`。场景层把一组镜头的标签/测量做批量 reduce。
+- **M3**：`scenes` 把镜头聚合成 12 镜/180s 基线场景，生成场景卡、全片统计和证据回链；场景边界后续可替换为 VLM reduce，产物形状不变。
 
 ## 短镜头 VLM 兜底
 
@@ -132,14 +149,14 @@ M1/M2 再加入：标签枚举/证据质量门、运动与实测一致、描述�
 - **M0 镜头表内核（已完成）**：probe、基线切分、镜头表、质量门、Markdown 报告。
 - **多检测器与路由（已完成）**：ffmpeg/PySceneDetect/TransNetV2 适配，按运动画像自动路由，`detection.json` 记录选择与耗时。
 - **人工复核闭环（已完成）**：review HTML、误切/漏切标记、apply-review、manual_cuts。
-- **VLM 逐镜标注（单帧起步）**：单帧静态标签 + 证据 + 置信度；多帧/联系表、上下文和叙事功能仍待补。
+- **VLM 逐镜标注（三帧起步）**：三帧联系表 + 证据 + 置信度；上下文/叙事功能仍待补。
 - **VLM 短镜头兜底（已完成）**：<1s 边界的前后帧判断、保守合并、多表共享缓存；>1s 误切仍靠复核。
-- **M1 证据层**：代理转码、黑边检测、关键帧/联系表、运动/亮度/色彩/人脸测量、ASR/音频事件；SBD 已有 ffmpeg/PySceneDetect/TransNetV2 路由，仍待更多片种校准和 OmniShotCut 评估。
-- **M2 标注质量**：多帧输入、批量 reduce、质量门 v2、低置信度重跑、人工确认。
-- **M3 场景与报告**：镜头聚合、场景卡、全片统计、证据回链、HTML/CSV 导出。
+- **M1 证据（已完成）**：代理/黑边/关键帧/测量/音频。
+- **M2 多帧标注（已完成）**：三帧联系表，允许基本运镜判断。
+- **M3 场景与报告（已完成基线）**：场景卡、全片统计、证据回链；场景边界仍是固定基线。
 - **M4 交互与问答**：`search_shots`、`compare_shots`、`render_clip`、播放器联动、增量重跑。
 
-单帧 VLM 是刻意提前的窄切片：先验证“标签/证据/缓存/密钥边界”能跑通，不宣称已经解决视听语言理解。
+三帧 VLM 仍是窄切片：先验证“多帧标签/证据/缓存/密钥边界”能跑通，不宣称已经解决视听语言理解。
 
 ## 与其他子 repo 的边界
 

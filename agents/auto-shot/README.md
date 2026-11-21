@@ -7,8 +7,11 @@
 - **M0 镜头表**：切分镜头、生成镜头表、跑质量门、出 Markdown 报告。
 - **多检测器 + 运动路由**：ffmpeg、PySceneDetect、TransNetV2 三种切分器，按素材运动量自动选择。
 - **人工复核闭环**：生成本地播放器检查页，标记误切/漏切，应用后得到修正镜头表。
-- **VLM 单帧标注（M2 起步）**：逐镜取中点帧，让 VLM 填景别/角度/构图/光线/色彩/景深 + 证据 + 置信度。
+- **VLM 多帧标注（M2）**：逐镜取三帧联系表，让 VLM 填景别/角度/运镜/构图/光线/色彩/景深 + 证据 + 置信度。
 - **VLM 短镜头兜底**：对 <1s shot 的入/出点取前后帧，判断是否同一镜头，合并短镜头伪切以提高 precision。
+- **M1 证据层**：代理转码、黑边检测、每镜 3 帧/联系表、亮度/对比度/色彩/运动/人脸测量、静音/音量事件；ASR 可选。
+- **M2 多帧标注**：VLM 默认看同一镜头的三帧联系表，允许判断基本运镜；标签独立缓存。
+- **M3 场景与报告**：镜头聚合为场景卡、全片统计、证据回链；场景边界首版为 12 镜/180s 基线。
 
 场景聚合和完整的逐镜叙事分析还没有实现，路线图见 [`docs/architecture.md`](docs/architecture.md)。
 
@@ -53,6 +56,21 @@ python3 -m auto_shot verify-short \
   --window 90:600 \
   --all \
   --env-file /path/to/.env
+
+# 6) M1 证据层（人脸需要 vision extra；ASR 需要 asr extra）
+python3 -m auto_shot evidence \
+  --shots /tmp/film-shots/shots.json \
+  --video /path/to/film.mp4 \
+  --out /tmp/film-shots/evidence \
+  --face
+# OpenCV 5 没有 Haar：再加 --face-model /path/to/face_detection_yunet_2023mar.onnx
+
+# 7) M3 场景、全片统计和证据回链
+python3 -m auto_shot scenes \
+  --shots /tmp/film-shots/shots.json \
+  --evidence /tmp/film-shots/evidence/evidence.json \
+  --labels /tmp/film-shots/labels.json \
+  --out /tmp/film-shots/scenes
 ```
 
 `analyze` 的关键参数是 `--detector` 和 `--threshold`：
@@ -110,6 +128,16 @@ out/
     verifications.json    # 短镜头边界判定与缓存
     table-N-verified.json # 每个输入表应用合并后的结果
     verification-report.md
+  evidence/
+    proxy-480.mp4         # 代理
+    media.json            # 视频/黑边/内容区/音量
+    frames/S001-k1.jpg    # 每镜 3 帧
+    contact-sheets/S001.jpg
+    evidence.json         # 每镜测量/音频/ASR
+  scenes/
+    scenes.json           # 场景卡
+    stats.json            # 全片统计
+    scenes.md             # 全片报告
 ```
 
 ## 复核页怎么用
@@ -125,7 +153,7 @@ out/
 ## VLM 标注
 
 - 密钥从 `--env-file` 或进程环境读取，变量名默认 `DEEPSEEK_API_KEY`；`--base-url` / `--model` 可覆盖。密钥不进代码、日志或产物。
-- 第一版只取镜头中点的一帧，单帧无法可靠判断运镜，所以 `camera` 固定为 `unknown`；`function` 也没有上下文，先写 `unknown`。
+- 默认取同一镜头的三帧（15%/50%/85%）；三帧可判断基本运镜，但不稳定/不确定仍写 `unknown`；`function` 没有跨镜上下文，先写 `unknown`。
 - `labels.json` 是独立工件，不直接改 `shots.json`；缓存 key 是 `video identity + shot_hash + prompt_version + model`。
 - 默认 `--limit 20`，避免一上来就产生大量调用；`--all` 才全量标注。每镜一次调用，成本/延迟随 provider 变化。
 - 模型返回非法枚举、缺字段或 `camera != unknown` 时，该镜记为错误，不影响其他镜头。
@@ -146,7 +174,8 @@ python3 -m unittest discover -v
 ## 当前边界
 
 - auto 路由能减少高运动误切，但不保证正确；低对比度切点/渐变仍可能漏，复核闭环负责修正。路由阈值来自一集素材，其他片种需要校准。
-- VLM 单帧只做静态标签；短镜头兜底只处理 <1s 边界，>1s 误切和漏切仍靠复核页。
+- VLM 三帧仍可能误判；短镜头兜底只处理 <1s 边界；场景边界首版是 12 镜/180s 基线，不是语义场景。
+- 人脸/ASR 是可选依赖，缺失时是 skip 不是 0；证据/场景不阻塞基础切分。
 - 没有 ASR、OCR、人脸、音频事件；这些属于 M1 证据层。
 - 没有场景聚合和交互报告；复核页是切点检查工具，不是完整编辑器。
 
@@ -163,8 +192,12 @@ auto_shot/
   quality.py   # 质量门
   report.py    # Markdown 报告
   review.py    # 复核 HTML 生成 + 应用修正
-  label.py     # VLM 逐镜标注编排与缓存
+  label.py     # VLM 逐镜标注编排与缓存（三帧联系表）
   verify.py    # 短镜头切点 VLM 兜底与合并
+  evidence.py  # M1 代理/黑边/关键帧/测量/音频
+  vision.py    # 可选 OpenCV 人脸测量
+  asr.py       # 可选 faster-whisper 转写
+  scenes.py    # M3 场景聚合、统计、证据回链
   vlm.py       # OpenAI-compatible VLM 客户端 / env 读取
   taxonomy.py  # 标签枚举校验
 tests/         # 单元测试 + 合成视频集成测试
@@ -179,6 +212,7 @@ docs/          # 架构、词表、决策记录
 - 人工复核闭环：[`docs/decisions/proposed/feature/2026-11-21-human-review-loop.md`](docs/decisions/proposed/feature/2026-11-21-human-review-loop.md)
 - VLM 标注边界：[`docs/decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md`](docs/decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)
 - VLM 短镜头兜底：[`docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md`](docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md)
+- M1–M3 证据/多帧/场景：[`docs/decisions/proposed/feature/2026-11-21-m1-m3-evidence-label-scene.md`](docs/decisions/proposed/feature/2026-11-21-m1-m3-evidence-label-scene.md)
 - 多检测器与路由：[`docs/decisions/proposed/feature/2026-11-21-sbd-router.md`](docs/decisions/proposed/feature/2026-11-21-sbd-router.md)
 - 词表：[`docs/taxonomy.md`](docs/taxonomy.md)
 

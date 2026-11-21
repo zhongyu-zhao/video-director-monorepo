@@ -7,7 +7,6 @@ from pathlib import Path
 
 from auto_shot.label import LabelError, build_prompt, label_shots, validate_response
 from auto_shot.models import Shot, shots_from_cuts
-
 from tests.support import sample_table
 
 VALID_RESPONSE = {
@@ -67,12 +66,12 @@ def table_with_shots():
 
 
 class PromptAndValidationTest(unittest.TestCase):
-    def test_prompt_contains_schema_and_single_frame_constraint(self) -> None:
+    def test_prompt_contains_schema_and_multi_frame_guidance(self) -> None:
         prompt = build_prompt(table_with_shots().shots[0])
 
         self.assertIn("S001", prompt)
         self.assertIn("camera", prompt)
-        self.assertIn("单帧", prompt)
+        self.assertIn("三帧", prompt)
         self.assertIn("unknown", prompt)
 
     def test_valid_response_is_normalized(self) -> None:
@@ -83,12 +82,12 @@ class PromptAndValidationTest(unittest.TestCase):
         self.assertEqual(normalized["function"]["beat"], "unknown")
         self.assertEqual(normalized["confidence"]["dof"], 0.5)
 
-    def test_camera_motion_is_rejected_for_single_frame(self) -> None:
+    def test_camera_motion_is_allowed_with_multiple_frames(self) -> None:
         payload = json.loads(json.dumps(VALID_RESPONSE))
         payload["labels"]["camera"] = "static"
 
-        with self.assertRaises(LabelError):
-            validate_response(payload)
+        normalized = validate_response(payload)
+        self.assertEqual(normalized["labels"]["camera"], "static")
 
     def test_non_object_response_is_rejected(self) -> None:
         with self.assertRaises(LabelError):
@@ -155,7 +154,7 @@ class LabelShotsTest(unittest.TestCase):
 
     def test_bad_response_is_recorded_without_losing_the_batch(self) -> None:
         bad = json.loads(json.dumps(VALID_RESPONSE))
-        bad["labels"]["camera"] = "static"
+        bad["labels"]["scale"] = "超级特写"
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             result = label_shots(
