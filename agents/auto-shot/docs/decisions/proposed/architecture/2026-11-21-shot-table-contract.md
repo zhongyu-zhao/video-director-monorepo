@@ -23,7 +23,7 @@
   },
   "detector": {
     "name": "ffmpeg-scene",
-    "threshold": 0.3
+    "threshold": 0.25
   },
   "shots": [],
   "manual_cuts": []
@@ -84,7 +84,7 @@
     "function": 0.6
   },
   "provenance": {
-    "detected_by": "ffmpeg-scene@0.3",
+    "detected_by": "ffmpeg-scene@0.25",
     "labeled_by": "vlm:provider/model@prompt-v1",
     "review": "unreviewed"
   }
@@ -99,6 +99,7 @@
 - 每个模型判断至少有一条 `evidence`（帧号、时间码或测量值）。没有证据的判断不进最终报告，只进“待人工确认”。
 - `source` 只能是 `detected` 或 `manual`。人工修改保留 `original` 子对象，自动重跑不覆盖 `manual`。
 - 首个纵切只落地 `schema_version`、`video`、`detector`、`shots`（`shot_id`、`start`、`end`、`duration`、`transition_in`、`source`）、`manual_cuts`；其余字段按需增量加入，都是 additive，不改变已有字段语义。
+- 当前 VLM 标签先写独立 `labels.json`，由 `shot_hash` 与镜头表对账，不直接改 `shots.json`；合并进镜头表前，本契约的 `labels`/`content`/`function`/`evidence`/`confidence` 仍是目标字段。
 
 ## 备选方案
 

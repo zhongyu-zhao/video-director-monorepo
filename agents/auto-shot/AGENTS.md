@@ -8,10 +8,13 @@
 
 ```bash
 python3 -m unittest discover -v
-python3 -m auto_shot analyze <video> --out <dir> [--threshold 0.3]
+python3 -m auto_shot analyze <video> --out <dir> [--threshold 0.25]
+python3 -m auto_shot review --shots <shots.json> --video <video> [--out review.html]
+python3 -m auto_shot apply-review --shots <shots.json> --flags <review-flags.json>
+python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env-file <env>
 ```
 
-依赖和入口以 `pyproject.toml` 为准。测试不需要安装包；`ffmpeg`/`ffprobe` 缺失时集成测试自动跳过。
+依赖和入口以 `pyproject.toml` 为准。测试不需要安装包；`ffmpeg`/`ffprobe` 缺失时集成测试自动跳过。VLM 单元测试用假客户端，不调用真实 API。
 
 ## 结构
 
@@ -19,14 +22,20 @@ python3 -m auto_shot analyze <video> --out <dir> [--threshold 0.3]
 - `auto_shot/probe.py` / `detect.py`：外部工具边界，只产出事实。
 - `auto_shot/quality.py`：确定性验收；`skipped` 不等于 `passed`。
 - `auto_shot/report.py`：镜头表的一个视图，不引入新事实。
+- `auto_shot/review.py`：复核页生成 + 应用人工修正；不修改原 `shots.json`。
+- `auto_shot/vlm.py` / `label.py`：VLM 客户端、逐镜标注、缓存；标签只写独立 `labels.json`。
+- `auto_shot/taxonomy.py`：标签枚举校验，与 `docs/taxonomy.md` 同步。
 - `auto_shot/pipeline.py`：只编排，不藏业务规则。
 
 ## 规则
 
 - 时间码、时长、帧率、镜头数、运动量只能由代码写入；VLM 只能写枚举标签、描述、功能、证据和置信度。
-- 镜头表是唯一事实源；报告、CSV、HTML、问答都从它生成，不各自维护数据。
+- 镜头表是唯一事实源；报告、HTML、问答都从它生成，不各自维护数据。VLM 标签在合并进镜头表前是独立 `labels.json`。
 - 没有证据的标签进“待人工确认”，不能算完成；枚举只取词表值，不确定用 `unknown`。
-- 人工改过的切点或标签标 `manual`，自动重跑不覆盖。
+- 人工改过的切点或标签标 `manual`，自动重跑不覆盖；`apply-review` 只生成新文件，不覆盖原 `shots.json`。
+- 默认阈值 0.25 是召回优先的起点；降低阈值必须配合复核页，不能把低阈值结果当最终镜头表。
+- 单帧 VLM 标注里 `camera` 必须是 `unknown`；多帧上下文是后续里程碑，不伪造运镜判断。
+- API key 只能从 `--env-file` 或进程环境读取；不写代码、日志、README、`labels.json` 或 PR。
 - 产物 schema 变更必须加 `schema_version`、更新契约 ADR，并说明迁移方式。
 - 不 import `video-director` 的代码；跨 agent 只交换版本化 JSON。
 - 不提交视频、帧、音频等大资产；测试用 ffmpeg 现场生成合成素材。

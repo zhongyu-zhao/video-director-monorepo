@@ -38,7 +38,7 @@ class PipelineIntegrationTest(unittest.TestCase):
         payload = json.loads(result.shots_path.read_text(encoding="utf-8"))
         self.assertEqual(payload["schema_version"], 1)
         self.assertEqual(len(payload["shots"]), 3)
-        self.assertEqual(payload["detector"], {"name": "ffmpeg-scene", "threshold": 0.3})
+        self.assertEqual(payload["detector"], {"name": "ffmpeg-scene", "threshold": 0.25})
 
         quality = json.loads(result.quality_path.read_text(encoding="utf-8"))
         self.assertTrue(quality["ok"])

@@ -68,6 +68,6 @@ def sample_table() -> ShotTable:
             height=240,
             has_audio=False,
         ),
-        detector=DetectorInfo(name="ffmpeg-scene", threshold=0.3),
+        detector=DetectorInfo(name="ffmpeg-scene", threshold=0.25),
         shots=[],
     )
