@@ -12,6 +12,7 @@ python3 -m auto_shot analyze <video> --out <dir> [--detector auto] [--threshold 
 python3 -m auto_shot review --shots <shots.json> --video <video> [--out review.html]
 python3 -m auto_shot apply-review --shots <shots.json> --flags <review-flags.json>
 python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env-file <env>
+python3 -m auto_shot verify-short --shots <shots.json> --video <video> --window 90:600 --all --env-file <env>
 ```
 
 依赖和入口以 `pyproject.toml` 为准。测试不需要安装包；`ffmpeg`/`ffprobe` 缺失时集成测试自动跳过。VLM 单元测试用假客户端，不调用真实 API。
@@ -25,6 +26,7 @@ python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env
 - `auto_shot/report.py`：镜头表的一个视图，不引入新事实。
 - `auto_shot/review.py`：复核页生成 + 应用人工修正；不修改原 `shots.json`。
 - `auto_shot/vlm.py` / `label.py`：VLM 客户端、逐镜标注、缓存；标签只写独立 `labels.json`。
+- `auto_shot/verify.py`：<1s 边界的 VLM 同一镜头判断、保守合并、多表共享缓存；只写 `*-verified.json`。
 - `auto_shot/taxonomy.py`：标签枚举校验，与 `docs/taxonomy.md` 同步。
 - `auto_shot/pipeline.py`：只编排，不藏业务规则。
 
@@ -39,7 +41,9 @@ python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env
 - 路由决策、检测器阈值语义和时延必须写进 `detection.json`；不同检测器的 threshold 不能横向比较。
 - 可选检测器缺失时 auto 可以回退 ffmpeg，但必须在 notes 里说明；显式指定缺失检测器要报错，不偷偷替换。
 - 单帧 VLM 标注里 `camera` 必须是 `unknown`；多帧上下文是后续里程碑，不伪造运镜判断。
-- API key 只能从 `--env-file` 或进程环境读取；不写代码、日志、README、`labels.json` 或 PR。
+- 短镜头兜底只处理 `<1s` 边界，`same_shot=true` 且 confidence 达阈值才合并；低置信度/错误保留边界，不能替代复核页。
+- `verify-short` 不覆盖原表，合并后 `source=vlm`，并重跑质量门；多张表用重复 `--shots` 共享判定，避免按方法重复调用 VLM。
+- API key 只能从 `--env-file` 或进程环境读取；不写代码、日志、README、`labels.json`、`verifications.json` 或 PR。
 - 产物 schema 变更必须加 `schema_version`、更新契约 ADR，并说明迁移方式。
 - 不 import `video-director` 的代码；跨 agent 只交换版本化 JSON。
 - 不提交视频、帧、音频等大资产；测试用 ffmpeg 现场生成合成素材。

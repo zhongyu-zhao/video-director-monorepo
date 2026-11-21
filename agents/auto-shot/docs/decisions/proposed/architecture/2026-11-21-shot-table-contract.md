@@ -97,7 +97,7 @@
 - 只有代码可以写 `measured`；模型只能写 `labels`、`content`、`function`、`evidence`、`confidence`。
 - 枚举维度只能取词表值；不确定用 `"unknown"`，不允许猜一个确定值。词表和判据放在 `docs/taxonomy.md`，与 schema 同版本。
 - 每个模型判断至少有一条 `evidence`（帧号、时间码或测量值）。没有证据的判断不进最终报告，只进“待人工确认”。
-- `source` 只能是 `detected` 或 `manual`。人工修改保留 `original` 子对象，自动重跑不覆盖 `manual`。
+- `source` 只能是 `detected`、`manual` 或 `vlm`。`manual` 保留人工修改，自动重跑不覆盖；`vlm` 表示短镜头边界被 VLM 复核合并（见 `2026-11-21-vlm-short-cut-verifier.md`）。
 - 首个纵切只落地 `schema_version`、`video`、`detector`、`shots`（`shot_id`、`start`、`end`、`duration`、`transition_in`、`source`）、`manual_cuts`；其余字段按需增量加入，都是 additive，不改变已有字段语义。
 - 当前 VLM 标签先写独立 `labels.json`，由 `shot_hash` 与镜头表对账，不直接改 `shots.json`；合并进镜头表前，本契约的 `labels`/`content`/`function`/`evidence`/`confidence` 仍是目标字段。
 
