@@ -12,6 +12,7 @@
 - **M1 证据层**：代理转码、黑边检测、每镜 3 帧/联系表、亮度/对比度/色彩/运动/人脸测量、静音/音量事件；ASR 可选。
 - **M2 多帧标注**：VLM 默认看同一镜头的三帧联系表，允许判断基本运镜；标签独立缓存。
 - **M3 场景与报告**：默认用 VLM 对逐镜标签/动作做叙事 reduce，按视听语言和叙事场景聚合；场景卡带标题/摘要，统计和证据回链。
+- **剧本还原**：全片 ASR 台词按时间对齐到镜头/场景，结合标签/分镜/场景生成 `screenplay.md/json` 草稿；自动转写会明确标注可能听错。
 
 场景聚合和完整的逐镜叙事分析还没有实现，路线图见 [`docs/architecture.md`](docs/architecture.md)。
 
@@ -72,6 +73,16 @@ python3 -m auto_shot scenes \
   --labels /tmp/film-shots/labels.json \
   --out /tmp/film-shots/scenes \
   --reduce vlm --env-file /path/to/.env
+
+# 8) ASR 转写 + 剧本还原草稿（ASR 可选 faster-whisper）
+python3 -m auto_shot screenplay \
+  --shots /tmp/film-shots/shots.json \
+  --labels /tmp/film-shots/labels.json \
+  --scenes /tmp/film-shots/scenes/scenes.json \
+  --asr /tmp/film-shots/asr.json \
+  --evidence /tmp/film-shots/evidence/evidence.json \
+  --out /tmp/film-shots/screenplay \
+  --translate-zh --env-file /path/to/.env
 ```
 
 `analyze` 的关键参数是 `--detector` 和 `--threshold`：
@@ -140,6 +151,11 @@ out/
     narrative-scenes.json # VLM 叙事 reduce 计划
     stats.json            # 全片统计
     scenes.md             # 全片报告
+  asr.json                # faster-whisper 转写（automatic, 无 diarization）
+  asr-zh.json             # 可选：带 text_zh 的 ASR（自动中译）
+  screenplay/
+    screenplay.md         # 证据剧本草稿
+    screenplay.json       # 机器可读剧本结构
 ```
 
 ## 复核页怎么用
@@ -177,6 +193,7 @@ python3 -m unittest discover -v
 
 - auto 路由能减少高运动误切，但不保证正确；低对比度切点/渐变仍可能漏，复核闭环负责修正。路由阈值来自一集素材，其他片种需要校准。
 - VLM 三帧仍可能误判；短镜头兜底只处理 <1s 边界；叙事 reduce 也会误判，需用场景卡/复核页校正。
+- 剧本台词来自自动 ASR，可能听错且没有角色分离；它是证据草稿，不是人工校对稿。
 - 人脸/ASR 是可选依赖，缺失时是 skip 不是 0；证据/场景不阻塞基础切分。
 - 没有 ASR、OCR、人脸、音频事件；这些属于 M1 证据层。
 - 没有场景聚合和交互报告；复核页是切点检查工具，不是完整编辑器。
@@ -201,6 +218,7 @@ auto_shot/
   asr.py       # 可选 faster-whisper 转写
   scenes.py    # M3 场景聚合、统计、证据回链
   scene_reduce.py # 逐镜标签的叙事场景 reduce
+  screenplay.py # ASR/标签/场景/分镜组合成剧本草稿
   vlm.py       # OpenAI-compatible VLM 客户端 / env 读取
   taxonomy.py  # 标签枚举校验
 tests/         # 单元测试 + 合成视频集成测试
@@ -216,6 +234,7 @@ docs/          # 架构、词表、决策记录
 - VLM 标注边界：[`docs/decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md`](docs/decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)
 - VLM 短镜头兜底：[`docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md`](docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md)
 - M1–M3 证据/多帧/场景：[`docs/decisions/proposed/feature/2026-11-21-m1-m3-evidence-label-scene.md`](docs/decisions/proposed/feature/2026-11-21-m1-m3-evidence-label-scene.md)
+- 剧本还原：[`docs/decisions/proposed/feature/2026-11-21-screenplay-reconstruction.md`](docs/decisions/proposed/feature/2026-11-21-screenplay-reconstruction.md)
 - 多检测器与路由：[`docs/decisions/proposed/feature/2026-11-21-sbd-router.md`](docs/decisions/proposed/feature/2026-11-21-sbd-router.md)
 - 词表：[`docs/taxonomy.md`](docs/taxonomy.md)
 

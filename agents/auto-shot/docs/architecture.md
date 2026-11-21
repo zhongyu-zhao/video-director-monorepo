@@ -39,6 +39,7 @@ input.mp4
 | `verify.py` | <1s 边界的 VLM 同一镜头判断与合并 | 已有 |
 | `evidence.py` / `vision.py` / `asr.py` | 代理、黑边、关键帧/联系表、测量、音频；人脸/ASR 可选 | 已有 |
 | `scenes.py` / `scene_reduce.py` | 叙事场景 reduce、聚合、统计、证据回链 | 已有 |
+| `screenplay.py` | ASR/标签/场景/分镜组合成剧本草稿 | 已有 |
 
 ## 产物
 
@@ -114,6 +115,7 @@ out/
 - **M1**：`evidence` 生成代理、黑边/内容区、每镜 3 帧和联系表、亮度/对比度/饱和度/色调/运动测量、静音/音量事件；人脸和 ASR 走可选适配器，缺失是 skip。测量写独立 `evidence.json`，不回写镜头表。
 - **M2**：`label` 默认用三帧联系表（15%/50%/85%），prompt `vlm-labels-v2`；三帧允许判断基本运镜，不确定仍 `unknown`。场景层把一组镜头的标签/测量做批量 reduce。
 - **M3**：`scenes` 默认把逐镜标签/动作交给 VLM 做叙事 reduce，返回连续场景计划（标题/摘要/边界理由）；覆盖校验失败才回退到标签/证据变长聚合。场景卡、全片统计和证据回链保留。
+- **剧本**：`screenplay` 把 ASR 片段按中点落到镜头，再按场景组合成 `screenplay.md/json`；文件头明确自动转写/无角色分离。
 
 ## 短镜头 VLM 兜底
 
