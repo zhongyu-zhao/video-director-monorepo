@@ -74,7 +74,7 @@ out/
 - `evidence`：至少一条观察依据。
 - `confidence`：每个维度 0–1。
 
-标签写入独立 `labels.json`，带 `shot_hash`、`prompt_version`、模型名和 `provenance`；缓存 key 是 `shot_hash + prompt_version + model`。模型返回非法枚举、缺字段或伪造运镜时，该镜记为错误，不写入标签。详见 [`2026-11-21-vlm-shot-labeling.md`](decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)。
+标签写入独立 `labels.json`，带 `shot_hash`、`prompt_version`、模型名和 `provenance`；缓存 key 是 `video identity + shot_hash + prompt_version + model`。模型返回非法枚举、缺字段或伪造运镜时，该镜记为错误，不写入标签。详见 [`2026-11-21-vlm-shot-labeling.md`](decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)。
 
 ## 质量门
 

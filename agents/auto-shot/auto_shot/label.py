@@ -52,6 +52,13 @@ def shot_hash(shot: Shot) -> str:
     return hashlib.sha1(payload).hexdigest()[:16]
 
 
+def video_key(table: ShotTable) -> str:
+    return (
+        f"{table.video.path}|{table.video.duration:.3f}|{table.video.fps:.3f}|"
+        f"{table.video.width}x{table.video.height}"
+    )
+
+
 def build_prompt(shot: Shot) -> str:
     return f"""镜头 {shot.shot_id}，时长 {shot.duration:.3f}s。这是该镜头中间的一帧。
 
@@ -183,11 +190,12 @@ def label_shots(
     labels_path = destination / "labels.json"
     markdown_path = destination / "labels.md"
     model = getattr(client, "model", "unknown")
+    identity = video_key(table)
     existing = _load_existing(labels_path, table)
     cached = {
         shot.shot_id: existing[shot.shot_id]
         for shot in table.shots
-        if shot.shot_id in existing and _is_cached(existing[shot.shot_id], shot, model)
+        if shot.shot_id in existing and _is_cached(existing[shot.shot_id], shot, model, identity)
     }
     targets = [shot for shot in table.shots if force or shot.shot_id not in cached]
     if limit is not None:
@@ -206,6 +214,7 @@ def label_shots(
         normalized = validate_response(response)
         return {
             "shot_hash": shot_hash(shot),
+            "video_key": identity,
             **normalized,
             "provenance": {
                 "labeled_by": f"deepseek:{model}",
@@ -293,10 +302,11 @@ def _load_existing(path: Path, table: ShotTable) -> dict[str, dict[str, Any]]:
     return {shot_id: entry for shot_id, entry in shots.items() if shot_id in current and isinstance(entry, dict)}
 
 
-def _is_cached(entry: dict[str, Any], shot: Shot, model: str) -> bool:
+def _is_cached(entry: dict[str, Any], shot: Shot, model: str, identity: str) -> bool:
     provenance = entry.get("provenance", {})
     return (
         entry.get("shot_hash") == shot_hash(shot)
+        and entry.get("video_key") == identity
         and provenance.get("prompt_version") == PROMPT_VERSION
         and provenance.get("labeled_by") == f"deepseek:{model}"
     )

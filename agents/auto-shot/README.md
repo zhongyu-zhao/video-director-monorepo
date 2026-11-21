@@ -82,7 +82,7 @@ out/
 
 - 密钥从 `--env-file` 或进程环境读取，变量名默认 `DEEPSEEK_API_KEY`；`--base-url` / `--model` 可覆盖。密钥不进代码、日志或产物。
 - 第一版只取镜头中点的一帧，单帧无法可靠判断运镜，所以 `camera` 固定为 `unknown`；`function` 也没有上下文，先写 `unknown`。
-- `labels.json` 是独立工件，不直接改 `shots.json`；缓存 key 是 `shot_hash + prompt_version + model`。
+- `labels.json` 是独立工件，不直接改 `shots.json`；缓存 key 是 `video identity + shot_hash + prompt_version + model`。
 - 默认 `--limit 20`，避免一上来就产生大量调用；`--all` 才全量标注。每镜一次调用，成本/延迟随 provider 变化。
 - 模型返回非法枚举、缺字段或 `camera != unknown` 时，该镜记为错误，不影响其他镜头。
 
