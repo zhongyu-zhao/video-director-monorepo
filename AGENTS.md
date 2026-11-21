@@ -8,10 +8,13 @@
 
 `video-director-monorepo` 是视频导演 Agent 的 monorepo：把创作意图变成可核对、可编辑、可导出的视频产物。
 
-初步阶段需要两种Agent设计，包括 1.自动拉片——切分镜头，并逐镜分析视听语言和 2.视频制作。
+当前拆成两个独立子 repo，架构、实现和文档各自独立，边界见 [`docs/decisions/proposed/architecture/2026-11-21-two-agent-subrepos.md`](docs/decisions/proposed/architecture/2026-11-21-two-agent-subrepos.md)：
+
+- `agents/auto-shot/`：自动拉片——切分镜头，并逐镜分析视听语言。规则见 [`agents/auto-shot/AGENTS.md`](agents/auto-shot/AGENTS.md)。
+- `agents/video-director/`：视频制作——从创作意图到可编辑时间线和成片。规则见 [`agents/video-director/AGENTS.md`](agents/video-director/AGENTS.md)。
 
 - **当前阶段：研究 → MVP。** 实现前先读 `docs/research/` 下的调研；它们定义了问题、参考架构和选型，不要绕过。
-- 仓库还没有生产代码。代码落地时，在同一个 PR 里补上本文件的命令、目录和检查约定；不要提前为空想的结构写规则。
+- 两个子 repo 已有 M0 骨架和可运行的检查；命令见第 9 节。不要为“以后可能用到”的结构提前写规则。
 - 调研是带日期的快照，不是当前实现说明。实现与调研冲突时，以代码和决策记录为准，并回头修正文档。
 
 ## 1. 协作模型：人定方向，Agent 执行
@@ -109,9 +112,24 @@
 - 大资产（视频、帧、音频）不进 git；用对象存储或本地缓存，记录来源、hash 和版本。
 - 版权与隐私：本地优先，帧/音频不外传；公开发布前做合规评估。
 
-## 9. 命令
+## 9. 命令与目录
 
-本仓库还没有构建/测试命令。代码落地后在这里补充，并以 `package.json` / `Makefile` 为唯一事实源；不要在文档里手抄一份会漂移的命令清单。
+两个子 repo 都只依赖 Python 3.12+ 与 `ffmpeg`/`ffprobe`（视频相关集成测试在缺少 ffmpeg 时自动跳过）。依赖和入口以各自的 `pyproject.toml` 为准；这里只写跨仓库的检查入口：
+
+```bash
+# auto-shot
+(cd agents/auto-shot && python3 -m unittest discover -v)
+
+# video-director
+(cd agents/video-director && python3 -m unittest discover -v)
+```
+
+目录：
+
+- `agents/auto-shot/`：自动拉片子 repo；文档入口 `agents/auto-shot/README.md`。
+- `agents/video-director/`：视频制作子 repo；文档入口 `agents/video-director/README.md`。
+- `docs/research/`：带日期的调研快照。
+- `docs/decisions/`：仓库级/跨子 repo 决策；子 repo 决策在各自 `docs/decisions/`。
 
 ## 10. 维护本文件
 

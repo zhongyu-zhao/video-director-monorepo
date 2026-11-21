@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Generated project artifacts and media never belong in git
+agents/*/artifacts/
+agents/*/assets/
+agents/*/renders/
+agents/*/history/
