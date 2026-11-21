@@ -9,6 +9,7 @@ from pathlib import Path
 
 from . import __version__
 from .detect import DetectError
+from .detectors import DetectorUnavailable
 from .label import LabelError, label_shots
 from .models import ShotTable
 from .pipeline import analyze
@@ -39,6 +40,17 @@ def build_parser() -> argparse.ArgumentParser:
         default=0.25,
         help="ffmpeg scene score threshold in (0, 1]; default 0.25",
     )
+    analyze_parser.add_argument(
+        "--detector",
+        choices=("auto", "ffmpeg", "pyscenedetect", "transnetv2"),
+        default="auto",
+        help="shot detector, or auto to route by motion (default auto)",
+    )
+    analyze_parser.add_argument(
+        "--prefer-neural",
+        action="store_true",
+        help="with --detector auto, prefer TransNetV2 for high-motion video when installed",
+    )
 
     review_parser = commands.add_parser(
         "review",
@@ -62,7 +74,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     label_parser.add_argument("--shots", required=True, help="shots.json from analyze")
     label_parser.add_argument("--video", required=True, help="source video")
-    label_parser.add_argument("--out", default=None, help="labels.json (default: next to shots.json)")
+    label_parser.add_argument("--out", default=None, help="output directory for labels.json/labels.md (default: next to shots.json)")
     label_parser.add_argument("--limit", type=int, default=20, help="label at most N uncached shots (default 20)")
     label_parser.add_argument("--all", action="store_true", help="label every uncached shot")
     label_parser.add_argument("--force", action="store_true", help="ignore the label cache")
@@ -89,6 +101,7 @@ def main(argv: list[str] | None = None) -> int:
     except (
         ProbeError,
         DetectError,
+        DetectorUnavailable,
         ReviewError,
         LabelError,
         VlmError,
@@ -105,14 +118,18 @@ def _command_analyze(arguments: argparse.Namespace) -> int:
         arguments.input,
         arguments.out,
         threshold=arguments.threshold,
+        detector=arguments.detector,
+        prefer_neural=arguments.prefer_neural,
     )
     counts = result.quality.counts()
     status = "pass" if result.quality.ok else "FAIL"
     print(
         f"shots={len(result.table.shots)} duration={result.table.video.duration:.3f}s "
+        f"detector={result.detection.detector} route={result.detection.route} "
+        f"latency={result.detection.latency_seconds:.2f}s "
         f"quality={status} ({counts['pass']} pass / {counts['fail']} fail / {counts['skip']} skip)"
     )
-    for artifact in (result.shots_path, result.quality_path, result.report_path):
+    for artifact in (result.shots_path, result.quality_path, result.detection_path, result.report_path):
         print(f"wrote: {artifact}")
     if not result.quality.ok:
         failed = ", ".join(check.id for check in result.quality.failed)

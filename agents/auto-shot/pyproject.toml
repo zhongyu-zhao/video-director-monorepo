@@ -11,6 +11,10 @@ requires-python = ">=3.12"
 license = { text = "MIT" }
 dependencies = []
 
+[project.optional-dependencies]
+sbd = ["scenedetect>=0.7"]
+neural = ["transnetv2-pytorch>=1.0.5", "torch>=2.0"]
+
 [project.scripts]
 auto-shot = "auto_shot.cli:main"
 
