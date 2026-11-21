@@ -690,7 +690,10 @@ function seek(index) {
   highlight();
 }
 function highlight() {
-  [...ROWS.children].forEach((row, index) => row.classList.toggle('active', index === active));
+  [...ROWS.children].forEach(row => {
+    if (row.classList.contains('scene-row')) return;
+    row.classList.toggle('active', Number(row.dataset.index) === active);
+  });
   if (active < 0 || active >= visible.length) {
     STATUS.textContent = '选择一个切点开始检查。';
     renderDetail(null);
