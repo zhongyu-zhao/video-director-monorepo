@@ -63,10 +63,6 @@ def build_screenplay(
             }
         ]
 
-    shot_to_scene: dict[str, str] = {}
-    for scene in scene_list:
-        for shot_id in scene.get("shot_ids", []):
-            shot_to_scene[shot_id] = scene["scene_id"]
 
     segments_by_shot: dict[str, list[dict[str, Any]]] = {shot.shot_id: [] for shot in table.shots}
     for segment in segments:
