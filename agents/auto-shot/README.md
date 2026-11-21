@@ -8,6 +8,7 @@
 - **多检测器 + 运动路由**：ffmpeg、PySceneDetect、TransNetV2 三种切分器，按素材运动量自动选择。
 - **人工复核闭环**：生成本地播放器检查页，标记误切/漏切，应用后得到修正镜头表。
 - **VLM 单帧标注（M2 起步）**：逐镜取中点帧，让 VLM 填景别/角度/构图/光线/色彩/景深 + 证据 + 置信度。
+- **VLM 短镜头兜底**：对 <1s shot 的入/出点取前后帧，判断是否同一镜头，合并短镜头伪切以提高 precision。
 
 场景聚合和完整的逐镜叙事分析还没有实现，路线图见 [`docs/architecture.md`](docs/architecture.md)。
 
@@ -43,6 +44,14 @@ python3 -m auto_shot label \
   --video /path/to/film.mp4 \
   --out /tmp/film-shots \
   --limit 20 \
+  --env-file /path/to/.env
+
+# 5) 短镜头切点 VLM 兜底（可一次传多张表）
+python3 -m auto_shot verify-short \
+  --shots /tmp/film-shots/shots.json \
+  --video /path/to/film.mp4 \
+  --window 90:600 \
+  --all \
   --env-file /path/to/.env
 ```
 
@@ -97,6 +106,10 @@ out/
   labels.json             # VLM 逐镜标签（带缓存/provenance）
   labels.md               # 标签的人读视图
   frames/                 # 标注用的关键帧
+  vlm-verify/
+    verifications.json    # 短镜头边界判定与缓存
+    table-N-verified.json # 每个输入表应用合并后的结果
+    verification-report.md
 ```
 
 ## 复核页怎么用
@@ -117,6 +130,10 @@ out/
 - 默认 `--limit 20`，避免一上来就产生大量调用；`--all` 才全量标注。每镜一次调用，成本/延迟随 provider 变化。
 - 模型返回非法枚举、缺字段或 `camera != unknown` 时，该镜记为错误，不影响其他镜头。
 
+## VLM 短镜头兜底
+
+`verify-short` 只处理 `<1.0s` shot 的入点/出点：取切点前后帧拼成左右对比图，问 VLM 是否同一镜头；只有 `same_shot=true` 且 `confidence >= 0.70` 才合并边界。默认 `--limit 20`，`--all` 全量；多张表用重复的 `--shots` 传入，共享同一次判定和缓存。合并结果写 `*-verified.json`，原表不变，`source=vlm`，并通过质量门。低置信度/模型错误保留边界，人工复核仍是最终兜底。详见 [`ADR`](docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md)。
+
 ## 测试
 
 ```bash
@@ -129,7 +146,7 @@ python3 -m unittest discover -v
 ## 当前边界
 
 - auto 路由能减少高运动误切，但不保证正确；低对比度切点/渐变仍可能漏，复核闭环负责修正。路由阈值来自一集素材，其他片种需要校准。
-- VLM 只做单帧静态标签；运镜、叙事功能、镜头关系还没有。
+- VLM 单帧只做静态标签；短镜头兜底只处理 <1s 边界，>1s 误切和漏切仍靠复核页。
 - 没有 ASR、OCR、人脸、音频事件；这些属于 M1 证据层。
 - 没有场景聚合和交互报告；复核页是切点检查工具，不是完整编辑器。
 
@@ -147,6 +164,7 @@ auto_shot/
   report.py    # Markdown 报告
   review.py    # 复核 HTML 生成 + 应用修正
   label.py     # VLM 逐镜标注编排与缓存
+  verify.py    # 短镜头切点 VLM 兜底与合并
   vlm.py       # OpenAI-compatible VLM 客户端 / env 读取
   taxonomy.py  # 标签枚举校验
 tests/         # 单元测试 + 合成视频集成测试
@@ -160,6 +178,7 @@ docs/          # 架构、词表、决策记录
 - 四层流水线：[`docs/decisions/proposed/architecture/2026-11-21-auto-shot-pipeline.md`](docs/decisions/proposed/architecture/2026-11-21-auto-shot-pipeline.md)
 - 人工复核闭环：[`docs/decisions/proposed/feature/2026-11-21-human-review-loop.md`](docs/decisions/proposed/feature/2026-11-21-human-review-loop.md)
 - VLM 标注边界：[`docs/decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md`](docs/decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)
+- VLM 短镜头兜底：[`docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md`](docs/decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md)
 - 多检测器与路由：[`docs/decisions/proposed/feature/2026-11-21-sbd-router.md`](docs/decisions/proposed/feature/2026-11-21-sbd-router.md)
 - 词表：[`docs/taxonomy.md`](docs/taxonomy.md)
 

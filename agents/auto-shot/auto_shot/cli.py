@@ -17,6 +17,12 @@ from .probe import ProbeError
 from .quality import validate_shot_table
 from .report import render_report
 from .review import ReviewError, apply_review, render_review_html
+from .verify import (
+    VerificationError,
+    collect_boundaries,
+    short_shot_boundaries,
+    verify_short_shots,
+)
 from .vlm import DeepSeekVlmClient, VlmError, resolve_config
 
 
@@ -84,6 +90,31 @@ def build_parser() -> argparse.ArgumentParser:
     label_parser.add_argument("--env-file", default=None, help="dotenv file with the API key, e.g. /mnt/d/Super-Agent/.env")
     label_parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY", help="environment variable name")
     label_parser.add_argument("--dry-run", action="store_true", help="show what would be labeled, without API calls")
+
+    verify_parser = commands.add_parser(
+        "verify-short",
+        help="use a VLM to merge short-shot boundaries that are the same shot",
+    )
+    verify_parser.add_argument(
+        "--shots",
+        action="append",
+        required=True,
+        help="shot table to verify; repeat for multiple methods",
+    )
+    verify_parser.add_argument("--video", required=True, help="source video")
+    verify_parser.add_argument("--out", default=None, help="output directory (default: next to the first shots file)")
+    verify_parser.add_argument("--window", default=None, help="evaluation window START:END in seconds")
+    verify_parser.add_argument("--max-duration", type=float, default=1.0, help="short shot threshold in seconds (default 1.0)")
+    verify_parser.add_argument("--confidence", type=float, default=0.7, help="minimum same-shot confidence to merge (default 0.7)")
+    verify_parser.add_argument("--limit", type=int, default=20, help="verify at most N uncached boundaries (default 20)")
+    verify_parser.add_argument("--all", action="store_true", help="verify every uncached boundary")
+    verify_parser.add_argument("--workers", type=int, default=2, help="parallel VLM requests (default 2)")
+    verify_parser.add_argument("--model", default=None, help="override model name")
+    verify_parser.add_argument("--base-url", default=None, help="override OpenAI-compatible base URL")
+    verify_parser.add_argument("--env-file", default=None, help="dotenv file with the API key")
+    verify_parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY", help="environment variable name")
+    verify_parser.add_argument("--force", action="store_true", help="ignore the verification cache")
+    verify_parser.add_argument("--dry-run", action="store_true", help="list candidates without API/frame extraction")
     return parser
 
 
@@ -98,11 +129,14 @@ def main(argv: list[str] | None = None) -> int:
             return _command_apply_review(arguments)
         if arguments.command == "label":
             return _command_label(arguments)
+        if arguments.command == "verify-short":
+            return _command_verify_short(arguments)
     except (
         ProbeError,
         DetectError,
         DetectorUnavailable,
         ReviewError,
+        VerificationError,
         LabelError,
         VlmError,
         ValueError,
@@ -169,6 +203,66 @@ def _command_apply_review(arguments: argparse.Namespace) -> int:
     print(f"wrote: {destination}")
     print(f"wrote: {report_path}")
     return 0 if quality.ok else 1
+
+
+def _command_verify_short(arguments: argparse.Namespace) -> int:
+    shots_paths = [Path(path) for path in arguments.shots]
+    tables = [ShotTable.load(path) for path in shots_paths]
+    window = _parse_window(arguments.window)
+    limit = None if arguments.all else max(0, arguments.limit)
+
+    if arguments.dry_run:
+        union = collect_boundaries(tables, window, arguments.max_duration)
+        for path, table in zip(shots_paths, tables):
+            count = len(short_shot_boundaries(table, window, arguments.max_duration))
+            print(f"{path}: {count} short-shot boundaries")
+        print(f"union: {len(union)} boundaries")
+        print("dry run: no API call, no files written")
+        return 0
+
+    config = resolve_config(
+        env_file=arguments.env_file,
+        model=arguments.model,
+        base_url=arguments.base_url,
+        api_key_env=arguments.api_key_env,
+    )
+    client = DeepSeekVlmClient(config)
+    destination = Path(arguments.out) if arguments.out else shots_paths[0].parent / "vlm-verify"
+    result = verify_short_shots(
+        tables,
+        arguments.video,
+        destination,
+        client,
+        window=window,
+        max_duration=arguments.max_duration,
+        confidence_threshold=arguments.confidence,
+        limit=limit,
+        force=arguments.force,
+        workers=max(1, arguments.workers),
+    )
+    print(f"boundaries={len(result.boundaries)} errors={len(result.errors)}")
+    for source, path in result.verified_paths.items():
+        print(f"wrote: {path} (removed {len(result.removed[source])} boundaries)")
+    print(f"wrote: {result.verifications_path}")
+    print(f"wrote: {result.report_path}")
+    for error in result.errors[:5]:
+        print(f"  {error['time']}: {error['error']}", file=sys.stderr)
+    return 0 if not result.errors else 1
+
+
+def _parse_window(value: str | None) -> tuple[float, float] | None:
+    if value is None:
+        return None
+    parts = value.split(":", 1)
+    if len(parts) != 2:
+        raise VerificationError("window must be START:END")
+    try:
+        start, end = float(parts[0]), float(parts[1])
+    except ValueError as error:
+        raise VerificationError("window must be START:END in seconds") from error
+    if start < 0 or end <= start:
+        raise VerificationError("window must satisfy 0 <= START < END")
+    return start, end
 
 
 def _command_label(arguments: argparse.Namespace) -> int:

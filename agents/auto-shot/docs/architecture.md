@@ -36,6 +36,7 @@ input.mp4
 | `review.py` | 复核 HTML 生成 + 应用人工修正 | 已有 |
 | `taxonomy.py` | 标签枚举校验 | 已有 |
 | `vlm.py` / `label.py` | VLM 客户端、逐镜标注、缓存 | 单帧起步 |
+| `verify.py` | <1s 边界的 VLM 同一镜头判断与合并 | 已有 |
 | measure / scenes | 测量、场景聚合 | 计划中 |
 
 ## 产物
@@ -53,6 +54,10 @@ out/
   labels.json             # VLM 标签：labels/content/evidence/confidence/provenance
   labels.md               # 标签的人读视图
   frames/                 # 标注用关键帧
+  vlm-verify/
+    verifications.json    # 短镜头边界判定与缓存
+    table-N-verified.json # 多张表应用合并后的结果
+    verification-report.md
 ```
 
 字段契约见 [`2026-11-21-shot-table-contract.md`](decisions/proposed/architecture/2026-11-21-shot-table-contract.md)。镜头表保持事实层；VLM 标签先放 `labels.json`，等字段稳定后再合并进镜头表。
@@ -93,6 +98,19 @@ out/
 
 标签写入独立 `labels.json`，带 `shot_hash`、`prompt_version`、模型名和 `provenance`；缓存 key 是 `video identity + shot_hash + prompt_version + model`。模型返回非法枚举、缺字段或伪造运镜时，该镜记为错误，不写入标签。详见 [`2026-11-21-vlm-shot-labeling.md`](decisions/proposed/feature/2026-11-21-vlm-shot-labeling.md)。
 
+## 短镜头 VLM 兜底
+
+`verify-short` 只对 `<1s` shot 的入点/出点取切点前后帧，让 VLM 判断是否同一镜头；只有 `same_shot=true` 且 confidence ≥ 0.70 才合并。多张表可一次传入，按 0.12s 聚类共享判定；结果写 `*-verified.json`，原表不动，`source=vlm`。低置信度/模型错误保留边界，人工复核仍是最终兜底。
+
+`.hack` 1:30–10:00 实测（相对人工复核的 PySceneDetect 切点集）：
+
+| 方法 | 过滤前 P/R/F1 | 过滤后 P/R/F1 | 移除边界 |
+|---|---|---|---:|
+| PySceneDetect | 0.753 / 1.000 / 0.859 | 0.908 / 0.986 / 0.945 | 17 |
+| ffmpeg 0.25 | 0.711 / 0.914 / 0.800 | 0.886 / 0.886 / 0.886 | 20 |
+
+42 次 VLM 调用（2 并发，约 1 分钟），25 个边界判为 same。详见 [`2026-11-21-vlm-short-cut-verifier.md`](decisions/proposed/feature/2026-11-21-vlm-short-cut-verifier.md)。
+
 ## 质量门
 
 已实现：
@@ -115,6 +133,7 @@ M1/M2 再加入：标签枚举/证据质量门、运动与实测一致、描述�
 - **多检测器与路由（已完成）**：ffmpeg/PySceneDetect/TransNetV2 适配，按运动画像自动路由，`detection.json` 记录选择与耗时。
 - **人工复核闭环（已完成）**：review HTML、误切/漏切标记、apply-review、manual_cuts。
 - **VLM 逐镜标注（单帧起步）**：单帧静态标签 + 证据 + 置信度；多帧/联系表、上下文和叙事功能仍待补。
+- **VLM 短镜头兜底（已完成）**：<1s 边界的前后帧判断、保守合并、多表共享缓存；>1s 误切仍靠复核。
 - **M1 证据层**：代理转码、黑边检测、关键帧/联系表、运动/亮度/色彩/人脸测量、ASR/音频事件；SBD 已有 ffmpeg/PySceneDetect/TransNetV2 路由，仍待更多片种校准和 OmniShotCut 评估。
 - **M2 标注质量**：多帧输入、批量 reduce、质量门 v2、低置信度重跑、人工确认。
 - **M3 场景与报告**：镜头聚合、场景卡、全片统计、证据回链、HTML/CSV 导出。
