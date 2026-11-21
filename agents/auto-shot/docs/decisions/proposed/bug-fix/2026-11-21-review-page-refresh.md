@@ -14,10 +14,12 @@
 
 1. **`analyze` 默认写/刷新 `review.html`**，页面状态为“自动检测（最新）”；`--no-review` 可关闭，供批量/测试使用。
 2. **`verify-short` 为每张 verified 表写 `table-N-review.html`**，并把第一张表的页面写到输出目录的 `review.html`；状态为“VLM 短镜头兜底”。
-3. **页面头显示阶段、检测器、阈值和生成时间**，这样“看起来是新的但其实旧”一眼可见；页面仍只内嵌镜头表，不引入证据/标签事实。
-4. **原始页不覆盖**：如已有原始 `review.html`，升级时另存 `review-original.html`；旧 localStorage 标记仍在原页面 key 下。
-5. **`review` 命令保留**并增加 `--status`，用于手工重建/对比；不替代自动刷新。
-6. **不自动合并人工标记**：页面只负责看和导出；`apply-review` 仍是显式步骤。
+3. **页面头显示阶段、检测器、阈值和生成时间**，这样“看起来是新的但其实旧”一眼可见。
+4. **页面嵌入逐镜 VLM 标签、场景聚合和证据**：`review` 接受 `--labels`、`--scenes`、`--evidence`、`--source-shots`；表格增加场景/景别/运镜/光线/色彩列，场景分组头和场景卡展示多镜聚合，选中镜头显示完整标签/置信度/动作/测量/联系表。verified 表被重编号，因此按精确 id → 最长源镜 overlap 映射，并记录继承来源和合并镜号。
+5. **`scenes --review-out` 可生成最终富复核页**；`analyze` 仍自动写基础页，详细页在场景/标签完成后显式或由脚本刷新。
+6. **原始页不覆盖**：如已有原始 `review.html`，升级时另存 `review-original.html`；旧 localStorage 标记仍在原页面 key 下。
+7. **`review` 命令保留**并增加 `--status`、`--labels`、`--scenes`、`--evidence`、`--source-shots`，用于手工重建/对比；不替代自动刷新。
+8. **不自动合并人工标记**：页面只负责看和导出；`apply-review` 仍是显式步骤。
 
 ## 备选方案
 
@@ -32,3 +34,5 @@
 - 多张 detector 表时，输出目录 `review.html` 代表第一张表（通常是主 auto 结果），其余在 `table-N-review.html`；需在索引/报告里说明。
 - 人工复核前应确认页面头部的阶段和时间；旧标记只对同一镜头表 key 生效。
 - 本次 .hack 的根页切到 448 镜的 VLM 兜底结果，原始 465 镜保留为 `review-original.html`。
+- 页面变重：标签/场景/证据内嵌后 `.hack` 版约 380 KB；仍是单文件，不需要 server。
+- 只有已标注镜头显示 VLM 值；合并后的 verified 镜头继承最长源镜标签，详情里列出合并镜号。
