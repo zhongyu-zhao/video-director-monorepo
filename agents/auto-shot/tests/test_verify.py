@@ -114,6 +114,9 @@ class VerifyTest(unittest.TestCase):
             self.assertEqual(len(verified["shots"]), 4)
             self.assertTrue(result.verifications_path.is_file())
             self.assertTrue(result.report_path.is_file())
+            self.assertIsNotNone(result.review_path)
+            self.assertTrue(result.review_path.is_file())
+            self.assertTrue(result.review_paths["table-1"].is_file())
 
             second = verify_short_shots(
                 [table()],

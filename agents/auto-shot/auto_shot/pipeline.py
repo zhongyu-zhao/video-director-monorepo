@@ -11,6 +11,7 @@ from .models import DetectorInfo, ShotTable, shots_from_cuts
 from .probe import probe
 from .quality import QualityReport, validate_shot_table
 from .report import render_report
+from .review import render_review_html
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,7 @@ class AnalysisResult:
     quality_path: Path
     report_path: Path
     detection_path: Path
+    review_path: Path | None
     table: ShotTable
     quality: QualityReport
     detection: DetectionResult
@@ -31,6 +33,7 @@ def analyze(
     threshold: float = 0.25,
     detector: str = "auto",
     prefer_neural: bool = False,
+    review: bool = True,
 ) -> AnalysisResult:
     media = probe(input_path)
     detection = detect_with_router(
@@ -58,6 +61,11 @@ def analyze(
     _write_json(quality_path, quality.to_dict())
     _write_json(detection_path, detection.to_dict())
     report_path.write_text(render_report(table, quality, detection), encoding="utf-8")
+    review_path = destination / "review.html"
+    if review:
+        render_review_html(table, input_path, review_path, status="自动检测（最新）")
+    else:
+        review_path = None
 
     return AnalysisResult(
         output_dir=destination,
@@ -65,6 +73,7 @@ def analyze(
         quality_path=quality_path,
         report_path=report_path,
         detection_path=detection_path,
+        review_path=review_path,
         table=table,
         quality=quality,
         detection=detection,

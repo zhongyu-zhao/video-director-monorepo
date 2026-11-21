@@ -59,6 +59,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="with --detector auto, prefer TransNetV2 for high-motion video when installed",
     )
+    analyze_parser.add_argument(
+        "--no-review",
+        action="store_true",
+        help="do not write/refresh review.html after analysis",
+    )
 
     review_parser = commands.add_parser(
         "review",
@@ -67,6 +72,7 @@ def build_parser() -> argparse.ArgumentParser:
     review_parser.add_argument("--shots", required=True, help="shots.json from analyze")
     review_parser.add_argument("--video", required=True, help="source video")
     review_parser.add_argument("--out", default=None, help="output HTML (default: next to shots.json)")
+    review_parser.add_argument("--status", default="自动检测", help="stage label shown in the page header")
 
     apply_parser = commands.add_parser(
         "apply-review",
@@ -187,6 +193,7 @@ def _command_analyze(arguments: argparse.Namespace) -> int:
         threshold=arguments.threshold,
         detector=arguments.detector,
         prefer_neural=arguments.prefer_neural,
+        review=not arguments.no_review,
     )
     counts = result.quality.counts()
     status = "pass" if result.quality.ok else "FAIL"
@@ -196,7 +203,10 @@ def _command_analyze(arguments: argparse.Namespace) -> int:
         f"latency={result.detection.latency_seconds:.2f}s "
         f"quality={status} ({counts['pass']} pass / {counts['fail']} fail / {counts['skip']} skip)"
     )
-    for artifact in (result.shots_path, result.quality_path, result.detection_path, result.report_path):
+    artifacts = [result.shots_path, result.quality_path, result.detection_path, result.report_path]
+    if result.review_path is not None:
+        artifacts.append(result.review_path)
+    for artifact in artifacts:
         print(f"wrote: {artifact}")
     if not result.quality.ok:
         failed = ", ".join(check.id for check in result.quality.failed)
@@ -214,7 +224,7 @@ def _command_review(arguments: argparse.Namespace) -> int:
         raise ReviewError(f"video not found: {video_path}")
     table = ShotTable.load(shots_path)
     destination = Path(arguments.out) if arguments.out else shots_path.parent / "review.html"
-    written = render_review_html(table, video_path, destination)
+    written = render_review_html(table, video_path, destination, status=arguments.status)
     print(f"review page: {written}")
     print("open it in a browser; export review-flags.json, then run apply-review")
     return 0
@@ -325,6 +335,10 @@ def _command_verify_short(arguments: argparse.Namespace) -> int:
     print(f"boundaries={len(result.boundaries)} errors={len(result.errors)}")
     for source, path in result.verified_paths.items():
         print(f"wrote: {path} (removed {len(result.removed[source])} boundaries)")
+        if source in result.review_paths:
+            print(f"wrote: {result.review_paths[source]}")
+    if result.review_path is not None:
+        print(f"wrote: {result.review_path} (latest review)")
     print(f"wrote: {result.verifications_path}")
     print(f"wrote: {result.report_path}")
     for error in result.errors[:5]:

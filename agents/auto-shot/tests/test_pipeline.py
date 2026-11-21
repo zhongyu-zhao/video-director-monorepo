@@ -10,7 +10,6 @@ from pathlib import Path
 from auto_shot.cli import main
 from auto_shot.pipeline import analyze
 from auto_shot.probe import ProbeError
-
 from tests.support import ffmpeg_available, make_color_video
 
 
@@ -34,6 +33,8 @@ class PipelineIntegrationTest(unittest.TestCase):
         self.assertTrue(result.shots_path.is_file())
         self.assertTrue(result.quality_path.is_file())
         self.assertTrue(result.report_path.is_file())
+        self.assertIsNotNone(result.review_path)
+        self.assertTrue(result.review_path.is_file())
 
         payload = json.loads(result.shots_path.read_text(encoding="utf-8"))
         self.assertEqual(payload["schema_version"], 1)
