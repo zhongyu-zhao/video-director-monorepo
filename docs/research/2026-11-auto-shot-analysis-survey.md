@@ -211,7 +211,7 @@
 
 - [CineTechBench](https://arxiv.org/abs/2505.15145)（2025）：7 个维度（景别、角度、构图、运镜、光线、色彩、焦距），600+ 张电影图 + 120+ 段电影片段，610 个图像 QA + 128 个视频 QA；评测 15+ MLLM。
   - 静态技术问答最好：GPT-4o 70.16%，Gemini-2.5-Pro 69.67%；开源模型平均低约 15 个百分点，InternVL3 55.25%。
-  - 运镜问答最好：Gemini-2.5-Pro 56.69%；很多模型在旋转/变焦上接近瞎猜。
+  - 运镜问答最好：Gemini-2.5-Pro 56.69%；不少模型在旋转/变焦上接近随机水平。
   - 结论：**“识别技术”本身都还不稳，更不用说“解释技术为什么这样用”。**
 - [CinematicVQA](https://arxiv.org/abs/2609.28813)（2026）：用 Cinematic Scene Graph 把“技术 → 视觉呈现 → 叙事功能”串起来；发现模型在“描述画面”上明显好于“识别技术”，在“叙事功能/多跳推理”上更差；CoT 对多数模型没有稳定收益，SFT 才有持续提升。
 - [CineCap](https://arxiv.org/abs/2606.24636)（2026）：开放形式的“电影摄影描述”（运镜、景别、景深、构图、角度），用结构化推理 + 时空锚点 + RL 奖励（完整性/准确性/覆盖门控）提升；说明**结构化证据 + 训练**比纯 prompt 更有效。
@@ -509,7 +509,7 @@
 | [AWS Rekognition](https://docs.aws.amazon.com/rekognition/latest/dg/segments.html) | Shot segments + technical cues | 标签、人脸、内容审核 | 返回 SMPTE 时间码/帧号；适合广电/长片 |
 | [Twelve Labs](https://docs.twelvelabs.io/docs/guides/segment-videos) | 自定义 segment（最多 10 种定义、20 个字段） | 结构化字段、时间戳、场景分析（含 camera angles） | 最接近“按段做结构化分析”的商业 API；但仍需自己写电影语言 prompt |
 | 阿里云视觉智能 [DetectVideoShot](https://help.aliyun.com/zh/viapi/developer-reference/api-jki2om) | 返回镜头切分点 | 视频拆条 `SplitVideoParts` | 国内合规/本地化；注意该平台文档标注“停止维护” |
-| [腾讯云智能拆条](https://cloud.tencent.com/document/product/266/131216) | 镜头切分 + 拆条 | 点播转码/审核 | 国内视频云集成 |
+| [腾讯云智能拆条](https://cloud.tencent.com/document/product/266/131216) | 镜头切分 + 拆条 | 云点播集成 | 国内视频云集成 |
 | [火山引擎视频分镜](https://docs.volcengine.com/docs/lake-ai-service/video-story-board) | 视频分镜算子 | AI 数据湖处理 | 国内数据湖/批处理 |
 | [Adobe Premiere Scene Edit Detection](https://helpx.adobe.com/premiere-pro/using/scene-edit-detection.chromeless.html) / [DaVinci Resolve Scene Cut Detection](https://docs.imaster.org/davinci-resolve-21-manual/part-3-ingest-and-organize-media/ch.-23-using-scene-detection) | 编辑器内置场景切分 | 人工精修/时间线 | 适合“人机协作”的最后一公里 |
 
