@@ -18,6 +18,7 @@ from .probe import ProbeError
 from .quality import validate_shot_table
 from .report import render_report
 from .review import ReviewError, apply_review, render_review_html
+from .scene_reduce import SceneReduceError, reduce_scenes, save_plan, summarize_existing
 from .scenes import SceneError, build_scenes
 from .verify import (
     VerificationError,
@@ -97,6 +98,8 @@ def build_parser() -> argparse.ArgumentParser:
     label_parser.add_argument("--all", action="store_true", help="label every uncached shot")
     label_parser.add_argument("--force", action="store_true", help="ignore the label cache")
     label_parser.add_argument("--workers", type=int, default=2, help="parallel VLM requests (default 2)")
+    label_parser.add_argument("--retries", type=int, default=1, help="retries per shot on empty/invalid VLM response (default 1)")
+    label_parser.add_argument("--contact-sheets", default=None, help="reuse evidence contact-sheets/<shot_id>.jpg instead of extracting frames")
     label_parser.add_argument("--model", default=None, help="override model name")
     label_parser.add_argument("--base-url", default=None, help="override OpenAI-compatible base URL")
     label_parser.add_argument("--env-file", default=None, help="dotenv file with the API key, e.g. /mnt/d/Super-Agent/.env")
@@ -150,8 +153,16 @@ def build_parser() -> argparse.ArgumentParser:
     scenes_parser.add_argument("--out", default=None, help="output directory (default: shots parent/scenes)")
     scenes_parser.add_argument("--evidence", default=None, help="evidence.json from the evidence command")
     scenes_parser.add_argument("--labels", default=None, help="labels.json from the label command")
-    scenes_parser.add_argument("--scene-shots", type=int, default=12, help="max shots per scene (default 12)")
-    scenes_parser.add_argument("--scene-seconds", type=float, default=180.0, help="max scene seconds (default 180)")
+    scenes_parser.add_argument("--scene-shots", type=int, default=30, help="hard max shots per scene (default 30)")
+    scenes_parser.add_argument("--scene-seconds", type=float, default=300.0, help="hard max scene seconds (default 300)")
+    scenes_parser.add_argument("--min-shots", type=int, default=3, help="minimum shots before a semantic change can split (default 3)")
+    scenes_parser.add_argument("--scene-threshold", type=float, default=0.55, help="label/evidence distance to split a scene (default 0.55)")
+    scenes_parser.add_argument("--scene-mode", choices=("auto", "fixed"), default="auto", help="auto uses labels/evidence; fixed uses max blocks")
+    scenes_parser.add_argument("--reduce", choices=("auto", "vlm", "semantic", "fixed"), default="auto", help="narrative VLM reduce, semantic labels/evidence, or fixed blocks")
+    scenes_parser.add_argument("--env-file", default=None, help="dotenv file with the API key for --reduce vlm/auto")
+    scenes_parser.add_argument("--model", default=None, help="override model for the narrative reduce")
+    scenes_parser.add_argument("--max-tokens", type=int, default=8000, help="narrative reduce response budget")
+    scenes_parser.add_argument("--summarize", action="store_true", help="add VLM narrative titles/summaries to the chosen scene grouping")
     scenes_parser.add_argument("--review-out", default=None, help="also write an enriched review.html here")
     return parser
 
@@ -282,6 +293,23 @@ def _command_scenes(arguments: argparse.Namespace) -> int:
         json.loads(Path(arguments.labels).read_text(encoding="utf-8")) if arguments.labels else None
     )
     destination = Path(arguments.out) if arguments.out else shots_path.parent / "scenes"
+    destination.mkdir(parents=True, exist_ok=True)
+    reduce_mode = arguments.reduce
+    plan = None
+    if reduce_mode in ("auto", "vlm") and labels:
+        try:
+            config = resolve_config(env_file=arguments.env_file, model=arguments.model)
+            plan = reduce_scenes(table, labels, DeepSeekVlmClient(config), max_tokens=arguments.max_tokens)
+            save_plan(destination / "narrative-scenes.json", plan, table, labels)
+        except (VlmError, SceneReduceError, OSError) as error:
+            if reduce_mode == "vlm":
+                raise SceneError(f"narrative scene reduce failed: {error}") from error
+            print(f"narrative reduce unavailable, using semantic grouping: {error}", file=sys.stderr)
+            reduce_mode = "semantic"
+    elif reduce_mode == "vlm":
+        raise SceneError("--reduce vlm requires --labels")
+    if reduce_mode == "auto":
+        reduce_mode = "narrative" if plan is not None else ("semantic" if labels or evidence else "fixed")
     result = build_scenes(
         table,
         destination,
@@ -290,7 +318,48 @@ def _command_scenes(arguments: argparse.Namespace) -> int:
         evidence_path=evidence_path,
         max_shots=arguments.scene_shots,
         max_seconds=arguments.scene_seconds,
+        semantic=reduce_mode in ("semantic", "narrative"),
+        min_shots=arguments.min_shots,
+        threshold=arguments.scene_threshold,
+        plan=plan,
+        reduce_mode=reduce_mode,
     )
+    if arguments.summarize and labels:
+        try:
+            config = resolve_config(env_file=arguments.env_file, model=arguments.model)
+            summarized = summarize_existing(
+                table,
+                labels,
+                json.loads(result.scenes_path.read_text(encoding="utf-8"))["scenes"],
+                DeepSeekVlmClient(config),
+                max_tokens=arguments.max_tokens,
+            )
+            plan = [
+                {
+                    "start_shot": item["start_shot"],
+                    "end_shot": item["end_shot"],
+                    "title": item.get("title", ""),
+                    "summary": item.get("summary", ""),
+                    "boundary_reason": item.get("boundary_reason", ""),
+                }
+                for item in summarized
+            ]
+            result = build_scenes(
+                table,
+                destination,
+                evidence=evidence,
+                labels=labels,
+                evidence_path=evidence_path,
+                max_shots=arguments.scene_shots,
+                max_seconds=arguments.scene_seconds,
+                semantic=True,
+                min_shots=arguments.min_shots,
+                threshold=arguments.scene_threshold,
+                plan=plan,
+                reduce_mode="semantic+narrative",
+            )
+        except (VlmError, SceneReduceError, OSError) as error:
+            raise SceneError(f"narrative summaries failed: {error}") from error
     if arguments.review_out:
         scenes_payload = json.loads(result.scenes_path.read_text(encoding="utf-8"))
         render_review_html(
@@ -427,6 +496,8 @@ def _command_label(arguments: argparse.Namespace) -> int:
         limit=limit,
         force=arguments.force,
         workers=max(1, arguments.workers),
+        retries=max(0, arguments.retries),
+        contact_sheets_dir=arguments.contact_sheets,
     )
     print(f"labeled={result.labeled} skipped={result.skipped} errors={len(result.errors)}")
     print(f"wrote: {result.labels_path}")

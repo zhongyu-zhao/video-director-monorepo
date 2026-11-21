@@ -1,10 +1,9 @@
 """M3 scene aggregation, full-film statistics and evidence backlinks.
 
-The first implementation uses deterministic scene blocks (max shots /
-max seconds) because shot labels do not yet contain reliable scene ids.
-It is deliberately a baseline: the scene cards and stats are real, the
-scene boundaries can be replaced by a VLM reduce without changing the
-artifact shape.
+Scenes are grouped from per-shot VLM labels and measurements: a new
+scene starts on a strong feature change, with a generous hard cap rather
+than a fixed 12-shot block.  When no labels/measurements are available
+the fixed max-shots/max-seconds fallback still applies.
 """
 
 from __future__ import annotations
@@ -18,8 +17,28 @@ from typing import Any
 from .models import Shot, ShotTable, round_time
 
 SCENE_SCHEMA_VERSION = 1
-DEFAULT_SCENE_SHOTS = 12
-DEFAULT_SCENE_SECONDS = 180.0
+DEFAULT_SCENE_SHOTS = 30
+DEFAULT_SCENE_SECONDS = 300.0
+DEFAULT_MIN_SHOTS = 3
+DEFAULT_SCENE_THRESHOLD = 0.55
+
+_CATEGORICAL = ("scale", "camera", "lighting", "color", "angle", "dof")
+_NUMERIC = ("brightness", "contrast", "saturation", "motion", "face_ratio")
+_CATEGORY_WEIGHTS = {
+    "scale": 0.22,
+    "camera": 0.20,
+    "lighting": 0.14,
+    "color": 0.14,
+    "angle": 0.07,
+    "dof": 0.05,
+}
+_NUMERIC_WEIGHTS = {
+    "brightness": 0.05,
+    "contrast": 0.03,
+    "saturation": 0.03,
+    "motion": 0.04,
+    "face_ratio": 0.03,
+}
 
 
 class SceneError(RuntimeError):
@@ -33,6 +52,9 @@ class Scene:
     end: float
     shots: list[Shot]
     stats: dict[str, Any]
+    title: str = ""
+    summary: str = ""
+    boundary_reason: str = ""
 
     @property
     def duration(self) -> float:
@@ -57,15 +79,38 @@ def build_scenes(
     evidence_path: str | Path | None = None,
     max_shots: int = DEFAULT_SCENE_SHOTS,
     max_seconds: float = DEFAULT_SCENE_SECONDS,
+    semantic: bool = True,
+    min_shots: int = DEFAULT_MIN_SHOTS,
+    threshold: float = DEFAULT_SCENE_THRESHOLD,
+    plan: list[dict[str, Any]] | None = None,
+    reduce_mode: str = "semantic",
 ) -> SceneResult:
     if evidence is not None and evidence_path is not None:
         evidence = dict(evidence)
         evidence["_root"] = str(Path(evidence_path).parent)
     if max_shots <= 0 or max_seconds <= 0:
         raise SceneError("scene-shots and scene-seconds must be positive")
+    if min_shots <= 0 or threshold < 0:
+        raise SceneError("min-shots must be positive and threshold non-negative")
     destination = Path(output_dir)
     destination.mkdir(parents=True, exist_ok=True)
-    groups = _group(table.shots, max_shots, max_seconds)
+    if plan is not None:
+        groups = _group_from_plan(table.shots, plan)
+        meta = plan
+    else:
+        if semantic and (labels or evidence):
+            groups = _group_semantic(
+                table.shots,
+                labels,
+                evidence,
+                max_shots,
+                max_seconds,
+                min_shots,
+                threshold,
+            )
+        else:
+            groups = _group(table.shots, max_shots, max_seconds)
+        meta = [{} for _ in groups]
     scenes = [
         Scene(
             scene_id=f"SC{index:03d}",
@@ -73,6 +118,9 @@ def build_scenes(
             end=group[-1].end,
             shots=group,
             stats=_scene_stats(group, evidence, labels),
+            title=str(meta[index - 1].get("title", "")) if index - 1 < len(meta) else "",
+            summary=str(meta[index - 1].get("summary", "")) if index - 1 < len(meta) else "",
+            boundary_reason=str(meta[index - 1].get("boundary_reason", "")) if index - 1 < len(meta) else "",
         )
         for index, group in enumerate(groups, start=1)
     ]
@@ -84,7 +132,7 @@ def build_scenes(
             "duration": round_time(table.video.duration),
             "fps": round(float(table.video.fps), 3),
         },
-        "config": {"max_shots": max_shots, "max_seconds": max_seconds},
+        "config": {"max_shots": max_shots, "max_seconds": max_seconds, "semantic": semantic, "min_shots": min_shots, "threshold": threshold, "reduce": reduce_mode},
         "scenes": [
             {
                 "scene_id": scene.scene_id,
@@ -92,6 +140,9 @@ def build_scenes(
                 "end": round_time(scene.end),
                 "duration": scene.duration,
                 "shot_ids": [shot.shot_id for shot in scene.shots],
+                "title": scene.title,
+                "summary": scene.summary,
+                "boundary_reason": scene.boundary_reason,
                 "stats": scene.stats,
                 "evidence": _scene_evidence(scene, evidence),
             }
@@ -113,6 +164,102 @@ def build_scenes(
         scenes=scenes,
         stats=stats,
     )
+
+
+def _group_from_plan(shots: list[Shot], plan: list[dict[str, Any]]) -> list[list[Shot]]:
+    index_by_id = {shot.shot_id: index for index, shot in enumerate(shots)}
+    groups: list[list[Shot]] = []
+    cursor = 0
+    for item in plan:
+        start = index_by_id[item["start_shot"]]
+        end = index_by_id[item["end_shot"]]
+        if start != cursor or end < start:
+            raise SceneError("scene plan is not contiguous")
+        groups.append(shots[start : end + 1])
+        cursor = end + 1
+    if cursor != len(shots):
+        raise SceneError("scene plan does not cover all shots")
+    return groups
+
+
+def _group_semantic(
+    shots: list[Shot],
+    labels: dict[str, Any] | None,
+    evidence: dict[str, Any] | None,
+    max_shots: int,
+    max_seconds: float,
+    min_shots: int,
+    threshold: float,
+) -> list[list[Shot]]:
+    features = [_shot_features(shot, labels, evidence) for shot in shots]
+    groups: list[list[Shot]] = []
+    current: list[Shot] = []
+    for shot, feature in zip(shots, features):
+        if current:
+            distance = _feature_distance(
+                _shot_features(current[-1], labels, evidence), feature
+            )
+            duration = shot.end - current[0].start
+            strong_change = len(current) >= min_shots and distance >= threshold
+            hard_limit = len(current) >= max_shots or duration >= max_seconds
+            if strong_change or hard_limit:
+                groups.append(current)
+                current = []
+        current.append(shot)
+    if current:
+        groups.append(current)
+    return groups
+
+
+def _shot_features(
+    shot: Shot,
+    labels: dict[str, Any] | None,
+    evidence: dict[str, Any] | None,
+) -> dict[str, Any]:
+    label_entry = labels.get("shots", {}).get(shot.shot_id, {}) if labels else {}
+    label_values = label_entry.get("labels", {})
+    content = label_entry.get("content", {})
+    measured = (
+        evidence.get("shots", {}).get(shot.shot_id, {}).get("measured", {})
+        if evidence
+        else {}
+    )
+    return {
+        "labels": label_values,
+        "measured": measured,
+        "subjects": set(content.get("subjects", [])) if content else set(),
+    }
+
+
+def _feature_distance(left: dict[str, Any], right: dict[str, Any]) -> float:
+    total = 0.0
+    weighted = 0.0
+    for field in _CATEGORICAL:
+        a = left["labels"].get(field)
+        b = right["labels"].get(field)
+        if not a or not b or a == "unknown" or b == "unknown":
+            continue
+        weight = _CATEGORY_WEIGHTS[field]
+        weighted += weight
+        if a != b:
+            total += weight
+    for field in _NUMERIC:
+        a = left["measured"].get(field)
+        b = right["measured"].get(field)
+        if not isinstance(a, (int, float)) or not isinstance(b, (int, float)):
+            continue
+        weight = _NUMERIC_WEIGHTS[field]
+        weighted += weight
+        total += min(1.0, abs(float(a) - float(b))) * weight
+    left_subjects = left["subjects"]
+    right_subjects = right["subjects"]
+    if left_subjects and right_subjects:
+        union = left_subjects | right_subjects
+        overlap = len(left_subjects & right_subjects) / len(union) if union else 1.0
+        weight = 0.15
+        weighted += weight
+        total += (1.0 - overlap) * weight
+    return round(total / weighted, 4) if weighted > 0 else 0.0
 
 
 def _group(shots: list[Shot], max_shots: int, max_seconds: float) -> list[list[Shot]]:
@@ -226,7 +373,12 @@ def _render_report(
         f"- 视频：`{table.video.path}`",
         f"- 时长：{_timecode(table.video.duration)}；镜头：{stats['total_shots']}；场景：{stats['scene_count']}",
         f"- 平均镜长：{stats['mean_shot_duration']:.2f}s；剪辑率：{stats['cuts_per_minute']:.2f} cuts/min",
-        f"- 场景基线：每 {payload['config']['max_shots']} 镜或 {payload['config']['max_seconds']:.0f}s 分组",
+        (
+            f"- 场景聚合：标签/证据变长，硬上限 {payload['config']['max_shots']} 镜/{payload['config']['max_seconds']:.0f}s，"
+            f"最少 {payload['config']['min_shots']} 镜，阈值 {payload['config']['threshold']:.2f}"
+            if payload['config'].get('semantic', True)
+            else f"- 场景基线：每 {payload['config']['max_shots']} 镜或 {payload['config']['max_seconds']:.0f}s 分组"
+        ),
         f"- 已标注镜头：{stats['labeled_shots']}；有测量证据：{stats['evidence_shots']}",
         "",
         "## 全片统计",
