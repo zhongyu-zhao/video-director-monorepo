@@ -43,7 +43,14 @@ class PipelineIntegrationTest(unittest.TestCase):
         quality = json.loads(result.quality_path.read_text(encoding="utf-8"))
         self.assertTrue(quality["ok"])
 
+        detection = json.loads(result.detection_path.read_text(encoding="utf-8"))
+        self.assertEqual(detection["selected"], "ffmpeg-scene")
+        self.assertEqual(detection["route"], "auto")
+        self.assertIsNotNone(detection["profile"])
+        self.assertFalse(detection["profile"]["high_motion"])
+
         report = result.report_path.read_text(encoding="utf-8")
+        self.assertIn("- 路由：auto", report)
         self.assertIn("| S003 | 00:00:04.000 | 00:00:06.000 |", report)
 
     def test_missing_input_raises_probe_error(self) -> None:

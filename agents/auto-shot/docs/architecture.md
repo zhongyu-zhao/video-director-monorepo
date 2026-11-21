@@ -12,7 +12,8 @@
 input.mp4
    │
    ├─ probe      ffprobe：时长/帧率/画幅/音轨          ──► media facts
-   ├─ detect     ffmpeg scene score：候选切点            ──► cuts
+   ├─ route      ffmpeg 全帧 scene score → 运动画像     ──► detection.json
+   ├─ detect     ffmpeg / PySceneDetect / TransNetV2    ──► cuts
    ├─ table      cuts + duration → shots.json            ──► 镜头表
    ├─ validate   时间轴/镜号/时长/词表质量门              ──► quality.json
    ├─ report     shots.json → report.md                  ──► 镜头表视图
@@ -26,7 +27,8 @@ input.mp4
 | 模块 | 职责 | 状态 |
 |---|---|---|
 | `probe.py` | ffprobe 边界，只产出媒体事实 | 已有 |
-| `detect.py` | ffmpeg 场景检测，产出候选切点 | 基线 |
+| `detect.py` | ffmpeg 场景检测底层 / 全帧分数扫描 | 已有 |
+| `detectors.py` | 多检测器适配 + 运动路由 | 已有 |
 | `models.py` | 镜头表数据结构与 JSON 读写 | 已有 |
 | `quality.py` | 确定性质量门 | 已有 |
 | `report.py` | Markdown 镜头表 | 已有 |
@@ -42,6 +44,7 @@ input.mp4
 out/
   shots.json              # schema_version, video, detector, shots, manual_cuts
   quality.json            # ok, checks[]
+  detection.json          # requested/selected/route/profile/latency/notes
   report.md               # 人读的镜头表视图
   review.html             # 单文件复核页
   review-flags.json       # 页面导出：falseCuts / missedCuts
@@ -53,6 +56,20 @@ out/
 ```
 
 字段契约见 [`2026-11-21-shot-table-contract.md`](decisions/proposed/architecture/2026-11-21-shot-table-contract.md)。镜头表保持事实层；VLM 标签先放 `labels.json`，等字段稳定后再合并进镜头表。
+
+## 检测器与运动路由
+
+`--detector auto` 先跑一次 ffmpeg 全帧 scene score 扫描，同时得到运动画像和基线切点。低运动素材直接用这次扫描的 ffmpeg 切点；高运动素材转为 PySceneDetect Adaptive（可选 `--prefer-neural` 转 TransNetV2）。高运动判据：p95 ≥ 0.05、score ≥ 0.10 的帧占比 ≥ 0.02，或时长 ≥ 60s 且 candidate rate ≥ 15/min。
+
+本集（23:41.994，720p）实测：
+
+| 检测器 | 切点数 | 时延 |
+|---|---:|---:|
+| ffmpeg（0.25） | 624 | 14.9s |
+| PySceneDetect Adaptive（auto 选中） | 384 | 42.9s |
+| TransNetV2（60s 片段） | 约 20 | 10.8s（含模型加载） |
+
+`auto` 不静默加载 torch：神经网络只在 `--prefer-neural` 或显式 `--detector transnetv2` 时使用；PySceneDetect 缺失时回退 ffmpeg 并在 `detection.json.notes` 说明。不同检测器的 threshold 语义不同（ffmpeg scene score / PySceneDetect adaptive threshold / TransNetV2 概率），`shots.json` 里的 threshold 只是配置快照。详见 [`2026-11-21-sbd-router.md`](decisions/proposed/feature/2026-11-21-sbd-router.md)。
 
 ## 切点复核闭环
 
@@ -95,9 +112,10 @@ M1/M2 再加入：标签枚举/证据质量门、运动与实测一致、描述�
 ## 路线图
 
 - **M0 镜头表内核（已完成）**：probe、基线切分、镜头表、质量门、Markdown 报告。
+- **多检测器与路由（已完成）**：ffmpeg/PySceneDetect/TransNetV2 适配，按运动画像自动路由，`detection.json` 记录选择与耗时。
 - **人工复核闭环（已完成）**：review HTML、误切/漏切标记、apply-review、manual_cuts。
 - **VLM 逐镜标注（单帧起步）**：单帧静态标签 + 证据 + 置信度；多帧/联系表、上下文和叙事功能仍待补。
-- **M1 证据层**：代理转码、黑边检测、关键帧/联系表、运动/亮度/色彩/人脸测量、ASR/音频事件、可替换 SBD（PySceneDetect / TransNetV2 / OmniShotCut）。
+- **M1 证据层**：代理转码、黑边检测、关键帧/联系表、运动/亮度/色彩/人脸测量、ASR/音频事件；SBD 已有 ffmpeg/PySceneDetect/TransNetV2 路由，仍待更多片种校准和 OmniShotCut 评估。
 - **M2 标注质量**：多帧输入、批量 reduce、质量门 v2、低置信度重跑、人工确认。
 - **M3 场景与报告**：镜头聚合、场景卡、全片统计、证据回链、HTML/CSV 导出。
 - **M4 交互与问答**：`search_shots`、`compare_shots`、`render_clip`、播放器联动、增量重跑。

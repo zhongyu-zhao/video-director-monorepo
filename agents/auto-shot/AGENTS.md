@@ -8,7 +8,7 @@
 
 ```bash
 python3 -m unittest discover -v
-python3 -m auto_shot analyze <video> --out <dir> [--threshold 0.25]
+python3 -m auto_shot analyze <video> --out <dir> [--detector auto] [--threshold 0.25]
 python3 -m auto_shot review --shots <shots.json> --video <video> [--out review.html]
 python3 -m auto_shot apply-review --shots <shots.json> --flags <review-flags.json>
 python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env-file <env>
@@ -20,6 +20,7 @@ python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env
 
 - `auto_shot/models.py`：镜头表数据结构；字段变更先改契约决策记录。
 - `auto_shot/probe.py` / `detect.py`：外部工具边界，只产出事实。
+- `auto_shot/detectors.py`：ffmpeg / PySceneDetect / TransNetV2 适配器与运动路由；`detection.json` 记录选择依据。
 - `auto_shot/quality.py`：确定性验收；`skipped` 不等于 `passed`。
 - `auto_shot/report.py`：镜头表的一个视图，不引入新事实。
 - `auto_shot/review.py`：复核页生成 + 应用人工修正；不修改原 `shots.json`。
@@ -34,6 +35,9 @@ python3 -m auto_shot label --shots <shots.json> --video <video> --limit 20 --env
 - 没有证据的标签进“待人工确认”，不能算完成；枚举只取词表值，不确定用 `unknown`。
 - 人工改过的切点或标签标 `manual`，自动重跑不覆盖；`apply-review` 只生成新文件，不覆盖原 `shots.json`。
 - 默认阈值 0.25 是召回优先的起点；降低阈值必须配合复核页，不能把低阈值结果当最终镜头表。
+- 高运动素材由 auto 路由到 PySceneDetect；不静默加载 torch/TransNetV2，只有 `--prefer-neural` 或显式 `--detector transnetv2` 才用神经网络。
+- 路由决策、检测器阈值语义和时延必须写进 `detection.json`；不同检测器的 threshold 不能横向比较。
+- 可选检测器缺失时 auto 可以回退 ffmpeg，但必须在 notes 里说明；显式指定缺失检测器要报错，不偷偷替换。
 - 单帧 VLM 标注里 `camera` 必须是 `unknown`；多帧上下文是后续里程碑，不伪造运镜判断。
 - API key 只能从 `--env-file` 或进程环境读取；不写代码、日志、README、`labels.json` 或 PR。
 - 产物 schema 变更必须加 `schema_version`、更新契约 ADR，并说明迁移方式。

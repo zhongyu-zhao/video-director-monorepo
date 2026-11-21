@@ -1,4 +1,4 @@
-"""Milestone 0 pipeline: probe -> detect -> shot table -> gates -> report."""
+"""Milestone 0 pipeline: probe -> route/detect -> shot table -> gates -> report."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from .detect import detect_cuts
+from .detectors import DetectionResult, detect_with_router
 from .models import DetectorInfo, ShotTable, shots_from_cuts
 from .probe import probe
 from .quality import QualityReport, validate_shot_table
@@ -19,17 +19,31 @@ class AnalysisResult:
     shots_path: Path
     quality_path: Path
     report_path: Path
+    detection_path: Path
     table: ShotTable
     quality: QualityReport
+    detection: DetectionResult
 
 
-def analyze(input_path: str | Path, output_dir: str | Path, threshold: float = 0.25) -> AnalysisResult:
+def analyze(
+    input_path: str | Path,
+    output_dir: str | Path,
+    threshold: float = 0.25,
+    detector: str = "auto",
+    prefer_neural: bool = False,
+) -> AnalysisResult:
     media = probe(input_path)
-    cuts = detect_cuts(input_path, threshold=threshold)
+    detection = detect_with_router(
+        input_path,
+        media=media,
+        detector=detector,
+        threshold=threshold,
+        prefer_neural=prefer_neural,
+    )
     table = ShotTable(
         video=media,
-        detector=DetectorInfo(name="ffmpeg-scene", threshold=threshold),
-        shots=shots_from_cuts([cut.time for cut in cuts], media.duration),
+        detector=DetectorInfo(name=detection.detector, threshold=detection.threshold),
+        shots=shots_from_cuts(detection.cuts, media.duration),
     )
     quality = validate_shot_table(table)
 
@@ -38,18 +52,22 @@ def analyze(input_path: str | Path, output_dir: str | Path, threshold: float = 0
     shots_path = destination / "shots.json"
     quality_path = destination / "quality.json"
     report_path = destination / "report.md"
+    detection_path = destination / "detection.json"
 
     table.save(shots_path)
     _write_json(quality_path, quality.to_dict())
-    report_path.write_text(render_report(table, quality), encoding="utf-8")
+    _write_json(detection_path, detection.to_dict())
+    report_path.write_text(render_report(table, quality, detection), encoding="utf-8")
 
     return AnalysisResult(
         output_dir=destination,
         shots_path=shots_path,
         quality_path=quality_path,
         report_path=report_path,
+        detection_path=detection_path,
         table=table,
         quality=quality,
+        detection=detection,
     )
 
 

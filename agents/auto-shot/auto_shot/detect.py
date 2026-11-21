@@ -33,7 +33,16 @@ class Cut:
 def detect_cuts(path: str | Path, threshold: float = 0.25) -> list[Cut]:
     if not 0.0 < threshold <= 1.0:
         raise ValueError("threshold must be in (0.0, 1.0]")
+    return _run_scene_filter(path, f"gt(scene,{threshold})")
 
+
+def scan_scores(path: str | Path) -> list[Cut]:
+    """Return a score for every frame (used by the detector router)."""
+
+    return _run_scene_filter(path, "gte(scene,0)")
+
+
+def _run_scene_filter(path: str | Path, expression: str) -> list[Cut]:
     source = Path(path)
     if not source.is_file():
         raise DetectError(f"input not found: {source}")
@@ -48,7 +57,7 @@ def detect_cuts(path: str | Path, threshold: float = 0.25) -> list[Cut]:
         str(source),
         "-an",
         "-vf",
-        f"select='gt(scene,{threshold})',metadata=print",
+        f"select='{expression}',metadata=print",
         "-f",
         "null",
         "-",

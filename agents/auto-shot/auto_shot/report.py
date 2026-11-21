@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from .detectors import DetectionResult
 from .models import ShotTable
 from .quality import FAIL, PASS, SKIP, QualityReport
 
@@ -16,7 +17,11 @@ def format_timecode(seconds: float) -> str:
     return f"{hours:02d}:{minutes:02d}:{whole_seconds:02d}.{milliseconds:03d}"
 
 
-def render_report(table: ShotTable, quality: QualityReport) -> str:
+def render_report(
+    table: ShotTable,
+    quality: QualityReport,
+    detection: DetectionResult | None = None,
+) -> str:
     shots = table.shots
     counts = quality.counts()
     mean_duration = sum(shot.duration for shot in shots) / len(shots) if shots else 0.0
@@ -34,15 +39,26 @@ def render_report(table: ShotTable, quality: QualityReport) -> str:
         f"- 平均镜长：{mean_duration:.3f}s",
         f"- 剪辑频率：{cuts_per_minute:.1f} 次/分钟",
         f"- 检测器：{table.detector.name}（threshold={table.detector.threshold:.3f}）",
-        "",
-        (
-            f"## 质量门：{'通过' if quality.ok else '未通过'}"
-            f"（{counts[PASS]} 通过 / {counts[FAIL]} 失败 / {counts[SKIP]} 跳过）"
-        ),
-        "",
-        "| 门 | 状态 | 说明 |",
-        "|---|---|---|",
     ]
+    if detection is not None:
+        lines.extend(
+            [
+                f"- 路由：{detection.route}（{detection.reason}）",
+                f"- 检测耗时：{detection.latency_seconds:.2f}s",
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            (
+                f"## 质量门：{'通过' if quality.ok else '未通过'}"
+                f"（{counts[PASS]} 通过 / {counts[FAIL]} 失败 / {counts[SKIP]} 跳过）"
+            ),
+            "",
+            "| 门 | 状态 | 说明 |",
+            "|---|---|---|",
+        ]
+    )
     for check in quality.checks:
         lines.append(
             f"| `{check.id}` | {_STATUS_LABELS.get(check.status, check.status)} | "
