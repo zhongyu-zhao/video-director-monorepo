@@ -59,7 +59,7 @@ python3 -m auto_shot analyze INPUT --out DIR [--detector auto] [--threshold 0.25
 | 方法 | 特点 | 依赖 | 本集实测（23:42, 720p） |
 |---|---|---|---|
 | `ffmpeg` | 最快；清晰硬切好；高速运动易误切 | ffmpeg | 624 镜，约 15s |
-| `pyscenedetect` | AdaptiveDetector 抗运动；成本中等 | `scenedetect` + OpenCV | 384 切，约 43s |
+| `pyscenedetect` | AdaptiveDetector 抗运动；成本中等 | `scenedetect` + OpenCV | 384 切，约 47s |
 | `transnetv2` | 神经网络；运动/渐变更稳；CPU 推理慢 | `transnetv2-pytorch` + torch | 60s 片段 10.8s，约 20 切 |
 
 `auto` 先用一次 ffmpeg 扫描得到每帧 scene score，计算 p95、高运动比例和 candidate rate：

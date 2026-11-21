@@ -66,7 +66,7 @@ out/
 | 检测器 | 切点数 | 时延 |
 |---|---:|---:|
 | ffmpeg（0.25） | 624 | 14.9s |
-| PySceneDetect Adaptive（auto 选中） | 384 | 42.9s |
+| PySceneDetect Adaptive（auto 选中） | 384 | 47.0s |
 | TransNetV2（60s 片段） | 约 20 | 10.8s（含模型加载） |
 
 `auto` 不静默加载 torch：神经网络只在 `--prefer-neural` 或显式 `--detector transnetv2` 时使用；PySceneDetect 缺失时回退 ffmpeg 并在 `detection.json.notes` 说明。不同检测器的 threshold 语义不同（ffmpeg scene score / PySceneDetect adaptive threshold / TransNetV2 概率），`shots.json` 里的 threshold 只是配置快照。详见 [`2026-11-21-sbd-router.md`](decisions/proposed/feature/2026-11-21-sbd-router.md)。

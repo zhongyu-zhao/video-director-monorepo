@@ -35,6 +35,6 @@ ffmpeg 的 scene score 便宜、对清晰硬切有效，但在高速大范围运
 
 - 高运动视频要跑两次扫描（ffmpeg 画像 + PySceneDetect/神经），时延约 3× ffmpeg；低运动视频保持一次扫描。
 - PySceneDetect/TransNetV2 是可选依赖；未安装时 auto 回退 ffmpeg 并在报告里说明，不会假装已经解决高运动误切。
-- 路由阈值来自一集 24 分钟动画（p95 0.089、high-motion 0.045、27 candidates/min），需要更多片种校准；`detection.json` 让每次选择可复查。
+- 路由阈值来自一集 24 分钟动画（p95 0.089、high-motion 0.045、26.9 candidates/min），需要更多片种校准；`detection.json` 让每次选择可复查。
 - 不同检测器的 threshold 语义不同，`shots.json` 的 `threshold` 只能作为配置快照，不能跨检测器比较。
 - 复核页与 `manual_cuts` 继续作为残余错误的兜底。
