@@ -14,6 +14,8 @@ agents/*/labels.json
 agents/*/labels.md
 agents/*/frames/
 agents/*/vlm-verify/
+agents/*/evidence/
+agents/*/scenes/
 
 # Generated project artifacts and media never belong in git
 agents/*/artifacts/

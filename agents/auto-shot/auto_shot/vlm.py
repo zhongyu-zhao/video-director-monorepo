@@ -114,7 +114,7 @@ class DeepSeekVlmClient:
                 },
             ],
             "temperature": 0,
-            "max_tokens": 2500,
+            "max_tokens": 3500,
         }
         request = urllib.request.Request(
             f"{self.config.base_url}/chat/completions",

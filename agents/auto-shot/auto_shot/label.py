@@ -1,9 +1,9 @@
 """Per-shot VLM labeling with strict enums and an explicit cache.
 
 Labels are written to a separate artifact so the measured shot table
-stays immutable.  A single mid-shot frame is used for the first slice;
-camera motion is therefore forced to ``unknown`` and later milestones
-can add multi-frame context.
+stays immutable.  Labels use three frames (15%/50%/85%) from one shot as a single
+contact sheet.  Camera motion can be inferred from the three frames, but
+remains ``unknown`` when the model is unsure.
 """
 
 from __future__ import annotations
@@ -12,6 +12,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+import tempfile
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -21,6 +22,7 @@ from typing import Any
 from .models import Shot, ShotTable, round_time
 from .taxonomy import (
     ANGLES,
+    CAMERAS,
     COLORS,
     COMPOSITIONS,
     DOF,
@@ -31,7 +33,7 @@ from .taxonomy import (
 from .vlm import VlmClient, VlmError
 
 LABEL_SCHEMA_VERSION = 1
-PROMPT_VERSION = "vlm-labels-v1"
+PROMPT_VERSION = "vlm-labels-v2"
 
 
 class LabelError(RuntimeError):
@@ -60,14 +62,14 @@ def video_key(table: ShotTable) -> str:
 
 
 def build_prompt(shot: Shot) -> str:
-    return f"""镜头 {shot.shot_id}，时长 {shot.duration:.3f}s。这是该镜头中间的一帧。
+    return f"""镜头 {shot.shot_id}，时长 {shot.duration:.3f}s。下面是同一镜头的三帧（约 15%/50%/85%，左/中/右）。
 
 只输出一个 JSON 对象，不要 markdown，不要解释。结构：
 {{
   "labels": {{
     "scale": "<one of {", ".join(SCALES)}>",
     "angle": "<one of {", ".join(ANGLES)}>",
-    "camera": "unknown",
+    "camera": "<one of {", ".join(CAMERAS)}>",
     "composition": "<one of {", ".join(COMPOSITIONS)}>",
     "lighting": "<one of {", ".join(LIGHTING)}>",
     "color": "<one of {", ".join(COLORS)}>",
@@ -79,44 +81,74 @@ def build_prompt(shot: Shot) -> str:
 }}
 
 规则：
-- 这是单帧，无法可靠判断运镜，camera 必须是 "unknown"。
+- 三帧可用于判断运镜；如果三帧机位稳定、只有主体微动，选 static；不确定时填 "unknown"。
 - 不确定的维度填 "unknown"，不要猜。
 - action 必须描述画面里可看见的内容，不写“氛围感/高级感/视觉冲击”这类空话。
 - confidence 每个字段 0 到 1。
 - 不要输出时间码。"""
 
 
-def extract_frame(video: str | Path, shot: Shot, output: str | Path) -> Path:
+def extract_contact_sheet(video: str | Path, shot: Shot, output: str | Path) -> Path:
     if not shutil.which("ffmpeg"):
         raise LabelError("ffmpeg not found; install ffmpeg")
     destination = Path(output)
     destination.parent.mkdir(parents=True, exist_ok=True)
-    midpoint = round_time(shot.start + shot.duration / 2)
-    command = [
-        "ffmpeg",
-        "-y",
-        "-hide_banner",
-        "-loglevel",
-        "error",
-        "-ss",
-        f"{midpoint:.3f}",
-        "-i",
-        str(video),
-        "-frames:v",
-        "1",
-        "-vf",
-        "scale=480:-2",
-        "-q:v",
-        "4",
-        str(destination),
-    ]
-    completed = subprocess.run(command, capture_output=True, text=True, check=False)
-    if completed.returncode != 0 or not destination.is_file():
-        detail = (completed.stderr or "").strip().splitlines()
-        raise LabelError(
-            f"cannot extract frame for {shot.shot_id}: {detail[-1] if detail else 'ffmpeg failed'}"
-        )
-    return destination
+    work = Path(tempfile.mkdtemp(prefix=".label-", dir=destination.parent))
+    try:
+        frames: list[Path] = []
+        for index, position in enumerate((0.15, 0.5, 0.85), start=1):
+            time = round_time(shot.start + shot.duration * position)
+            frame = work / f"{index}.jpg"
+            completed = subprocess.run(
+                [
+                    "ffmpeg",
+                    "-y",
+                    "-hide_banner",
+                    "-loglevel",
+                    "error",
+                    "-ss",
+                    f"{time:.3f}",
+                    "-i",
+                    str(video),
+                    "-frames:v",
+                    "1",
+                    "-vf",
+                    "scale=480:-2",
+                    "-q:v",
+                    "4",
+                    str(frame),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            if completed.returncode != 0 or not frame.is_file():
+                detail = (completed.stderr or "").strip().splitlines()
+                raise LabelError(
+                    f"cannot extract frame for {shot.shot_id}: "
+                    f"{detail[-1] if detail else 'ffmpeg failed'}"
+                )
+            frames.append(frame)
+        command = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error"]
+        for frame in frames:
+            command += ["-i", str(frame)]
+        command += [
+            "-filter_complex",
+            f"hstack=inputs={len(frames)}",
+            "-frames:v",
+            "1",
+            str(destination),
+        ]
+        completed = subprocess.run(command, capture_output=True, text=True, check=False)
+        if completed.returncode != 0 or not destination.is_file():
+            detail = (completed.stderr or "").strip().splitlines()
+            raise LabelError(
+                f"cannot build contact sheet for {shot.shot_id}: "
+                f"{detail[-1] if detail else 'ffmpeg failed'}"
+            )
+        return destination
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
 
 
 def validate_response(payload: dict[str, Any]) -> dict[str, Any]:
@@ -126,8 +158,6 @@ def validate_response(payload: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(labels, dict):
         raise LabelError("VLM response has no 'labels' object")
     errors = validate_label_values(labels)
-    if labels.get("camera") != "unknown":
-        errors.append("camera must be 'unknown' for a single frame")
     if errors:
         raise LabelError("; ".join(errors))
 
@@ -179,7 +209,7 @@ def label_shots(
     limit: int | None = 20,
     force: bool = False,
     workers: int = 2,
-    frame_extractor: Callable[[str | Path, Shot, str | Path], Path] = extract_frame,
+    frame_extractor: Callable[[str | Path, Shot, str | Path], Path] = extract_contact_sheet,
 ) -> LabelResult:
     """Label up to ``limit`` uncached shots and write labels.json + labels.md.
 

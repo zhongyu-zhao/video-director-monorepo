@@ -10,6 +10,7 @@ from pathlib import Path
 from . import __version__
 from .detect import DetectError
 from .detectors import DetectorUnavailable
+from .evidence import EvidenceError, build_evidence
 from .label import LabelError, label_shots
 from .models import ShotTable
 from .pipeline import analyze
@@ -17,6 +18,7 @@ from .probe import ProbeError
 from .quality import validate_shot_table
 from .report import render_report
 from .review import ReviewError, apply_review, render_review_html
+from .scenes import SceneError, build_scenes
 from .verify import (
     VerificationError,
     collect_boundaries,
@@ -115,6 +117,31 @@ def build_parser() -> argparse.ArgumentParser:
     verify_parser.add_argument("--api-key-env", default="DEEPSEEK_API_KEY", help="environment variable name")
     verify_parser.add_argument("--force", action="store_true", help="ignore the verification cache")
     verify_parser.add_argument("--dry-run", action="store_true", help="list candidates without API/frame extraction")
+
+    evidence_parser = commands.add_parser(
+        "evidence",
+        help="build M1 evidence: proxy, bars, keyframes, measurements and audio events",
+    )
+    evidence_parser.add_argument("--shots", required=True, help="shots.json")
+    evidence_parser.add_argument("--video", required=True, help="source video")
+    evidence_parser.add_argument("--out", default=None, help="output directory (default: shots parent/evidence)")
+    evidence_parser.add_argument("--proxy-width", type=int, default=480, help="proxy width (default 480)")
+    evidence_parser.add_argument("--keyframes", type=int, default=3, help="keyframes per shot (default 3)")
+    evidence_parser.add_argument("--face", action="store_true", help="measure face ratio (needs OpenCV)")
+    evidence_parser.add_argument("--face-model", default=None, help="YuNet ONNX model for OpenCV 5 face detection")
+    evidence_parser.add_argument("--asr", action="store_true", help="transcribe audio (needs faster-whisper)")
+    evidence_parser.add_argument("--force", action="store_true", help="rebuild existing proxy/keyframes")
+
+    scenes_parser = commands.add_parser(
+        "scenes",
+        help="aggregate shots into scenes and write full-film statistics",
+    )
+    scenes_parser.add_argument("--shots", required=True, help="shots.json")
+    scenes_parser.add_argument("--out", default=None, help="output directory (default: shots parent/scenes)")
+    scenes_parser.add_argument("--evidence", default=None, help="evidence.json from the evidence command")
+    scenes_parser.add_argument("--labels", default=None, help="labels.json from the label command")
+    scenes_parser.add_argument("--scene-shots", type=int, default=12, help="max shots per scene (default 12)")
+    scenes_parser.add_argument("--scene-seconds", type=float, default=180.0, help="max scene seconds (default 180)")
     return parser
 
 
@@ -131,12 +158,18 @@ def main(argv: list[str] | None = None) -> int:
             return _command_label(arguments)
         if arguments.command == "verify-short":
             return _command_verify_short(arguments)
+        if arguments.command == "evidence":
+            return _command_evidence(arguments)
+        if arguments.command == "scenes":
+            return _command_scenes(arguments)
     except (
         ProbeError,
         DetectError,
         DetectorUnavailable,
         ReviewError,
         VerificationError,
+        EvidenceError,
+        SceneError,
         LabelError,
         VlmError,
         ValueError,
@@ -203,6 +236,55 @@ def _command_apply_review(arguments: argparse.Namespace) -> int:
     print(f"wrote: {destination}")
     print(f"wrote: {report_path}")
     return 0 if quality.ok else 1
+
+
+def _command_scenes(arguments: argparse.Namespace) -> int:
+    shots_path = Path(arguments.shots)
+    table = ShotTable.load(shots_path)
+    evidence_path = Path(arguments.evidence) if arguments.evidence else None
+    evidence = (
+        json.loads(evidence_path.read_text(encoding="utf-8")) if evidence_path else None
+    )
+    labels = (
+        json.loads(Path(arguments.labels).read_text(encoding="utf-8")) if arguments.labels else None
+    )
+    destination = Path(arguments.out) if arguments.out else shots_path.parent / "scenes"
+    result = build_scenes(
+        table,
+        destination,
+        evidence=evidence,
+        labels=labels,
+        evidence_path=evidence_path,
+        max_shots=arguments.scene_shots,
+        max_seconds=arguments.scene_seconds,
+    )
+    print(f"scenes={len(result.scenes)} stats={len(result.stats)}")
+    for path in (result.scenes_path, result.stats_path, result.report_path):
+        print(f"wrote: {path}")
+    return 0
+
+
+def _command_evidence(arguments: argparse.Namespace) -> int:
+    shots_path = Path(arguments.shots)
+    table = ShotTable.load(shots_path)
+    destination = Path(arguments.out) if arguments.out else shots_path.parent / "evidence"
+    result = build_evidence(
+        table,
+        arguments.video,
+        destination,
+        proxy_width=arguments.proxy_width,
+        keyframes=arguments.keyframes,
+        face=arguments.face,
+        face_model=arguments.face_model,
+        asr=arguments.asr,
+        force=arguments.force,
+    )
+    print(f"shots={len(result.shots)} notes={len(result.notes)}")
+    for path in (result.evidence_path, result.media_path, result.report_path):
+        print(f"wrote: {path}")
+    for note in result.notes[:5]:
+        print(f"  note: {note}", file=sys.stderr)
+    return 0
 
 
 def _command_verify_short(arguments: argparse.Namespace) -> int:
