@@ -13,6 +13,7 @@ import json
 import shutil
 import subprocess
 import tempfile
+import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
@@ -209,6 +210,8 @@ def label_shots(
     limit: int | None = 20,
     force: bool = False,
     workers: int = 2,
+    retries: int = 1,
+    contact_sheets_dir: str | Path | None = None,
     frame_extractor: Callable[[str | Path, Shot, str | Path], Path] = extract_contact_sheet,
 ) -> LabelResult:
     """Label up to ``limit`` uncached shots and write labels.json + labels.md.
@@ -241,9 +244,29 @@ def label_shots(
     def label_one(shot: Shot) -> dict[str, Any]:
         frame = frames_dir / f"{shot.shot_id}.jpg"
         if force or not frame.is_file():
-            frame_extractor(video, shot, frame)
-        response = client.label_image(frame.read_bytes(), build_prompt(shot))
-        normalized = validate_response(response)
+            existing = (
+                Path(contact_sheets_dir) / f"{shot.shot_id}.jpg"
+                if contact_sheets_dir
+                else None
+            )
+            if existing is not None and existing.is_file():
+                frame.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(existing, frame)
+            else:
+                frame_extractor(video, shot, frame)
+        last_error: Exception | None = None
+        for attempt in range(max(0, retries) + 1):
+            try:
+                response = client.label_image(frame.read_bytes(), build_prompt(shot))
+                normalized = validate_response(response)
+                break
+            except (LabelError, VlmError, OSError) as error:
+                last_error = error
+                if attempt >= retries:
+                    raise LabelError(str(last_error)) from last_error
+                time.sleep(0.5 * (attempt + 1))
+        else:  # pragma: no cover - the loop always breaks or raises
+            raise LabelError(str(last_error) if last_error else "label failed")
         return {
             "shot_hash": shot_hash(shot),
             "video_key": identity,
