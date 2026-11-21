@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "auto-shot-agent"
+version = "0.1.0"
+description = "Deterministic shot tables for film-language analysis"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+auto-shot = "auto_shot.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["auto_shot*"]

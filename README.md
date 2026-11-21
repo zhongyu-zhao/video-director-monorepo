@@ -1,2 +1,20 @@
 # video-director-monorepo
-A video director agent for general multimedia production work.
+
+视频导演 Agent 的 monorepo：把创作意图变成可核对、可编辑、可导出的视频产物。
+
+当前包含两个独立子 repo：
+
+- [auto-shot](agents/auto-shot/README.md)：自动拉片——切分镜头，并逐镜分析视听语言。
+- [video-director](agents/video-director/README.md)：视频制作——从创作意图到可编辑时间线和成片。
+
+两者架构、实现和文档各自独立，不共享代码；边界见[仓库级决策](docs/decisions/proposed/architecture/2026-11-21-two-agent-subrepos.md)。
+
+## 文档
+
+- 协作规则：[AGENTS.md](AGENTS.md)
+- 调研快照：[docs/research/](docs/research/)
+- 仓库级/跨子 repo 决策：[docs/decisions/](docs/decisions/)
+
+## 环境
+
+Python 3.12+，`ffmpeg`/`ffprobe` 6.x。各子 repo 的命令和限制见自己的 README。
