@@ -6,7 +6,9 @@
 
 ## 0. 项目与当前阶段
 
-`video-director-monorepo` 是视频导演 Agent 的 monorepo：把创作意图变成可核对、可编辑、可导出的视频产物。当前聚焦自动拉片——切分镜头，并逐镜分析视听语言。
+`video-director-monorepo` 是视频导演 Agent 的 monorepo：把创作意图变成可核对、可编辑、可导出的视频产物。
+
+初步阶段需要两种Agent设计，包括 1.自动拉片——切分镜头，并逐镜分析视听语言和 2.视频制作。
 
 - **当前阶段：研究 → MVP。** 实现前先读 `docs/research/` 下的调研；它们定义了问题、参考架构和选型，不要绕过。
 - 仓库还没有生产代码。代码落地时，在同一个 PR 里补上本文件的命令、目录和检查约定；不要提前为空想的结构写规则。
@@ -63,7 +65,9 @@
 
 ## 5. 决策记录
 
-影响架构、接口、格式或长期维护的决定，写进 `docs/decisions/YYYY-MM-DD-topic.md`（借鉴 deepseek-harness 的 Agent Notes）：
+影响架构、接口、格式或长期维护的决定，写进 `docs/decisions/<status>/<domain>/YYYY-MM-DD-topic.md`（借鉴 deepseek-harness 的 Agent Notes）：
+
+这里的<status>是决策ADR的状态，proposed | implemented | rejected。<domain>则是ADR的领域，分为architecture | feature | bug-fix | process | simplification | testing。
 
 ```markdown
 # 决策：<标题>
@@ -91,11 +95,12 @@
 
 ## 7. 提交与 PR
 
-- Conventional Commits：`feat:`、`fix:`、`docs:`、`refactor:`、`test:`、`chore:`；subject 用祈使句，尽量 ≤72 字符。
+- Conventional Commits：`dev:`、`feat:`、`fix:`、`docs:`、`refactor:`、`test:`、`chore:`；subject 用祈使句，尽量 ≤72 字符。
 - PR 描述四段：`Motivation`、`Changes`、`Testing`、`AI Usage`。`Changes` 只写 diff 保证且测试覆盖的行为；`Testing` 写测试设计和实际跑过的命令。
 - 关联 Issue：`Fixes #N` / `Refs #N`；没有 Issue 时说明来源。
 - 不提交凭证、密钥、私有素材；不把飞书等私有内容贴到 GitHub。
 - 重写历史用 `--force-with-lease`，禁止裸 `--force`；重写后重新核对评审 thread 和 CI。
+- 不添加 coauthor。
 
 ## 8. 安全与边界
 
