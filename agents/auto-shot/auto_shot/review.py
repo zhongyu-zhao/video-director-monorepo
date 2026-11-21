@@ -68,6 +68,8 @@ def apply_review(table: ShotTable, flags: dict[str, Any]) -> ShotTable:
     a human changed a boundary, and validated with the normal gates.
     """
 
+    if not isinstance(flags, dict):
+        raise ReviewError("review flags must be a JSON object")
     false_ids = _false_cut_ids(flags)
     missed = _missed_cut_times(flags)
 

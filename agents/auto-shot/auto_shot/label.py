@@ -120,6 +120,8 @@ def extract_frame(video: str | Path, shot: Shot, output: str | Path) -> Path:
 
 
 def validate_response(payload: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(payload, dict):
+        raise LabelError("VLM response must be a JSON object")
     labels = payload.get("labels")
     if not isinstance(labels, dict):
         raise LabelError("VLM response has no 'labels' object")

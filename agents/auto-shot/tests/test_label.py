@@ -90,6 +90,10 @@ class PromptAndValidationTest(unittest.TestCase):
         with self.assertRaises(LabelError):
             validate_response(payload)
 
+    def test_non_object_response_is_rejected(self) -> None:
+        with self.assertRaises(LabelError):
+            validate_response([])
+
     def test_invalid_enum_is_rejected(self) -> None:
         payload = json.loads(json.dumps(VALID_RESPONSE))
         payload["labels"]["scale"] = "超级特写"

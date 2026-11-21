@@ -55,6 +55,10 @@ class ApplyReviewTest(unittest.TestCase):
         self.assertEqual(corrected.shots[2].source, "manual")
         self.assertEqual(corrected.manual_cuts, [3.0])
 
+    def test_rejects_non_object_flags(self) -> None:
+        with self.assertRaises(ReviewError):
+            apply_review(table(), [])
+
     def test_rejects_false_cut_on_first_shot(self) -> None:
         with self.assertRaises(ReviewError):
             apply_review(table(), {"falseCuts": ["S001"], "missedCuts": []})
