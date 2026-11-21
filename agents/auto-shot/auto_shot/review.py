@@ -8,6 +8,7 @@ manual boundaries recorded, without touching the original artifact.
 
 from __future__ import annotations
 
+import hashlib
 import html
 import json
 import os
@@ -44,7 +45,13 @@ def render_review_html(
     page = _TEMPLATE.replace("__SHOTS_JSON__", shots_json)
     page = page.replace("__VIDEO_SRC__", html.escape(video_src))
     page = page.replace("__SOURCE_JSON__", json.dumps(table.video.path, ensure_ascii=False).replace("</", "<\\/"))
-    review_key = f"{table.video.path}|{table.detector.name}:{table.detector.threshold:.3f}|{len(table.shots)}|{table.shots[0].start if table.shots else 0}"
+    signature = "|".join(
+        f"{shot.start:.3f}:{shot.end:.3f}:{shot.transition_in}" for shot in table.shots
+    )
+    review_key = (
+        f"{table.video.path}|{table.detector.name}:{table.detector.threshold:.3f}|"
+        f"{hashlib.sha1(signature.encode()).hexdigest()[:16]}"
+    )
     page = page.replace("__REVIEW_KEY_JSON__", json.dumps(review_key, ensure_ascii=False).replace("</", "<\\/"))
     page = page.replace("__SOURCE__", html.escape(table.video.path))
     page = page.replace("__COUNT__", str(len(table.shots)))
