@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "screenplay-adapter-agent"
+version = "0.1.0"
+description = "Deterministic novel-to-screenplay adaptation kernel with traceable plans"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = []
+
+[project.scripts]
+screenplay-adapter = "screenplay_adapter.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["screenplay_adapter*"]

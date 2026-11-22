@@ -17,6 +17,16 @@ agents/*/vlm-verify/
 agents/*/evidence/
 agents/*/scenes/
 
+# Screenplay adaptation projects: copyrighted source, drafts and generated scripts stay local
+agents/*/adaptations/
+agents/*/adaptation.json
+agents/*/briefs.md
+agents/*/screenplay.json
+agents/*/screenplay.fountain
+agents/*/screenplay.md
+agents/*/drafts/
+agents/*/source/source.md
+
 # Generated project artifacts and media never belong in git
 agents/*/artifacts/
 agents/*/assets/
