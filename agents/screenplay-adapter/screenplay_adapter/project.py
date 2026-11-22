@@ -71,7 +71,12 @@ def save_plan(root: Path, plan: AdaptationPlan) -> Path:
 
 
 def load_plan(root: Path) -> AdaptationPlan:
-    return AdaptationPlan.from_dict(read_json(Path(root) / PLAN_FILENAME, "adaptation plan"))
+    path = Path(root) / PLAN_FILENAME
+    data = read_json(path, "adaptation plan")
+    try:
+        return AdaptationPlan.from_dict(data)
+    except (KeyError, TypeError, ValueError) as error:
+        raise AdapterError(f"invalid adaptation plan {path}: {error}") from error
 
 
 def save_briefs(root: Path, markdown: str) -> Path:
@@ -92,7 +97,11 @@ def load_drafts(root: Path) -> dict[str, SceneDraft]:
         return {}
     drafts: dict[str, SceneDraft] = {}
     for path in sorted(directory.glob("*.json")):
-        draft = SceneDraft.from_dict(read_json(path, f"draft {path.name}"))
+        data = read_json(path, f"draft {path.name}")
+        try:
+            draft = SceneDraft.from_dict(data)
+        except (KeyError, TypeError, ValueError) as error:
+            raise AdapterError(f"invalid draft {path}: {error}") from error
         if draft.scene_id in drafts:
             raise AdapterError(f"duplicate draft for scene {draft.scene_id}")
         drafts[draft.scene_id] = draft
@@ -107,7 +116,11 @@ def load_screenplay(root: Path) -> Screenplay | None:
     path = Path(root) / SCREENPLAY_FILENAME
     if not path.is_file():
         return None
-    return Screenplay.from_dict(read_json(path, "screenplay"))
+    data = read_json(path, "screenplay")
+    try:
+        return Screenplay.from_dict(data)
+    except (KeyError, TypeError, ValueError) as error:
+        raise AdapterError(f"invalid screenplay {path}: {error}") from error
 
 
 def save_report(root: Path, report: dict[str, Any]) -> Path:

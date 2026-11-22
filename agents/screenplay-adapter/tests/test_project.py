@@ -58,6 +58,16 @@ class ProjectIoTest(unittest.TestCase):
             with self.assertRaises(AdapterError):
                 load_drafts(root)
 
+    def test_malformed_plan_raises_actionable_error(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "adaptation.json").write_text("{}", encoding="utf-8")
+
+            with self.assertRaises(AdapterError) as context:
+                load_plan(root)
+
+        self.assertIn("invalid adaptation plan", str(context.exception))
+
     def test_missing_plan_raises(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             with self.assertRaises(AdapterError):
