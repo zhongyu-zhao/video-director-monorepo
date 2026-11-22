@@ -14,7 +14,7 @@ python3 -m screenplay_adapter assemble --root <dir>
 python3 -m screenplay_adapter validate --root <dir>
 ```
 
-依赖和入口以 `pyproject.toml` 为准。测试不需要安装包，不访问网络；writer 用本地假 HTTP server。
+依赖和入口以 `pyproject.toml` 为准。测试不需要安装包，不访问外部网络；writer 用本地假 HTTP server。
 
 ## 结构
 

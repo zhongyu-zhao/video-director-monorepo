@@ -113,7 +113,7 @@ cd agents/screenplay-adapter
 python3 -m unittest discover -v
 ```
 
-测试不访问网络：writer 测试用本地假 HTTP server，其余用固定合成文本。不需要安装包。
+测试不访问外部网络：writer 测试用本地假 HTTP server，其余用固定合成文本。不需要安装包。
 
 ## M0 的边界
 
