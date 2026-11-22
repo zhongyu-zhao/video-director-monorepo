@@ -21,9 +21,9 @@ def merge_screenplay(plan: AdaptationPlan, drafts: dict[str, SceneDraft]) -> Scr
     stale: list[str] = []
     for scene in plan.scenes:
         draft = drafts[scene.id]
-        if draft.plan_hash and draft.plan_hash != plan.plan_hash:
+        if not draft.plan_hash or draft.plan_hash != plan.plan_hash:
             stale.append(scene.id)
-        if draft.source_sha256 and draft.source_sha256 != str(plan.source.get("sha256", "")):
+        if not draft.source_sha256 or draft.source_sha256 != str(plan.source.get("sha256", "")):
             stale.append(scene.id)
     if stale:
         unique = sorted(set(stale))

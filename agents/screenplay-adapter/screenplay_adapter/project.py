@@ -127,6 +127,36 @@ def save_report(root: Path, report: dict[str, Any]) -> Path:
     return write_json(Path(root) / REPORT_FILENAME, report)
 
 
+def clear_derived(root: Path) -> list[str]:
+    """Remove generated views/reports so a changed plan cannot look current."""
+
+    removed: list[str] = []
+    for name in (SCREENPLAY_FILENAME, FOUNTAIN_FILENAME, MARKDOWN_FILENAME, REPORT_FILENAME):
+        path = Path(root) / name
+        if path.is_file():
+            try:
+                path.unlink()
+            except OSError as error:
+                raise AdapterError(f"cannot remove stale artifact {path}: {error}") from error
+            removed.append(name)
+    return removed
+
+
+def clear_screenplay_artifacts(root: Path) -> list[str]:
+    """Remove the screenplay and its views, keeping report.json for the caller."""
+
+    removed: list[str] = []
+    for name in (SCREENPLAY_FILENAME, FOUNTAIN_FILENAME, MARKDOWN_FILENAME):
+        path = Path(root) / name
+        if path.is_file():
+            try:
+                path.unlink()
+            except OSError as error:
+                raise AdapterError(f"cannot remove stale artifact {path}: {error}") from error
+            removed.append(name)
+    return removed
+
+
 def write_exports(root: Path, fountain: str, markdown: str) -> tuple[Path, Path]:
     root = ensure_root(root)
     fountain_path = root / FOUNTAIN_FILENAME

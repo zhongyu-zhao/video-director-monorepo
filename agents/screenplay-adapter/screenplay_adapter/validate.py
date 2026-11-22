@@ -82,7 +82,6 @@ def make_report(stage: str, gates: list[Gate], stats: dict[str, Any]) -> Report:
 def validate_plan(plan: AdaptationPlan, document: SourceDocument) -> Report:
     gates = [
         _gate_schema(plan),
-        _gate_brief(plan),
         _gate_source(plan, document),
         _gate_coverage(plan, document),
         _gate_scene_order(plan),
@@ -93,6 +92,7 @@ def validate_plan(plan: AdaptationPlan, document: SourceDocument) -> Report:
         _gate_chapters(plan, document),
         _gate_plan_warnings(plan),
         _gate_plan_hash(plan, document),
+        _gate_brief(plan),
     ]
     stats = {
         "scene_count": len(plan.scenes),
@@ -159,6 +159,19 @@ def _screenplay_shape_error(screenplay: Screenplay) -> Gate | None:
                 return Gate("S000", FAIL, f"{label} dialogue entries must be objects")
             if not str(line.get("character", "")).strip() or not str(line.get("line", "")).strip():
                 return Gate("S000", FAIL, f"{label} dialogue entries need character and line")
+        for field in ("episode", "index_in_episode"):
+            if not isinstance(scene.get(field), int) or isinstance(scene.get(field), bool):
+                return Gate("S000", FAIL, f"{label}.{field} must be an integer")
+        for field in ("target_seconds", "estimated_seconds"):
+            if field == "estimated_seconds" and field not in scene:
+                continue
+            value = scene.get(field)
+            if not isinstance(value, (int, float)) or isinstance(value, bool):
+                return Gate("S000", FAIL, f"{label}.{field} must be a number")
+        source = scene.get("source")
+        for field in ("sentence_start", "sentence_end", "char_start", "char_end"):
+            if not isinstance(source.get(field), int) or isinstance(source.get(field), bool):
+                return Gate("S000", FAIL, f"{label}.source.{field} must be an integer")
     return None
 
 
@@ -372,6 +385,8 @@ def _gate_scene_link(plan: AdaptationPlan, screenplay: Screenplay) -> Gate:
             return Gate("S003", FAIL, f"{expected.id} episode does not match the plan")
         if scene.get("beat") != expected.beat:
             return Gate("S003", FAIL, f"{expected.id} beat does not match the plan")
+        if scene.get("index_in_episode") != expected.index_in_episode:
+            return Gate("S003", FAIL, f"{expected.id} index_in_episode does not match the plan")
         try:
             target = float(scene.get("target_seconds", -1))
         except (TypeError, ValueError):
@@ -379,7 +394,7 @@ def _gate_scene_link(plan: AdaptationPlan, screenplay: Screenplay) -> Gate:
         if abs(target - expected.duration_s) > 0.01:
             return Gate("S003", FAIL, f"{expected.id} target_seconds does not match the plan")
         source = scene.get("source")
-        if not isinstance(source, dict) or source.get("sentence_start") != expected.source.sentence_start:
+        if not isinstance(source, dict) or source != expected.source.to_dict():
             return Gate("S003", FAIL, f"{expected.id} source anchor does not match the plan")
     return Gate("S003", PASS, "all scenes match the plan order and anchors")
 

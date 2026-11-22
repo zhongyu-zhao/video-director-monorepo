@@ -23,6 +23,8 @@ from .project import (
     BRIEFS_FILENAME,
     PLAN_FILENAME,
     SOURCE_RELATIVE_PATH,
+    clear_derived,
+    clear_screenplay_artifacts,
     ensure_root,
     load_drafts,
     load_plan,
@@ -138,8 +140,9 @@ def _adapt(arguments: argparse.Namespace) -> int:
     )
     explicit = load_cast_file(Path(arguments.cast)) if arguments.cast else None
     cast = extract_cast(document, explicit=explicit)
-    write_source(root, text)
     plan = build_plan(document, brief, cast)
+    invalidated = clear_derived(root)
+    write_source(root, text)
     save_plan(root, plan)
     save_briefs(root, render_briefs(plan, document))
     report = validate_plan(plan, document)
@@ -147,6 +150,8 @@ def _adapt(arguments: argparse.Namespace) -> int:
     _print_plan(plan, report)
     print(f"  -> {root / PLAN_FILENAME}")
     print(f"  -> {root / BRIEFS_FILENAME}")
+    if invalidated:
+        print(f"  invalidated: {', '.join(invalidated)} (re-run draft/assemble)")
     return 0 if report.status != "fail" else 1
 
 
@@ -181,10 +186,10 @@ def _draft(arguments: argparse.Namespace) -> int:
             for scene in selected
             if scene.id in existing
             and (
-                (existing[scene.id].plan_hash and existing[scene.id].plan_hash != plan.plan_hash)
+                (not existing[scene.id].plan_hash or existing[scene.id].plan_hash != plan.plan_hash)
                 or (
-                    existing[scene.id].source_sha256
-                    and existing[scene.id].source_sha256 != str(plan.source.get("sha256", ""))
+                    not existing[scene.id].source_sha256
+                    or existing[scene.id].source_sha256 != str(plan.source.get("sha256", ""))
                 )
             )
         )
@@ -240,26 +245,33 @@ def _assemble(arguments: argparse.Namespace) -> int:
     document = load_source(root)
     plan_report = validate_plan(plan, document)
     if plan_report.status == "fail":
+        clear_screenplay_artifacts(root)
         save_report(root, _report_payload(plan_report))
         _print_report(plan_report)
         print("error: plan has failing gates; fix the plan before assembling", file=sys.stderr)
         return 1
     drafts = load_drafts(root)
     screenplay = merge_screenplay(plan, drafts)
-    save_screenplay(root, screenplay)
-    fountain = render_fountain(screenplay, plan)
-    markdown = render_markdown(screenplay, plan, document)
-    write_exports(root, fountain, markdown)
     screenplay_report = validate_screenplay(plan, screenplay, document)
     stats = dict(screenplay_report.stats)
     stats["plan_status"] = plan_report.status
     report = make_report("screenplay", plan_report.gates + screenplay_report.gates, stats)
     save_report(root, _report_payload(report))
     _print_report(report)
+    if report.status == "fail":
+        clear_screenplay_artifacts(root)
+        print("error: screenplay has failing gates; no screenplay artifacts were written", file=sys.stderr)
+        return 1
+    save_screenplay(root, screenplay)
+    write_exports(
+        root,
+        render_fountain(screenplay, plan),
+        render_markdown(screenplay, plan, document),
+    )
     print(f"  -> {root / 'screenplay.json'}")
     print(f"  -> {root / 'screenplay.fountain'}")
     print(f"  -> {root / 'screenplay.md'}")
-    return 0 if report.status != "fail" else 1
+    return 0
 
 
 def _validate(arguments: argparse.Namespace) -> int:

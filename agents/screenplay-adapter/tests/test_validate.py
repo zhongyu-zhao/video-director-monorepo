@@ -165,6 +165,36 @@ class ScreenplayValidationTest(unittest.TestCase):
         self.assertEqual(report.status, FAIL)
         self.assertIn("S002", [gate.id for gate in report.failures])
 
+    def test_source_anchor_tamper_fails(self) -> None:
+        document, plan = make_plan()
+        screenplay = merge_screenplay(plan, make_drafts(plan))
+        screenplay.scenes[0]["source"]["sentence_end"] += 1
+        screenplay.scenes[0]["source"]["char_start"] = 0
+
+        report = validate_screenplay(plan, screenplay, document)
+
+        self.assertEqual(report.status, FAIL)
+        self.assertIn("S003", [gate.id for gate in report.failures])
+
+    def test_numeric_target_type_is_shape_failure(self) -> None:
+        document, plan = make_plan()
+        screenplay = merge_screenplay(plan, make_drafts(plan))
+        screenplay.scenes[0]["target_seconds"] = "oops"
+
+        report = validate_screenplay(plan, screenplay, document)
+
+        self.assertEqual(report.status, FAIL)
+        self.assertEqual(report.failures[0].id, "S000")
+
+    def test_empty_fingerprint_is_rejected_at_merge(self) -> None:
+        _, plan = make_plan()
+        drafts = make_drafts(plan)
+        drafts["S001"] = replace(drafts["S001"], plan_hash="")
+
+        with self.assertRaises(Exception) as context:
+            merge_screenplay(plan, drafts)
+        self.assertIn("different plan", str(context.exception))
+
     def test_invalid_heading_fails(self) -> None:
         document, plan = make_plan()
         screenplay = merge_screenplay(plan, make_drafts(plan))

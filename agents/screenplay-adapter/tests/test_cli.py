@@ -47,13 +47,29 @@ class CliEndToEndTest(unittest.TestCase):
             "45",
         )
 
-    def start_fake(self):
+    def start_fake(self, character: str = "林昭"):
         def builder(request):
             scene_id = request["messages"][1]["content"].split("场号：", 1)[1].split()[0].strip()
-            return 200, {"choices": [{"message": {"content": json.dumps(scene_payload(scene_id), ensure_ascii=False)}}]}
+            payload = scene_payload(scene_id, character=character)
+            return 200, {"choices": [{"message": {"content": json.dumps(payload, ensure_ascii=False)}}]}
 
         self.server, port = start_fake_server(builder)
         return port
+
+    def draft_all(self, port: int) -> None:
+        code, _, stderr = run_cli(
+            main,
+            "draft",
+            "--root",
+            str(self.root),
+            "--env-file",
+            str(self.env),
+            "--base-url",
+            f"http://127.0.0.1:{port}/v1",
+            "--model",
+            "fake",
+        )
+        self.assertEqual(code, 0, stderr)
 
     def test_full_pipeline(self) -> None:
         code, stdout, stderr = self.adapt()
@@ -208,6 +224,36 @@ class CliEndToEndTest(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("different plan or source", stderr)
 
+    def test_assemble_failure_writes_no_screenplay_artifacts(self) -> None:
+        self.assertEqual(self.adapt()[0], 0)
+        (self.root / "screenplay.json").write_text("stale", encoding="utf-8")
+        port = self.start_fake(character="陌生人")
+        self.draft_all(port)
+
+        code, _, stderr = run_cli(main, "assemble", "--root", str(self.root))
+
+        self.assertEqual(code, 1)
+        self.assertIn("no screenplay artifacts", stderr)
+        for name in ("screenplay.json", "screenplay.fountain", "screenplay.md"):
+            self.assertFalse((self.root / name).exists(), name)
+        report = json.loads((self.root / "report.json").read_text(encoding="utf-8"))
+        self.assertEqual(report["status"], "fail")
+        self.assertIn("S006", [gate["id"] for gate in report["gates"] if gate["status"] == "fail"])
+
+    def test_adapt_force_removes_stale_derived_artifacts(self) -> None:
+        self.assertEqual(self.adapt()[0], 0)
+        for name in ("screenplay.json", "screenplay.fountain", "screenplay.md"):
+            (self.root / name).write_text("stale", encoding="utf-8")
+
+        code, stdout, stderr = self.adapt_with_force()
+
+        self.assertEqual(code, 0, stderr)
+        self.assertIn("invalidated:", stdout)
+        for name in ("screenplay.json", "screenplay.fountain", "screenplay.md"):
+            self.assertFalse((self.root / name).exists(), name)
+        report = json.loads((self.root / "report.json").read_text(encoding="utf-8"))
+        self.assertEqual(report["stage"], "plan")
+
     def test_adapt_twice_needs_force(self) -> None:
         self.assertEqual(self.adapt()[0], 0)
 
@@ -215,6 +261,26 @@ class CliEndToEndTest(unittest.TestCase):
 
         self.assertEqual(code, 2)
         self.assertIn("already exists", stderr)
+
+    def adapt_with_force(self):
+        return run_cli(
+            main,
+            "adapt",
+            str(self.source),
+            "--root",
+            str(self.root),
+            "--title",
+            "雨夜",
+            "--format",
+            "short-drama",
+            "--episodes",
+            "3",
+            "--episode-minutes",
+            "2",
+            "--scene-seconds",
+            "45",
+            "--force",
+        )
 
     def test_draft_without_api_key_returns_two(self) -> None:
         self.assertEqual(self.adapt()[0], 0)

@@ -179,7 +179,7 @@ canonical JSON 用 `ensure_ascii=False, sort_keys=True, separators=(",", ":")`�
 ```
 
 - `status` 由门状态聚合：任意 `fail` → `fail`；否则任意 `warn` → `warn`；否则 `pass`。
-- `stage` 表示这次报告是计划门还是剧本门；`assemble` 会先跑计划门，失败则不出剧本。
+- `stage` 表示这次报告是计划门还是剧本门；`assemble` 会先跑计划门和剧本门，只有 `pass`/`warn` 才写 `screenplay.json`/Fountain/Markdown；`fail` 时只写 `report.json` 并清掉旧的剧本产物。
 - 门 id 稳定：`P001...` 计划，`S000...` 剧本；新增门只追加，不复用旧 id。
 
 ## 备选方案

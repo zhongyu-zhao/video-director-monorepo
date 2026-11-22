@@ -46,6 +46,13 @@ class CastExtractionTest(unittest.TestCase):
         self.assertEqual(cast[0].role, "主角")
         self.assertEqual(cast[0].first_chapter, "CH001")
 
+    def test_explicit_cast_does_not_inflate_dialogue_mentions(self) -> None:
+        document = make_document()
+        cast = extract_cast(document, explicit=[{"name": "林昭"}, {"name": "顾远"}])
+
+        self.assertEqual(cast[0].dialogue_mentions, 2)
+        self.assertLess(cast[0].dialogue_mentions, cast[0].mentions)
+
     def test_find_characters_uses_aliases_and_order(self) -> None:
         document = make_document()
         cast = extract_cast(

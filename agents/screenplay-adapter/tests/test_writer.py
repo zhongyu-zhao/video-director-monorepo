@@ -101,6 +101,34 @@ class WriterHttpTest(unittest.TestCase):
 
         self.assertIn("no JSON object", str(context.exception))
 
+    def test_missing_dialogue_basis_fails(self) -> None:
+        def builder(request: dict) -> tuple[int, dict]:
+            payload = scene_payload(prompt_scene_id(request))
+            payload["dialogue"][0].pop("basis")
+            return 200, {"choices": [{"message": {"content": json.dumps(payload)}}]}
+
+        document, plan = make_plan()
+        writer = self.start(builder)
+
+        with self.assertRaises(WriterError) as context:
+            writer.write_scene(plan, plan.scenes[0], document)
+
+        self.assertIn("basis is required", str(context.exception))
+
+    def test_unknown_dialogue_basis_fails(self) -> None:
+        def builder(request: dict) -> tuple[int, dict]:
+            payload = scene_payload(prompt_scene_id(request))
+            payload["dialogue"][0]["basis"] = "original"
+            return 200, {"choices": [{"message": {"content": json.dumps(payload)}}]}
+
+        document, plan = make_plan()
+        writer = self.start(builder)
+
+        with self.assertRaises(WriterError) as context:
+            writer.write_scene(plan, plan.scenes[0], document)
+
+        self.assertIn("basis must be", str(context.exception))
+
     def test_invalid_heading_fails(self) -> None:
         def builder(request: dict) -> tuple[int, dict]:
             payload = scene_payload(prompt_scene_id(request))
@@ -137,6 +165,12 @@ class WriterHttpTest(unittest.TestCase):
     def test_missing_api_key_is_rejected_before_request(self) -> None:
         with self.assertRaises(WriterError):
             OpenAICompatibleWriter(WriterConfig(base_url="https://example.com/v1", api_key="", model="x"))
+
+    def test_plain_http_to_remote_host_is_rejected(self) -> None:
+        with self.assertRaises(WriterError) as context:
+            OpenAICompatibleWriter(WriterConfig(base_url="http://example.com/v1", api_key="key", model="x"))
+
+        self.assertIn("plain HTTP", str(context.exception))
 
     def test_base_url_without_v1_gets_chat_completions(self) -> None:
         writer = OpenAICompatibleWriter(

@@ -126,6 +126,11 @@ def build_plan(document: SourceDocument, brief: AdaptationBrief, cast: list[Char
     episode_totals: dict[int, int] = {}
     for episode in episode_for_scene:
         episode_totals[episode] = episode_totals.get(episode, 0) + 1
+    for episode, total_in_episode in episode_totals.items():
+        if total_in_episode == 1:
+            warnings.append(
+                f"episode {episode} has one scene; it must serve as both the opening and the cliffhanger."
+            )
 
     scenes: list[Scene] = []
     episode_indexes: dict[int, int] = {}
@@ -279,7 +284,7 @@ def _allocate_quotas(weights: list[int], count: int) -> list[int]:
     while remaining > 0:
         index = max(
             range(len(weights)),
-            key=lambda value: weights[value] / total - quotas[value],
+            key=lambda value: weights[value] / (quotas[value] + 1),
         )
         quotas[index] += 1
         remaining -= 1
@@ -305,19 +310,21 @@ def partition_sentences(sentences: list, count: int, start: int | None = None, e
     if count == end - start:
         return [(index, index + 1) for index in range(start, end)]
 
-    total_chars = sum(len(sentences[index].text) for index in range(start, end))
-    boundaries: list[int] = []
     range_start = start
+    prefix = [0]
+    for index in range(start, end):
+        prefix.append(prefix[-1] + len(sentences[index].text))
+    total_chars = prefix[-1]
+    boundaries: list[int] = []
     cursor = start
     for group in range(count - 1):
         remaining_groups = count - group
         target = total_chars * (group + 1) / count
         best_end = cursor + 1
         best_distance = math.inf
-        cumulative = 0
         last_index = end - remaining_groups
         for index in range(cursor, last_index + 1):
-            cumulative += len(sentences[index].text)
+            cumulative = prefix[index + 1 - range_start]
             distance = abs(cumulative - target)
             if distance < best_distance:
                 best_distance = distance

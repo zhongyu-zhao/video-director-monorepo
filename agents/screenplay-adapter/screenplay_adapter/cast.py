@@ -241,6 +241,17 @@ def _chapter_range(document: SourceDocument, names: tuple[str, ...]) -> tuple[st
 
 
 def _explicit_cast(document: SourceDocument, entries: list[dict[str, object]]) -> list[Character]:
+    names_to_counts = {
+        str(entry["name"]): tuple(str(alias) for alias in entry.get("aliases", [])) for entry in entries
+    }
+    dialogue_counts: dict[str, int] = {name: 0 for name in names_to_counts}
+    for sentence in document.sentences:
+        for candidate, _ in _candidate_names_with_offsets(sentence.text, sentence.start):
+            for name, aliases in names_to_counts.items():
+                if candidate == name or candidate in aliases:
+                    dialogue_counts[name] += 1
+                    break
+
     characters: list[Character] = []
     for index, entry in enumerate(entries, start=1):
         name = str(entry["name"])
@@ -255,7 +266,7 @@ def _explicit_cast(document: SourceDocument, entries: list[dict[str, object]]) -
                 first_chapter=first_chapter,
                 last_chapter=last_chapter,
                 mentions=mentions,
-                dialogue_mentions=mentions,
+                dialogue_mentions=dialogue_counts.get(name, 0),
                 source="explicit",
                 role=str(entry.get("role", "")),
                 note=str(entry.get("note", "")),

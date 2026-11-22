@@ -18,6 +18,8 @@ from .models import AdapterError, Chapter, Paragraph, Sentence, SourceDocument
 _CHAPTER_ZH = re.compile(
     r"^\s*(第[0-9零〇一二三四五六七八九十百千万两]+[章节回卷集部篇][^\n]{0,60})\s*$"
 )
+_CHAPTER_UNIT = re.compile(r"^\s*(第[0-9零〇一二三四五六七八九十百千万两]+[章节回集][^\n]{0,60})\s*$")
+_CHAPTER_VOLUME = re.compile(r"^\s*(第[0-9零〇一二三四五六七八九十百千万两]+[卷部篇][^\n]{0,60})\s*$")
 _CHAPTER_SPECIAL = re.compile(r"^\s*((?:序章|楔子|引子|尾声|终章|后记|番外|前言)[^\n]{0,60})\s*$")
 _CHAPTER_EN = re.compile(
     r"^\s*((?:Chapter|CHAPTER)\s+[0-9IVXLCDM]+[.:：、\s]?[^\n]{0,60})\s*$"
@@ -218,7 +220,10 @@ def _detect_markers(lines: list[_Line]) -> tuple[list[_Marker], str | None]:
             numeric_markers.append(_Marker(start=line.start, end=line.end, title=stripped))
 
     if not selected:
-        if len(text_markers) >= 1:
+        unit_markers = [marker for marker in text_markers if not _looks_like_volume(marker.title)]
+        if unit_markers:
+            selected = unit_markers
+        elif text_markers:
             selected = text_markers
         elif len(numeric_markers) >= 2:
             selected = numeric_markers
@@ -229,10 +234,14 @@ def _detect_markers(lines: list[_Line]) -> tuple[list[_Marker], str | None]:
 
 def _looks_like_chapter(title: str) -> bool:
     return bool(
-        _CHAPTER_ZH.match(title)
+        _CHAPTER_UNIT.match(title)
         or _CHAPTER_SPECIAL.match(title)
         or _CHAPTER_EN.match(title)
     )
+
+
+def _looks_like_volume(title: str) -> bool:
+    return bool(_CHAPTER_VOLUME.match(title))
 
 
 def _markdown_title(lines: list[_Line], markers: list[_Marker]) -> str | None:
@@ -252,8 +261,9 @@ def _markdown_title(lines: list[_Line], markers: list[_Marker]) -> str | None:
     if markers:
         first_marker = min(marker.start for marker in markers)
         before = [heading for heading in heading_markers if heading.start < first_marker]
-        if before:
-            return before[0].title
+        for heading in before:
+            if not _looks_like_volume(heading.title):
+                return heading.title
         return None
     if len(heading_markers) == 1 and lines[0].start == heading_markers[0].start:
         return heading_markers[0].title

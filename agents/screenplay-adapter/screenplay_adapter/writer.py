@@ -12,6 +12,7 @@ import json
 import re
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Any
@@ -185,6 +186,11 @@ class OpenAICompatibleWriter:
         self.endpoint = base if base.endswith("/chat/completions") else base + "/chat/completions"
         if not self.endpoint.startswith(("http://", "https://")):
             raise WriterError(f"base URL must start with http:// or https://: {config.base_url}")
+        parsed = urllib.parse.urlparse(self.endpoint)
+        if parsed.scheme.lower() == "http" and parsed.hostname not in ("127.0.0.1", "localhost", "::1"):
+            raise WriterError(
+                "refusing to send credentials and source text over plain HTTP to a non-loopback host; use https"
+            )
         self.config = config
 
     def write_scene(self, plan: AdaptationPlan, scene: Scene, document: SourceDocument) -> SceneDraft:
@@ -330,13 +336,20 @@ def parse_scene_payload(
             raise WriterError(f"{scene.id}: dialogue[{index}] needs a character")
         if not line:
             raise WriterError(f"{scene.id}: dialogue[{index}] needs a non-empty line")
-        basis = _BASIS_MAP.get(str(item.get("basis", "adapted")).strip().lower(), "adapted")
+        raw_basis = str(item.get("basis", "")).strip().lower()
+        if not raw_basis:
+            raise WriterError(f"{scene.id}: dialogue[{index}].basis is required")
+        basis = _BASIS_MAP.get(raw_basis)
+        if basis not in DIALOGUE_BASES:
+            raise WriterError(
+                f"{scene.id}: dialogue[{index}].basis must be source, adapted or invented (got {raw_basis!r})"
+            )
         dialogue.append(
             Dialogue(
                 character=character,
                 line=line,
                 parenthetical=str(item.get("parenthetical", "")).strip(),
-                basis=basis if basis in DIALOGUE_BASES else "adapted",
+                basis=basis,
             )
         )
     if not action and not dialogue:

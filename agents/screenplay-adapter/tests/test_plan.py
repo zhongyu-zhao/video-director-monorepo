@@ -102,6 +102,14 @@ class PlanTest(unittest.TestCase):
 
         self.assertTrue(all("expand" in scene.expansion for scene in plan.scenes))
 
+    def test_single_scene_episode_gets_a_warning(self) -> None:
+        document = make_document()
+        brief = make_brief("雨夜", "short-drama", episodes=24, episode_minutes=2, scene_seconds=45)
+        plan = build_plan(document, brief, [])
+
+        self.assertTrue(any("one scene" in warning for warning in plan.warnings))
+        self.assertTrue(all(scene.index_in_episode == 1 for scene in plan.scenes))
+
     def test_sparse_source_is_capped_with_warning(self) -> None:
         document = parse_source("只有一句话。\n", title="短")
         brief = make_brief("短", "feature", episodes=1, episode_minutes=100, scene_seconds=150)
@@ -128,6 +136,32 @@ class PlanTest(unittest.TestCase):
         self.assertEqual(len(groups), 2)
         self.assertEqual(groups[0][0], 0)
         self.assertEqual(groups[-1][1], len(document.sentences))
+
+    def test_partition_sentences_balances_equal_sentences(self) -> None:
+        class FakeSentence:
+            def __init__(self, text: str):
+                self.text = text
+
+        sentences = [FakeSentence("0123456789") for _ in range(12)]
+        groups = partition_sentences(sentences, 3)
+
+        lengths = [sum(len(sentences[i].text) for i in range(start, end)) for start, end in groups]
+        self.assertEqual([end - start for start, end in groups], [4, 4, 4])
+        self.assertLessEqual(max(lengths) - min(lengths), 10)
+
+    def test_uneven_chapters_get_proportional_scene_quotas(self) -> None:
+        text = "第一章 长\n\n" + "\n\n".join(["长句内容。" * 10] * 6) + "\n\n第二章 短\n\n短。\n\n第三章 短\n\n也短。\n"
+        document = parse_source(text, title="权重")
+        groups, requested = partition_document(document, 6)
+
+        self.assertEqual(requested, 6)
+        self.assertEqual(len(groups), 6)
+        chapter_counts: dict[str, int] = {}
+        for start, end in groups:
+            chapter = document.sentences[start].chapter_id
+            chapter_counts[chapter] = chapter_counts.get(chapter, 0) + 1
+        self.assertGreater(chapter_counts.get("CH001", 0), chapter_counts.get("CH002", 0))
+        self.assertGreater(chapter_counts.get("CH001", 0), chapter_counts.get("CH003", 0))
 
     def test_partition_sentences_range(self) -> None:
         document = make_document()

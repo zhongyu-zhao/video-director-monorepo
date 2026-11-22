@@ -68,6 +68,13 @@ class SourceParsingTest(unittest.TestCase):
 
         self.assertEqual([sentence.text for sentence in document.sentences], ["他出发了。"])
 
+    def test_volume_heading_does_not_swallow_chapters(self) -> None:
+        text = "# 书名\n\n# 第一卷 风起\n\n## 第一章 起点\n\n他出发了。\n\n## 第二章 转折\n\n他停下了。\n"
+        document = parse_source(text, title="书名")
+
+        self.assertEqual([chapter.title for chapter in document.chapters], ["第一章 起点", "第二章 转折"])
+        self.assertNotEqual(document.title, "第一卷 风起")
+
     def test_single_chinese_chapter_heading(self) -> None:
         document = parse_source("第一章 起点\n\n他出发了。\n", title="路")
 
