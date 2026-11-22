@@ -157,6 +157,26 @@ class ScreenplayValidationTest(unittest.TestCase):
 
         self.assertIn("S008", [gate.id for gate in report.warnings])
 
+    def test_alias_speaker_is_not_flagged_as_extra_cast(self) -> None:
+        from screenplay_adapter.cast import extract_cast
+        from screenplay_adapter.plan import build_plan, make_brief
+        from tests.support import make_document
+
+        document = make_document()
+        cast = extract_cast(document, explicit=[{"name": "林昭", "aliases": ["阿昭"]}, {"name": "顾远"}])
+        plan = build_plan(document, make_brief("雨夜", "short-drama", episodes=3, episode_minutes=2, scene_seconds=45), cast)
+        drafts = make_drafts(plan)
+        first = drafts["S001"]
+        drafts["S001"] = replace(
+            first,
+            dialogue=(replace(first.dialogue[0], character="阿昭"),),
+        )
+        screenplay = merge_screenplay(plan, drafts)
+
+        report = validate_screenplay(plan, screenplay, document)
+
+        self.assertNotIn("S011", [gate.id for gate in report.warnings])
+
     def test_invention_ratio_warns(self) -> None:
         document, plan = make_plan()
         screenplay = merge_screenplay(plan, make_drafts(plan, basis="invented"))

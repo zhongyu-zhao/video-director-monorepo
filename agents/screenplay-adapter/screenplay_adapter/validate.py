@@ -519,8 +519,15 @@ def _gate_scene_cast(plan: AdaptationPlan, screenplay: Screenplay) -> Gate:
     mismatches: list[str] = []
     for plan_scene, scene in zip(plan.scenes, screenplay.scenes):
         planned = set(plan_scene.cast)
-        speakers = {str(line.get("character", "")) for line in scene.get("dialogue", [])}
-        extra = sorted(name for name in speakers if name and name not in planned)
+        speakers = set()
+        for line in scene.get("dialogue", []):
+            name = str(line.get("character", ""))
+            character = plan.character(name)
+            if character is not None:
+                name = character.name
+            if name:
+                speakers.add(name)
+        extra = sorted(name for name in speakers if name not in planned)
         if extra:
             mismatches.append(f"{plan_scene.id}:{','.join(extra)}")
     if mismatches:
