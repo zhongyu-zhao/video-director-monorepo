@@ -281,12 +281,13 @@ def extract_keyframes(
     positions = [0.15, 0.5, 0.85] if keyframes == 3 else [
         (index + 1) / (keyframes + 1) for index in range(keyframes)
     ]
+    max_frame = max(0, int(table.video.duration * fps) - 1)
     requested: list[tuple[str, int, int]] = []
     frame_numbers: set[int] = set()
     for shot in table.shots:
         for index, position in enumerate(positions, start=1):
             time = shot.start + shot.duration * position
-            frame = max(0, round(time * fps))
+            frame = min(max_frame, max(0, round(time * fps)))
             requested.append((shot.shot_id, index, frame))
             frame_numbers.add(frame)
     ordered = sorted(frame_numbers)
@@ -317,11 +318,17 @@ def extract_keyframes(
         if path.is_file():
             frame_paths[number] = path
 
+    available = sorted(frame_paths)
+    if not available:
+        raise EvidenceError("keyframe extraction produced no frames")
     result: dict[str, dict[str, Path]] = {}
     for shot_id, index, frame in requested:
         source = frame_paths.get(frame)
         if source is None:
-            raise EvidenceError(f"missing keyframe {frame} for {shot_id}")
+            # Near the end of a video, duration*fps can overshoot the last
+            # decoded frame; use the nearest earlier extracted frame.
+            fallback = max((number for number in available if number <= frame), default=available[0])
+            source = frame_paths[fallback]
         destination = frames_root / f"{shot_id}-k{index}.jpg"
         if force or not destination.is_file():
             shutil.copyfile(source, destination)
