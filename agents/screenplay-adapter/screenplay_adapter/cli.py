@@ -176,6 +176,24 @@ def _draft(arguments: argparse.Namespace) -> int:
 
     existing = load_drafts(root)
     if not arguments.force:
+        stale = sorted(
+            scene.id
+            for scene in selected
+            if scene.id in existing
+            and (
+                (existing[scene.id].plan_hash and existing[scene.id].plan_hash != plan.plan_hash)
+                or (
+                    existing[scene.id].source_sha256
+                    and existing[scene.id].source_sha256 != str(plan.source.get("sha256", ""))
+                )
+            )
+        )
+        if stale:
+            preview = ", ".join(stale[:8]) + (" …" if len(stale) > 8 else "")
+            raise AdapterError(
+                f"{len(stale)} drafts were written against a different plan or source: {preview}. "
+                "Pass --force to rewrite them."
+            )
         selected = [scene for scene in selected if scene.id not in existing]
     if not selected:
         print("draft: nothing to do (all selected scenes already have drafts)")

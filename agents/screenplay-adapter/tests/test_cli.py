@@ -155,6 +155,59 @@ class CliEndToEndTest(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn("plan has failing gates", stderr)
 
+    def test_stale_draft_requires_force(self) -> None:
+        self.assertEqual(self.adapt()[0], 0)
+        port = self.start_fake()
+        code, _, stderr = run_cli(
+            main,
+            "draft",
+            "--root",
+            str(self.root),
+            "--env-file",
+            str(self.env),
+            "--base-url",
+            f"http://127.0.0.1:{port}/v1",
+            "--model",
+            "fake",
+            "--scene",
+            "S001",
+        )
+        self.assertEqual(code, 0, stderr)
+
+        # Changing the brief changes plan_hash and invalidates the old draft.
+        code, _, stderr = run_cli(
+            main,
+            "adapt",
+            str(self.source),
+            "--root",
+            str(self.root),
+            "--title",
+            "雨夜",
+            "--episodes",
+            "3",
+            "--episode-minutes",
+            "2",
+            "--scene-seconds",
+            "30",
+            "--force",
+        )
+        self.assertEqual(code, 0, stderr)
+
+        code, _, stderr = run_cli(
+            main,
+            "draft",
+            "--root",
+            str(self.root),
+            "--env-file",
+            str(self.env),
+            "--base-url",
+            f"http://127.0.0.1:{port}/v1",
+            "--model",
+            "fake",
+        )
+        self.assertEqual(code, 2)
+        self.assertIn("different plan or source", stderr)
+
     def test_adapt_twice_needs_force(self) -> None:
         self.assertEqual(self.adapt()[0], 0)
 
