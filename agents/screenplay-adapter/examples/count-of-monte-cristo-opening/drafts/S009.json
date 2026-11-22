@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "scene_id": "S009",
+  "heading": {
+    "int_ext": "EXT",
+    "location": "马赛外海 / 伊夫堡",
+    "time": "NIGHT"
+  },
+  "action": [
+    "一艘没有灯的小船离开马赛。唐泰斯坐在船底，手腕被绳子勒红。",
+    "船绕过伊夫堡的礁石。城堡的黑影从海面升起来，像一块没有窗的石头。",
+    "狱卒把唐泰斯推上石阶。铁门打开，又合上。走廊里只有火把，墙上渗着水。",
+    "唐泰斯扑到铁窗前。窗外是海，远处马赛的灯火越来越小。",
+    "狱卒把一盏灯挂在门边，灯芯很细。唐泰斯的手从铁栏间伸出去，什么也抓不到。",
+    "小船靠岸时，浪把船头推得撞在石阶上，唐泰斯踉跄了一下。",
+    "狱卒搜走他的钱袋、小刀和那枚有点松的戒指。",
+    "铁门合拢，走廊尽头的火把晃了一下。"
+  ],
+  "dialogue": [
+    {
+      "character": "爱德蒙",
+      "line": "我们去哪里？",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "狱卒",
+      "line": "到了你就知道。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我要见检察官！我是无辜的！",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "狱卒",
+      "line": "每一个进来的人都这么说。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "告诉莫雷尔先生！告诉梅尔塞苔丝！",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "狱卒",
+      "line": "省点力气吧。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我会出去的。我一定会出去。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "狱卒",
+      "line": "那就留着这句话，过几年再说。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "你叫什么名字？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "狱卒",
+      "line": "在这里，名字没用。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我有名字。我叫爱德蒙·唐泰斯。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "狱卒",
+      "line": "睡吧，唐泰斯先生。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "那枚戒指还给我。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "狱卒",
+      "line": "这里的东西都不是你的了。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "那是我未婚妻的。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "狱卒",
+      "line": "那就更不属于你了。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

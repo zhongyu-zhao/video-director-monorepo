@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "scene_id": "S007",
+  "heading": {
+    "int_ext": "INT",
+    "location": "法院审讯室",
+    "time": "NIGHT"
+  },
+  "action": [
+    "审讯室里只有一张桌子、两支蜡烛。维尔福坐在桌后，领结工整，手指轻轻敲着桌面。",
+    "唐泰斯站在他面前，衣服上还留着订婚宴的褶皱。窗外的马赛在夜里发白。",
+    "维尔福翻开记录本，先问姓名、年龄、职业，像在核对一件货物。",
+    "当唐泰斯提到厄尔巴岛，维尔福的笔停了。烛芯爆了一声，蜡油滴在纸上。",
+    "维尔福把信接过去，没有立刻拆。他先看了看信封，又看了看唐泰斯的脸。",
+    "维尔福把信放在烛台边，信封边缘被火苗烤得发黄。",
+    "唐泰斯看见他的手指在抖，却以为那是夜里的凉意。",
+    "窗外有马车经过，车轮碾过石板，声音很长。"
+  ],
+  "dialogue": [
+    {
+      "character": "维尔福",
+      "line": "你从厄尔巴岛回来。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "法老号在那里停靠。船长病了，我替他办事。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "维尔福",
+      "line": "你见了谁？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我见了皇帝。他问我船上的事，还让我带一封信回马赛。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "维尔福",
+      "line": "信呢？",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "在这里。收信人是诺瓦蒂埃先生。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "维尔福",
+      "line": "诺瓦蒂埃。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "您认识他？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "你为什么不早说？",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我以为这很重要。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "你在厄尔巴岛还见了谁？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "只有皇帝。还有几个穿便服的人，我没有问名字。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "便服。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "先生，我做错什么了吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "你认识诺瓦蒂埃先生？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "不认识。我只知道信封上的名字。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "这封信，你看过内容吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "没有。船长的信，我不拆。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

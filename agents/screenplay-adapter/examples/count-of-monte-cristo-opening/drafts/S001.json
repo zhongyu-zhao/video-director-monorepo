@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "scene_id": "S001",
+  "heading": {
+    "int_ext": "EXT",
+    "location": "马赛港码头",
+    "time": "DAY"
+  },
+  "action": [
+    "一八一五年二月二十四日。马赛港的钟声穿过晨雾，法老号的三根桅杆从防波堤后缓缓升起。",
+    "码头工人停下手中的绳索。鱼贩把篮子搁在脚边，孩子们追着海鸥跑。船主莫雷尔挤到岸边，手搭凉棚。",
+    "船头站着一个十九岁的年轻人，爱德蒙·唐泰斯，皮肤被海风吹成深色，手里攥着船长帽。",
+    "押运员唐格拉尔站在他身后半步，夹着账本，笑得很轻。甲板上，水手们把缆绳抛上岸。",
+    "莫雷尔跳上船，先摸了摸船舷，像在确认老伙计还活着。唐泰斯把帽子摘下来，露出被帽檐压出的红印。",
+    "莫雷尔拍了拍唐泰斯的肩，又回头看了一眼码头上的钟。",
+    "唐格拉尔合上账本，拇指在封皮上按出一道白印。",
+    "法老号的旧帆被卷起来，露出一道缝补过的裂口。"
+  ],
+  "dialogue": [
+    {
+      "character": "莫雷尔",
+      "line": "法老号回来了！唐泰斯，老船长呢？",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "勒克莱尔船长没能回来。他病死在返航途中。我按他的航线把船带回来了。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "你才十九岁。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "货在，船在。账目可以现在就对。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "账目当然要对。不过船长尸骨未寒，有人已经站在他的位子上了。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "唐格拉尔，回办公室再说。唐泰斯，明天来见我。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "是，先生。我今晚想先去看我父亲。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "去吧。你父亲会为你骄傲的。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "一夜。在厄尔巴岛停一夜，足够做很多事了。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "唐格拉尔。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "船长需要淡水。我们只停了半夜。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "明天把航海日志带来。唐泰斯，你也来。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "船上的账，今晚之前送到我办公室。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "今晚。船长一定有空。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我有空。先让我父亲吃顿饱饭。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

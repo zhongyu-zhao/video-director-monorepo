@@ -61,6 +61,10 @@ SCREENPLAY_ADAPTER_MODEL=gpt-4o-mini
 
 退出码：`0` 通过（允许 warn）；`1` 有 fail 门或部分场景写作失败；`2` 输入、项目或 provider 配置错误。
 
+## 示例
+
+[《基督山伯爵》20 分钟开场](examples/count-of-monte-cristo-opening/README.md)：10 场、约 18.7 分钟（估算）、0 fail / 1 warn；含可读剧本、计划、逐场草稿和报告。
+
 ## 人物表
 
 默认从对白归属自动抽人物（`“你迟到了。”顾远说。`），抽不到重要角色时用显式人物表：

@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "scene_id": "S010",
+  "heading": {
+    "int_ext": "INT",
+    "location": "唐泰斯家阁楼 / 马赛",
+    "time": "DAY"
+  },
+  "action": [
+    "清晨。梅尔塞苔丝坐在老唐泰斯对面，桌上放着两碗没有动过的汤。",
+    "楼下，费尔南站在街角，抬头看着那扇小窗。梅尔塞苔丝没有看他。",
+    "唐格拉尔在账房里写下新的数字，笔尖很稳。维尔福对着镜子整理领结，准备去参加升迁的仪式。",
+    "镜头越过马赛的屋顶，落在伊夫堡的石墙上。海浪一遍遍撞上去。字幕：十四年后。",
+    "老唐泰斯把手放在梅尔塞苔丝手背上，像在确认两个人还坐在一起。",
+    "梅尔塞苔丝把汤碗推到老唐泰斯面前，老人拿起勺子，又放下。",
+    "费尔南在街角站了很久，直到教堂的钟敲响。",
+    "维尔福的马车从楼下经过，车帘拉得严严实实。"
+  ],
+  "dialogue": [
+    {
+      "character": "老唐泰斯",
+      "line": "他会回来吗？",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "会。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "我等他。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "我们一起等。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "梅尔塞苔丝。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "你走吧。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "我会照顾你。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "我不需要。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "你每天来，是想替他尽孝吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "我只是……",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "你只是希望他别回来。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "我从来没有这么说。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "那就别站在这里。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "十四年后，他还会认得我们吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "他走的时候，穿的还是订婚的衣服。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "我给他做了一件新的。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "他回来就能穿。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "他回来就能穿。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

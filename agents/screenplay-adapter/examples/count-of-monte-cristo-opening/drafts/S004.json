@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "scene_id": "S004",
+  "heading": {
+    "int_ext": "INT",
+    "location": "雷瑟夫酒馆",
+    "time": "NIGHT"
+  },
+  "action": [
+    "酒馆里烟雾缭绕。唐格拉尔把一瓶酒推到费尔南面前，卡德鲁斯坐在旁边啃面包。",
+    "唐格拉尔摊开一张纸，蘸了墨水，笔尖停在半空。他故意用左手写字，字迹歪歪扭扭。",
+    "费尔南的杯子已经空了。他盯着桌面，像在听，又像没在听。卡德鲁斯把酒洒在袖子上。",
+    "唐格拉尔写完，把信折好，用蜡封上。烛火在信封上跳了一下。他把信推到费尔南手边。",
+    "窗外有巡逻队的脚步声经过。卡德鲁斯下意识压低了声音。",
+    "卡德鲁斯把面包屑扫到地上，一只猫从桌下钻出来。",
+    "唐格拉尔从怀里摸出一枚旧戒指，在蜡上按出印记。",
+    "费尔南把信揣进内袋，手指在袋口停了一下。"
+  ],
+  "dialogue": [
+    {
+      "character": "唐格拉尔",
+      "line": "法老号的船长，十九岁。梅尔塞苔丝，加泰罗尼亚最漂亮的姑娘。他什么都有。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "费尔南",
+      "line": "闭嘴。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "我只是陈述事实。除非有人让检察官知道，他从厄尔巴岛带了一封信。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "卡德鲁斯",
+      "line": "厄尔巴岛？那是皇帝住的地方。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "所以这封信很有趣。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "他会坐牢吗？",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "也许。也许只是问几句话。你写不写？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "把信给我。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "卡德鲁斯",
+      "line": "你们疯了。这只是玩笑。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "当然，只是玩笑。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "卡德鲁斯",
+      "line": "唐泰斯是我们的邻居。他父亲还在等他回家。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "那就让他回家。谁拦着他了？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "信上写什么？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "写他是拿破仑党的密使。剩下的，交给检察官。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "卡德鲁斯",
+      "line": "唐格拉尔，你写这封信的时候，手不抖吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "我写账的时候也不抖。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "如果他被放出来呢？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "唐格拉尔",
+      "line": "那就当是个玩笑。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

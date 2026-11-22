@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "scene_id": "S003",
+  "heading": {
+    "int_ext": "EXT",
+    "location": "加泰罗尼亚村",
+    "time": "DAY"
+  },
+  "action": [
+    "海边的加泰罗尼亚村，白墙被晒得发亮。梅尔塞苔丝坐在门边织网，黑发垂在肩上。",
+    "唐泰斯从坡下走来，手里拿着一小束野花。她抬头，眼睛里先亮了一下，又故意板起脸。",
+    "不远处的阴影里，费尔南靠着墙，手里握着一把割网的刀。刀刃在石头上一下一下地磨。",
+    "唐泰斯单膝跪下，把花递过去。梅尔塞苔丝没有接花，先握住了他的手。",
+    "她把手收回去，低头理了理网线，耳根却红了。费尔南的刀停了。",
+    "梅尔塞苔丝把野花插在门边的水罐里，花瓣上还带着露水。",
+    "费尔南把刀插回腰间，转身走向海边，脚踩碎了贝壳。",
+    "唐泰斯追了两步，又停下。"
+  ],
+  "dialogue": [
+    {
+      "character": "爱德蒙",
+      "line": "梅尔塞苔丝，我要当船长了。嫁给我。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "你确定？海会把你带走。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "这次我带你去。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "那我等你回来。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "不用等。船一靠岸，我们就去教堂。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "你父亲同意吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "他今晚会喝一杯，然后假装不高兴。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "她等的人不该是你。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "费尔南，我们是朋友。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "朋友。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "费尔南，别这样。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "我只是来看看。你们继续。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "今晚来喝一杯。我请你。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "我不喝你的酒。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "费尔南从小就住在隔壁。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我知道。所以我请他喝喜酒。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "他未必会来。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

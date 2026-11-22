@@ -1,0 +1,597 @@
+{
+  "schema_version": 1,
+  "kind": "screenplay-adapter-plan",
+  "title": "基督山伯爵：马赛（20 分钟开场）",
+  "brief": {
+    "title": "基督山伯爵：马赛（20 分钟开场）",
+    "format": "series",
+    "episodes": 1,
+    "episode_minutes": 20.0,
+    "scene_seconds": 120.0,
+    "total_minutes": 20.0,
+    "total_seconds": 1200.0,
+    "genre": "剧情/复仇",
+    "logline": "一个即将成为船长和丈夫的年轻人，在订婚宴上被一封匿名信推进了十四年的深渊。",
+    "audience": "一般观众",
+    "aspect": "horizontal",
+    "language": "zh",
+    "mode": "expand"
+  },
+  "source": {
+    "path": "source/source.md",
+    "sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+    "title": "基督山伯爵：马赛（20 分钟开场）",
+    "language": "zh",
+    "chars": 1335,
+    "word_units": 1094,
+    "chapter_count": 10,
+    "paragraph_count": 10,
+    "sentence_count": 57,
+    "chapters": [
+      {
+        "id": "CH001",
+        "index": 1,
+        "title": "第一章 归航",
+        "chars": 122,
+        "paragraph_count": 1,
+        "sentence_count": 5
+      },
+      {
+        "id": "CH002",
+        "index": 2,
+        "title": "第二章 父与子",
+        "chars": 100,
+        "paragraph_count": 1,
+        "sentence_count": 4
+      },
+      {
+        "id": "CH003",
+        "index": 3,
+        "title": "第三章 加泰罗尼亚村",
+        "chars": 95,
+        "paragraph_count": 1,
+        "sentence_count": 6
+      },
+      {
+        "id": "CH004",
+        "index": 4,
+        "title": "第四章 密谋",
+        "chars": 133,
+        "paragraph_count": 1,
+        "sentence_count": 6
+      },
+      {
+        "id": "CH005",
+        "index": 5,
+        "title": "第五章 订婚宴",
+        "chars": 116,
+        "paragraph_count": 1,
+        "sentence_count": 6
+      },
+      {
+        "id": "CH006",
+        "index": 6,
+        "title": "第六章 逮捕",
+        "chars": 148,
+        "paragraph_count": 1,
+        "sentence_count": 6
+      },
+      {
+        "id": "CH007",
+        "index": 7,
+        "title": "第七章 审讯",
+        "chars": 117,
+        "paragraph_count": 1,
+        "sentence_count": 6
+      },
+      {
+        "id": "CH008",
+        "index": 8,
+        "title": "第八章 信与父",
+        "chars": 159,
+        "paragraph_count": 1,
+        "sentence_count": 8
+      },
+      {
+        "id": "CH009",
+        "index": 9,
+        "title": "第九章 伊夫堡",
+        "chars": 107,
+        "paragraph_count": 1,
+        "sentence_count": 6
+      },
+      {
+        "id": "CH010",
+        "index": 10,
+        "title": "第十章 余波",
+        "chars": 109,
+        "paragraph_count": 1,
+        "sentence_count": 4
+      }
+    ]
+  },
+  "cast": [
+    {
+      "id": "C001",
+      "name": "爱德蒙·唐泰斯",
+      "aliases": [
+        "爱德蒙",
+        "唐泰斯"
+      ],
+      "first_chapter": "CH001",
+      "last_chapter": "CH010",
+      "mentions": 29,
+      "dialogue_mentions": 1,
+      "source": "explicit",
+      "role": "主角",
+      "note": "法老号大副，即将接任船长"
+    },
+    {
+      "id": "C002",
+      "name": "梅尔塞苔丝",
+      "aliases": [
+        "梅尔塞苔丝"
+      ],
+      "first_chapter": "CH002",
+      "last_chapter": "CH010",
+      "mentions": 18,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "女主角",
+      "note": "加泰罗尼亚渔女，唐泰斯的未婚妻"
+    },
+    {
+      "id": "C003",
+      "name": "费尔南",
+      "aliases": [],
+      "first_chapter": "CH003",
+      "last_chapter": "CH010",
+      "mentions": 7,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "反派",
+      "note": "梅尔塞苔丝的追求者"
+    },
+    {
+      "id": "C004",
+      "name": "唐格拉尔",
+      "aliases": [],
+      "first_chapter": "CH001",
+      "last_chapter": "CH010",
+      "mentions": 5,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "反派",
+      "note": "法老号押运员，嫉妒唐泰斯"
+    },
+    {
+      "id": "C005",
+      "name": "莫雷尔",
+      "aliases": [],
+      "first_chapter": "CH001",
+      "last_chapter": "CH006",
+      "mentions": 4,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "船主",
+      "note": "法老号船主，唐泰斯的雇主"
+    },
+    {
+      "id": "C006",
+      "name": "老唐泰斯",
+      "aliases": [
+        "唐泰斯的父亲"
+      ],
+      "first_chapter": "CH002",
+      "last_chapter": "CH010",
+      "mentions": 4,
+      "dialogue_mentions": 1,
+      "source": "explicit",
+      "role": "配角",
+      "note": "爱德蒙的父亲"
+    },
+    {
+      "id": "C007",
+      "name": "卡德鲁斯",
+      "aliases": [],
+      "first_chapter": "CH004",
+      "last_chapter": "CH006",
+      "mentions": 3,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "配角",
+      "note": "裁缝，唐泰斯的邻居"
+    },
+    {
+      "id": "C008",
+      "name": "维尔福",
+      "aliases": [
+        "检察官"
+      ],
+      "first_chapter": "CH004",
+      "last_chapter": "CH010",
+      "mentions": 10,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "反派",
+      "note": "代理检察官"
+    },
+    {
+      "id": "C009",
+      "name": "宪兵队长",
+      "aliases": [],
+      "first_chapter": "CH005",
+      "last_chapter": "CH008",
+      "mentions": 3,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "配角",
+      "note": "执行逮捕的宪兵"
+    },
+    {
+      "id": "C010",
+      "name": "狱卒",
+      "aliases": [],
+      "first_chapter": "CH009",
+      "last_chapter": "CH009",
+      "mentions": 1,
+      "dialogue_mentions": 0,
+      "source": "explicit",
+      "role": "配角",
+      "note": "伊夫堡狱卒"
+    }
+  ],
+  "scenes": [
+    {
+      "id": "S001",
+      "episode": 1,
+      "index_in_episode": 1,
+      "beat": "cold_open",
+      "beat_label": "开场钩子",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 0,
+        "sentence_end": 4,
+        "char_start": 32,
+        "char_end": 151,
+        "chapter_ids": [
+          "CH001"
+        ],
+        "paragraph_ids": [
+          "P0001"
+        ],
+        "excerpt": "一八一五年二月二十四日，法老号驶入马赛港。 年轻的大副爱德蒙·唐泰斯站在船头，海风吹动他的头发。 船主莫雷尔在码头等他，老船长勒克莱尔已经在返航途中病逝。 莫雷尔有意让唐泰斯接任船长。 船上的押运员唐格拉尔看着这一幕，脸上笑着，手指却攥紧了账本。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "唐格拉尔",
+        "莫雷尔"
+      ],
+      "expansion": [
+        "expand",
+        "add_dialogue"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "原文没有直接引语：考虑用对白或可见动作外化，而不是旁白复述。"
+      ]
+    },
+    {
+      "id": "S002",
+      "episode": 1,
+      "index_in_episode": 2,
+      "beat": "setup",
+      "beat_label": "建置",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 5,
+        "sentence_end": 8,
+        "char_start": 165,
+        "char_end": 262,
+        "chapter_ids": [
+          "CH002"
+        ],
+        "paragraph_ids": [
+          "P0002"
+        ],
+        "excerpt": "唐泰斯回到狭窄的阁楼。 老唐泰斯已经三天没有好好吃饭，却不肯花儿子留下的钱。 唐泰斯把金币放在桌上，告诉父亲自己就要当船长，还要娶梅尔塞苔丝。 老人为他祝福，又忍不住担心： 幸福来得太快，未必是好事。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "梅尔塞苔丝",
+        "老唐泰斯"
+      ],
+      "expansion": [
+        "expand",
+        "add_dialogue"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "原文没有直接引语：考虑用对白或可见动作外化，而不是旁白复述。"
+      ]
+    },
+    {
+      "id": "S003",
+      "episode": 1,
+      "index_in_episode": 3,
+      "beat": "setup",
+      "beat_label": "建置",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 9,
+        "sentence_end": 14,
+        "char_start": 279,
+        "char_end": 371,
+        "chapter_ids": [
+          "CH003"
+        ],
+        "paragraph_ids": [
+          "P0003"
+        ],
+        "excerpt": "加泰罗尼亚村的午后，梅尔塞苔丝坐在门边织网。 唐泰斯来了，向她求婚。 她答应等他。 费尔南站在阴影里，看着他们拥抱。 他也爱梅尔塞苔丝，却从未说出口。 唐泰斯走后，费尔南把手里的渔网割断了一截。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "梅尔塞苔丝",
+        "费尔南"
+      ],
+      "expansion": [
+        "expand",
+        "add_dialogue"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "原文没有直接引语：考虑用对白或可见动作外化，而不是旁白复述。"
+      ]
+    },
+    {
+      "id": "S004",
+      "episode": 1,
+      "index_in_episode": 4,
+      "beat": "escalation",
+      "beat_label": "升级",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 15,
+        "sentence_end": 20,
+        "char_start": 384,
+        "char_end": 514,
+        "chapter_ids": [
+          "CH004"
+        ],
+        "paragraph_ids": [
+          "P0004"
+        ],
+        "excerpt": "雷瑟夫酒馆里，唐格拉尔请费尔南喝酒。 他故意提起唐泰斯即将成为船长、即将娶梅尔塞苔丝。 费尔南的嫉妒被点燃。 唐格拉尔写下一封匿名信，说唐泰斯是拿破仑党的密使，从厄尔巴岛带回一封信。 卡德鲁斯在旁边看着，觉得这只是一个玩笑。 唐格拉尔把信折好，说：“让检察官去判断吧。”"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "梅尔塞苔丝",
+        "费尔南",
+        "唐格拉尔",
+        "卡德鲁斯",
+        "维尔福"
+      ],
+      "expansion": [
+        "expand",
+        "crowded_cast"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "出场人物较多：考虑聚焦 2–3 人，或拆成两场，避免一场戏没有主次。"
+      ]
+    },
+    {
+      "id": "S005",
+      "episode": 1,
+      "index_in_episode": 5,
+      "beat": "escalation",
+      "beat_label": "升级",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 21,
+        "sentence_end": 26,
+        "char_start": 528,
+        "char_end": 641,
+        "chapter_ids": [
+          "CH005"
+        ],
+        "paragraph_ids": [
+          "P0005"
+        ],
+        "excerpt": "唐泰斯与梅尔塞苔丝的订婚宴在河边的小厅举行。 莫雷尔、老唐泰斯、卡德鲁斯和邻居们都来了。 烛光、歌声、祝福。 唐泰斯举杯，说自己会做一个配得上梅尔塞苔丝的人。 费尔南站在门口，没有入席。 一个宪兵队长走进来，问：“谁是爱德蒙·唐泰斯？”"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "梅尔塞苔丝",
+        "费尔南",
+        "莫雷尔",
+        "老唐泰斯",
+        "卡德鲁斯",
+        "宪兵队长"
+      ],
+      "expansion": [
+        "expand",
+        "crowded_cast"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "出场人物较多：考虑聚焦 2–3 人，或拆成两场，避免一场戏没有主次。"
+      ]
+    },
+    {
+      "id": "S006",
+      "episode": 1,
+      "index_in_episode": 6,
+      "beat": "turn",
+      "beat_label": "转折",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 27,
+        "sentence_end": 32,
+        "char_start": 654,
+        "char_end": 799,
+        "chapter_ids": [
+          "CH006"
+        ],
+        "paragraph_ids": [
+          "P0006"
+        ],
+        "excerpt": "唐泰斯放下酒杯，说：“我是。”宪兵没有解释，只让他跟他们走。 梅尔塞苔丝抓住他的袖子，被轻轻推开。 老唐泰斯想上前，被卡德鲁斯拦住；费尔南站在门口。 莫雷尔上前交涉，宪兵队长说这是检察官的命令。 唐泰斯回头看了梅尔塞苔丝一眼，说：“别怕，我会回来的。”门在他身后关上。 宴会厅里只剩下蜡烛燃烧的声音。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "梅尔塞苔丝",
+        "费尔南",
+        "莫雷尔",
+        "老唐泰斯",
+        "卡德鲁斯",
+        "维尔福",
+        "宪兵队长"
+      ],
+      "expansion": [
+        "expand",
+        "crowded_cast"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "出场人物较多：考虑聚焦 2–3 人，或拆成两场，避免一场戏没有主次。"
+      ]
+    },
+    {
+      "id": "S007",
+      "episode": 1,
+      "index_in_episode": 7,
+      "beat": "turn",
+      "beat_label": "转折",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 33,
+        "sentence_end": 38,
+        "char_start": 812,
+        "char_end": 926,
+        "chapter_ids": [
+          "CH007"
+        ],
+        "paragraph_ids": [
+          "P0007"
+        ],
+        "excerpt": "维尔福在法院审讯唐泰斯。 唐泰斯讲述法老号的航线、老船长的病逝、他在厄尔巴岛停留的原因。 维尔福起初漫不经心，直到唐泰斯提到那封从厄尔巴岛带回的信。 维尔福问信是给谁的。 唐泰斯说，信封上写着“巴黎，诺瓦蒂埃先生”。 维尔福的手停在纸上。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "维尔福"
+      ],
+      "expansion": [
+        "expand"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。"
+      ]
+    },
+    {
+      "id": "S008",
+      "episode": 1,
+      "index_in_episode": 8,
+      "beat": "complication",
+      "beat_label": "复杂化",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 39,
+        "sentence_end": 46,
+        "char_start": 940,
+        "char_end": 1096,
+        "chapter_ids": [
+          "CH008"
+        ],
+        "paragraph_ids": [
+          "P0008"
+        ],
+        "excerpt": "维尔福让唐泰斯先下去。 他独自坐在办公室里，拆开那封信。 收信人是他的父亲诺瓦蒂埃，一个拿破仑党人。 信里没有什么大阴谋，只有几行问候和一件旧事的嘱托。 可是这封信一旦公开，维尔福的仕途就完了。 他叫来宪兵队长，又让他先出去；然后看着烛火，把信的一角放到火苗上。 纸张卷曲、发黑。 他对自己说：“为了我的父亲，也为了我自己。”"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "维尔福",
+        "宪兵队长"
+      ],
+      "expansion": [
+        "expand"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。"
+      ]
+    },
+    {
+      "id": "S009",
+      "episode": 1,
+      "index_in_episode": 9,
+      "beat": "complication",
+      "beat_label": "复杂化",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 47,
+        "sentence_end": 52,
+        "char_start": 1110,
+        "char_end": 1214,
+        "chapter_ids": [
+          "CH009"
+        ],
+        "paragraph_ids": [
+          "P0009"
+        ],
+        "excerpt": "夜里，唐泰斯被押上一艘小船。 他问去哪里，没有人回答。 船绕过伊夫堡的礁石，靠上码头。 狱卒把他推进门里，铁门在身后合拢。 唐泰斯隔着铁窗喊：“我是无辜的！我要见检察官！”回答他的只有海浪。 远处，马赛的灯火越来越小。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "维尔福",
+        "狱卒"
+      ],
+      "expansion": [
+        "expand"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。"
+      ]
+    },
+    {
+      "id": "S010",
+      "episode": 1,
+      "index_in_episode": 10,
+      "beat": "cliffhanger",
+      "beat_label": "结尾卡点",
+      "duration_s": 120.0,
+      "source": {
+        "sentence_start": 53,
+        "sentence_end": 56,
+        "char_start": 1227,
+        "char_end": 1334,
+        "chapter_ids": [
+          "CH010"
+        ],
+        "paragraph_ids": [
+          "P0010"
+        ],
+        "excerpt": "梅尔塞苔丝站在唐泰斯父亲的阁楼里，老唐泰斯问她：“他会回来吗？”她说：“会。”费尔南在楼下等她，她没有看他。 唐格拉尔在账本上写下新的数字。 维尔福在办公室里整理领结，准备升迁。 镜头停在伊夫堡的石墙上，字幕：十四年后。"
+      },
+      "cast": [
+        "爱德蒙·唐泰斯",
+        "梅尔塞苔丝",
+        "费尔南",
+        "唐格拉尔",
+        "老唐泰斯",
+        "维尔福"
+      ],
+      "expansion": [
+        "expand",
+        "crowded_cast"
+      ],
+      "notes": [
+        "原文信息量低于目标时长：需要补动作、反应和对白；新增内容不得改变既有事实。",
+        "出场人物较多：考虑聚焦 2–3 人，或拆成两场，避免一场戏没有主次。"
+      ]
+    }
+  ],
+  "requested_scenes": 10,
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "warnings": []
+}

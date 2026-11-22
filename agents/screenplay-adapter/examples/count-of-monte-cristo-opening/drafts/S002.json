@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "scene_id": "S002",
+  "heading": {
+    "int_ext": "INT",
+    "location": "唐泰斯家的阁楼",
+    "time": "DAY"
+  },
+  "action": [
+    "狭窄的木楼梯，墙皮剥落。唐泰斯推开门，屋里只有一张床、一张桌子和一扇小窗。",
+    "老唐泰斯坐在窗边，手里握着一只空碗。桌上留着几枚舍不得花的铜币。",
+    "唐泰斯把一袋金币放在桌上，金币滚开，映着窗外的光。老人没有看钱，先看儿子的脸。",
+    "墙角的小柜门半开着，里面只有半块硬面包和一小罐橄榄。窗台上，母亲留下的旧陶罐里插着一根干枯的迷迭香。",
+    "老人咳了两声，用袖口掩住嘴。唐泰斯把窗户推开，海风灌进来，吹动桌上的金币。",
+    "唐泰斯蹲下来，把父亲床下的旧木箱拖出来，里面是母亲的披肩。",
+    "老人把金币一枚枚码好，像在数儿子的年岁。",
+    "窗外传来卖鱼女人的吆喝，唐泰斯把窗关上。"
+  ],
+  "dialogue": [
+    {
+      "character": "老唐泰斯",
+      "line": "你回来了。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "父亲，你怎么瘦成这样？",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "我吃得下。你留着钱，娶媳妇要用。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "莫雷尔先生要让我当船长。法老号是我的了。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "梅尔塞苔丝知道吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我今晚就去告诉她。我要娶她。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "幸福来得太快，孩子。答应我，别把好事一次用完。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "等我回来，我们搬去有阳光的房子。你可以在窗边种花。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "我只要你别在海上走得太远。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "这次我带她一起去。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "你母亲要是看见今天，不知道多高兴。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "她看见了。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "船长一个月多少钱？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "够我们三个人花。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "三个人？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "你，我，还有梅尔塞苔丝。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

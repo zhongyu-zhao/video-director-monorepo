@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "scene_id": "S005",
+  "heading": {
+    "int_ext": "INT",
+    "location": "河边小厅",
+    "time": "NIGHT"
+  },
+  "action": [
+    "河边的小厅挂满纸灯。长桌上摆着面包、鱼和廉价葡萄酒。莫雷尔举杯，老唐泰斯坐在主位，笑得合不拢嘴。",
+    "梅尔塞苔丝换了一条浅色裙子，唐泰斯站在她身边，手一直没松开。卡德鲁斯在角落里拉手风琴。",
+    "费尔南靠在门框上，没有入席。唐格拉尔的位置空着，桌上留着一只没人碰的杯子。",
+    "一支舞跳完，莫雷尔敲了敲杯子。众人安静下来。老唐泰斯把儿子的手放在梅尔塞苔丝手上。",
+    "敲门声响起。一个宪兵队长走进来，皮靴在木地板上停住。他身后跟着两个宪兵。",
+    "莫雷尔把一枚旧怀表塞进唐泰斯手里，说是给船长的礼物。",
+    "老唐泰斯背过身去，用袖子擦眼睛。",
+    "梅尔塞苔丝把一枚戒指戴在唐泰斯手上，戒指有点松。"
+  ],
+  "dialogue": [
+    {
+      "character": "莫雷尔",
+      "line": "为唐泰斯船长，为梅尔塞苔丝。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "我儿子。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我敬我的父亲，敬莫雷尔先生，敬梅尔塞苔丝。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "敬我们。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "卡德鲁斯",
+      "line": "敬法老号！",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "敬你们的幸福。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "费尔南，进来喝一杯。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "费尔南",
+      "line": "我站着就好。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "孩子，我把她交给你了。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我会用一辈子还您。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "别说一辈子。先说今晚。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "今晚谁也不许谈船。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "谁是爱德蒙·唐泰斯？",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "法老号交给你，我放心。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "我不会让您失望。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "这块表走得准吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "比马赛的钟准。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

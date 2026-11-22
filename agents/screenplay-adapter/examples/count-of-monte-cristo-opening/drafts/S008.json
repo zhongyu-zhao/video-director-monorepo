@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "scene_id": "S008",
+  "heading": {
+    "int_ext": "INT",
+    "location": "维尔福办公室",
+    "time": "NIGHT"
+  },
+  "action": [
+    "维尔福让宪兵把唐泰斯带下去。门一关，他靠在椅背上，过了很久才拆开信。",
+    "信纸很薄，只有几行字。收信人是他的父亲诺瓦蒂埃。字迹苍老，语气却亲近。",
+    "维尔福走到壁炉前，把信的一角放进火里。火苗沿着纸边爬，字一个个卷起来。",
+    "他盯着火光，直到最后一角变成灰。然后他打开门，叫来宪兵队长。",
+    "桌上摊着唐泰斯的审讯记录。维尔福拿起笔，在“处置意见”一栏停住，笔尖悬了很久。",
+    "维尔福把烧剩的纸灰拨散，又用脚踩了踩。",
+    "他重新坐回桌前，把审讯记录翻到第一页，从头看了一遍。",
+    "宪兵队长在门外等，帽檐压得很低。"
+  ],
+  "dialogue": [
+    {
+      "character": "维尔福",
+      "line": "父亲，你为什么要写这种信？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "只要这封信存在，我就完了。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "一个水手，和一个代理检察官。马赛会相信谁？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "对不起，唐泰斯。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "先生？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "把他带到伊夫堡。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "伊夫堡？那是政治犯的地方。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "政治犯。不许探视。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "需要记录吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "记录写：爱德蒙·唐泰斯，危险分子。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "他的未婚妻在外面。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "让她回去。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "要不要告诉她？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "不用。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "先生，要通知船主吗？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "不必。政治犯不需要船主。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "他的未婚妻——",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "维尔福",
+      "line": "我说了，不必。",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

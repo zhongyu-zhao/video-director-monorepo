@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "scene_id": "S006",
+  "heading": {
+    "int_ext": "INT",
+    "location": "河边小厅门口",
+    "time": "NIGHT"
+  },
+  "action": [
+    "音乐停了。唐泰斯放下酒杯，往前走了一步。梅尔塞苔丝的手还停在他袖子上。",
+    "宪兵队长展开一张纸，没有念。两个宪兵站在他身后，手按着佩刀。",
+    "莫雷尔挡在唐泰斯前面，老唐泰斯从座位上站起来，椅子倒在地上。",
+    "门关上时，宴会厅里只剩蜡烛燃烧的细响。梅尔塞苔丝追到门口，被宪兵拦住。",
+    "费尔南弯腰捡起唐泰斯掉在地上的杯子，杯口已经缺了一块。",
+    "老唐泰斯想冲上去，被卡德鲁斯从后面抱住。",
+    "梅尔塞苔丝的手从唐泰斯袖子上滑下来，指尖只抓到空气。",
+    "宪兵队长把纸条收回口袋，纸角露出一截火漆印。"
+  ],
+  "dialogue": [
+    {
+      "character": "爱德蒙",
+      "line": "我是。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "跟我们走。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "为什么？他做了什么？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "检察官的命令。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "我是船主，我可以担保——",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "先生，请不要妨碍公务。",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "梅尔塞苔丝，别怕。我会回来的。",
+      "parenthetical": "",
+      "basis": "source"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "爱德蒙！",
+      "parenthetical": "",
+      "basis": "adapted"
+    },
+    {
+      "character": "费尔南",
+      "line": "他会回来的。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "莫雷尔",
+      "line": "唐泰斯！我这就去找检察官！",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "你们不能这样带走他！",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "让开。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "梅尔塞苔丝",
+      "line": "至少让我跟他说一句话。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "一句话。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "我儿子犯了什么罪？",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "宪兵队长",
+      "line": "我只是奉命行事。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "爱德蒙",
+      "line": "父亲，照顾好梅尔塞苔丝。",
+      "parenthetical": "",
+      "basis": "invented"
+    },
+    {
+      "character": "老唐泰斯",
+      "line": "你回来自己照顾她！",
+      "parenthetical": "",
+      "basis": "invented"
+    }
+  ],
+  "transition": "",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "writer": {
+    "provider": "human-demo",
+    "model": "manual"
+  },
+  "prompt_sha256": "",
+  "notes": ""
+}

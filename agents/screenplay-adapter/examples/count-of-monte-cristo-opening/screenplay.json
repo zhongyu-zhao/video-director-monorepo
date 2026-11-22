@@ -1,0 +1,1511 @@
+{
+  "schema_version": 1,
+  "kind": "screenplay",
+  "title": "基督山伯爵：马赛（20 分钟开场）",
+  "plan_hash": "8f6940d167ccf23bcb1a051e7571d0340e22488291094c3072098b1a12d6478e",
+  "source_sha256": "c350428befde77f648162f52015822973a366643eab4f4b1b2f76f57f9f47990",
+  "stats": {
+    "scene_count": 10,
+    "episode_count": 1,
+    "dialogue_lines": 171,
+    "action_blocks": 80,
+    "characters_speaking": [
+      "莫雷尔",
+      "爱德蒙",
+      "唐格拉尔",
+      "老唐泰斯",
+      "梅尔塞苔丝",
+      "费尔南",
+      "卡德鲁斯",
+      "宪兵队长",
+      "维尔福",
+      "狱卒"
+    ],
+    "dialogue_basis": {
+      "source": 14,
+      "adapted": 42,
+      "invented": 115
+    },
+    "estimated_seconds": 1122.6,
+    "target_seconds": 1200.0,
+    "average_scene_seconds": 112.26
+  },
+  "scenes": [
+    {
+      "id": "S001",
+      "episode": 1,
+      "index_in_episode": 1,
+      "beat": "cold_open",
+      "beat_label": "开场钩子",
+      "target_seconds": 120.0,
+      "estimated_seconds": 132.75,
+      "heading": {
+        "int_ext": "EXT",
+        "location": "马赛港码头",
+        "time": "DAY"
+      },
+      "action": [
+        "一八一五年二月二十四日。马赛港的钟声穿过晨雾，法老号的三根桅杆从防波堤后缓缓升起。",
+        "码头工人停下手中的绳索。鱼贩把篮子搁在脚边，孩子们追着海鸥跑。船主莫雷尔挤到岸边，手搭凉棚。",
+        "船头站着一个十九岁的年轻人，爱德蒙·唐泰斯，皮肤被海风吹成深色，手里攥着船长帽。",
+        "押运员唐格拉尔站在他身后半步，夹着账本，笑得很轻。甲板上，水手们把缆绳抛上岸。",
+        "莫雷尔跳上船，先摸了摸船舷，像在确认老伙计还活着。唐泰斯把帽子摘下来，露出被帽檐压出的红印。",
+        "莫雷尔拍了拍唐泰斯的肩，又回头看了一眼码头上的钟。",
+        "唐格拉尔合上账本，拇指在封皮上按出一道白印。",
+        "法老号的旧帆被卷起来，露出一道缝补过的裂口。"
+      ],
+      "dialogue": [
+        {
+          "character": "莫雷尔",
+          "line": "法老号回来了！唐泰斯，老船长呢？",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "勒克莱尔船长没能回来。他病死在返航途中。我按他的航线把船带回来了。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "你才十九岁。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "货在，船在。账目可以现在就对。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "账目当然要对。不过船长尸骨未寒，有人已经站在他的位子上了。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "唐格拉尔，回办公室再说。唐泰斯，明天来见我。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "是，先生。我今晚想先去看我父亲。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "去吧。你父亲会为你骄傲的。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "一夜。在厄尔巴岛停一夜，足够做很多事了。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "唐格拉尔。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "船长需要淡水。我们只停了半夜。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "明天把航海日志带来。唐泰斯，你也来。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "船上的账，今晚之前送到我办公室。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "今晚。船长一定有空。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我有空。先让我父亲吃顿饱饭。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 0,
+        "sentence_end": 4,
+        "char_start": 32,
+        "char_end": 151,
+        "chapter_ids": [
+          "CH001"
+        ],
+        "paragraph_ids": [
+          "P0001"
+        ],
+        "excerpt": "一八一五年二月二十四日，法老号驶入马赛港。 年轻的大副爱德蒙·唐泰斯站在船头，海风吹动他的头发。 船主莫雷尔在码头等他，老船长勒克莱尔已经在返航途中病逝。 莫雷尔有意让唐泰斯接任船长。 船上的押运员唐格拉尔看着这一幕，脸上笑着，手指却攥紧了账本。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S002",
+      "episode": 1,
+      "index_in_episode": 2,
+      "beat": "setup",
+      "beat_label": "建置",
+      "target_seconds": 120.0,
+      "estimated_seconds": 119.35,
+      "heading": {
+        "int_ext": "INT",
+        "location": "唐泰斯家的阁楼",
+        "time": "DAY"
+      },
+      "action": [
+        "狭窄的木楼梯，墙皮剥落。唐泰斯推开门，屋里只有一张床、一张桌子和一扇小窗。",
+        "老唐泰斯坐在窗边，手里握着一只空碗。桌上留着几枚舍不得花的铜币。",
+        "唐泰斯把一袋金币放在桌上，金币滚开，映着窗外的光。老人没有看钱，先看儿子的脸。",
+        "墙角的小柜门半开着，里面只有半块硬面包和一小罐橄榄。窗台上，母亲留下的旧陶罐里插着一根干枯的迷迭香。",
+        "老人咳了两声，用袖口掩住嘴。唐泰斯把窗户推开，海风灌进来，吹动桌上的金币。",
+        "唐泰斯蹲下来，把父亲床下的旧木箱拖出来，里面是母亲的披肩。",
+        "老人把金币一枚枚码好，像在数儿子的年岁。",
+        "窗外传来卖鱼女人的吆喝，唐泰斯把窗关上。"
+      ],
+      "dialogue": [
+        {
+          "character": "老唐泰斯",
+          "line": "你回来了。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "父亲，你怎么瘦成这样？",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "我吃得下。你留着钱，娶媳妇要用。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "莫雷尔先生要让我当船长。法老号是我的了。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "梅尔塞苔丝知道吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我今晚就去告诉她。我要娶她。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "幸福来得太快，孩子。答应我，别把好事一次用完。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "等我回来，我们搬去有阳光的房子。你可以在窗边种花。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "我只要你别在海上走得太远。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "这次我带她一起去。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "你母亲要是看见今天，不知道多高兴。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "她看见了。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "船长一个月多少钱？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "够我们三个人花。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "三个人？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "你，我，还有梅尔塞苔丝。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 5,
+        "sentence_end": 8,
+        "char_start": 165,
+        "char_end": 262,
+        "chapter_ids": [
+          "CH002"
+        ],
+        "paragraph_ids": [
+          "P0002"
+        ],
+        "excerpt": "唐泰斯回到狭窄的阁楼。 老唐泰斯已经三天没有好好吃饭，却不肯花儿子留下的钱。 唐泰斯把金币放在桌上，告诉父亲自己就要当船长，还要娶梅尔塞苔丝。 老人为他祝福，又忍不住担心： 幸福来得太快，未必是好事。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S003",
+      "episode": 1,
+      "index_in_episode": 3,
+      "beat": "setup",
+      "beat_label": "建置",
+      "target_seconds": 120.0,
+      "estimated_seconds": 106.95,
+      "heading": {
+        "int_ext": "EXT",
+        "location": "加泰罗尼亚村",
+        "time": "DAY"
+      },
+      "action": [
+        "海边的加泰罗尼亚村，白墙被晒得发亮。梅尔塞苔丝坐在门边织网，黑发垂在肩上。",
+        "唐泰斯从坡下走来，手里拿着一小束野花。她抬头，眼睛里先亮了一下，又故意板起脸。",
+        "不远处的阴影里，费尔南靠着墙，手里握着一把割网的刀。刀刃在石头上一下一下地磨。",
+        "唐泰斯单膝跪下，把花递过去。梅尔塞苔丝没有接花，先握住了他的手。",
+        "她把手收回去，低头理了理网线，耳根却红了。费尔南的刀停了。",
+        "梅尔塞苔丝把野花插在门边的水罐里，花瓣上还带着露水。",
+        "费尔南把刀插回腰间，转身走向海边，脚踩碎了贝壳。",
+        "唐泰斯追了两步，又停下。"
+      ],
+      "dialogue": [
+        {
+          "character": "爱德蒙",
+          "line": "梅尔塞苔丝，我要当船长了。嫁给我。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "你确定？海会把你带走。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "这次我带你去。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "那我等你回来。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "不用等。船一靠岸，我们就去教堂。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "你父亲同意吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "他今晚会喝一杯，然后假装不高兴。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "她等的人不该是你。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "费尔南，我们是朋友。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "朋友。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "费尔南，别这样。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "我只是来看看。你们继续。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "今晚来喝一杯。我请你。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "我不喝你的酒。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "费尔南从小就住在隔壁。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我知道。所以我请他喝喜酒。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "他未必会来。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 9,
+        "sentence_end": 14,
+        "char_start": 279,
+        "char_end": 371,
+        "chapter_ids": [
+          "CH003"
+        ],
+        "paragraph_ids": [
+          "P0003"
+        ],
+        "excerpt": "加泰罗尼亚村的午后，梅尔塞苔丝坐在门边织网。 唐泰斯来了，向她求婚。 她答应等他。 费尔南站在阴影里，看着他们拥抱。 他也爱梅尔塞苔丝，却从未说出口。 唐泰斯走后，费尔南把手里的渔网割断了一截。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S004",
+      "episode": 1,
+      "index_in_episode": 4,
+      "beat": "escalation",
+      "beat_label": "升级",
+      "target_seconds": 120.0,
+      "estimated_seconds": 126.3,
+      "heading": {
+        "int_ext": "INT",
+        "location": "雷瑟夫酒馆",
+        "time": "NIGHT"
+      },
+      "action": [
+        "酒馆里烟雾缭绕。唐格拉尔把一瓶酒推到费尔南面前，卡德鲁斯坐在旁边啃面包。",
+        "唐格拉尔摊开一张纸，蘸了墨水，笔尖停在半空。他故意用左手写字，字迹歪歪扭扭。",
+        "费尔南的杯子已经空了。他盯着桌面，像在听，又像没在听。卡德鲁斯把酒洒在袖子上。",
+        "唐格拉尔写完，把信折好，用蜡封上。烛火在信封上跳了一下。他把信推到费尔南手边。",
+        "窗外有巡逻队的脚步声经过。卡德鲁斯下意识压低了声音。",
+        "卡德鲁斯把面包屑扫到地上，一只猫从桌下钻出来。",
+        "唐格拉尔从怀里摸出一枚旧戒指，在蜡上按出印记。",
+        "费尔南把信揣进内袋，手指在袋口停了一下。"
+      ],
+      "dialogue": [
+        {
+          "character": "唐格拉尔",
+          "line": "法老号的船长，十九岁。梅尔塞苔丝，加泰罗尼亚最漂亮的姑娘。他什么都有。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "费尔南",
+          "line": "闭嘴。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "我只是陈述事实。除非有人让检察官知道，他从厄尔巴岛带了一封信。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "卡德鲁斯",
+          "line": "厄尔巴岛？那是皇帝住的地方。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "所以这封信很有趣。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "他会坐牢吗？",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "也许。也许只是问几句话。你写不写？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "把信给我。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "卡德鲁斯",
+          "line": "你们疯了。这只是玩笑。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "当然，只是玩笑。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "卡德鲁斯",
+          "line": "唐泰斯是我们的邻居。他父亲还在等他回家。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "那就让他回家。谁拦着他了？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "信上写什么？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "写他是拿破仑党的密使。剩下的，交给检察官。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "卡德鲁斯",
+          "line": "唐格拉尔，你写这封信的时候，手不抖吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "我写账的时候也不抖。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "如果他被放出来呢？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "唐格拉尔",
+          "line": "那就当是个玩笑。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 15,
+        "sentence_end": 20,
+        "char_start": 384,
+        "char_end": 514,
+        "chapter_ids": [
+          "CH004"
+        ],
+        "paragraph_ids": [
+          "P0004"
+        ],
+        "excerpt": "雷瑟夫酒馆里，唐格拉尔请费尔南喝酒。 他故意提起唐泰斯即将成为船长、即将娶梅尔塞苔丝。 费尔南的嫉妒被点燃。 唐格拉尔写下一封匿名信，说唐泰斯是拿破仑党的密使，从厄尔巴岛带回一封信。 卡德鲁斯在旁边看着，觉得这只是一个玩笑。 唐格拉尔把信折好，说：“让检察官去判断吧。”"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S005",
+      "episode": 1,
+      "index_in_episode": 5,
+      "beat": "escalation",
+      "beat_label": "升级",
+      "target_seconds": 120.0,
+      "estimated_seconds": 111.95,
+      "heading": {
+        "int_ext": "INT",
+        "location": "河边小厅",
+        "time": "NIGHT"
+      },
+      "action": [
+        "河边的小厅挂满纸灯。长桌上摆着面包、鱼和廉价葡萄酒。莫雷尔举杯，老唐泰斯坐在主位，笑得合不拢嘴。",
+        "梅尔塞苔丝换了一条浅色裙子，唐泰斯站在她身边，手一直没松开。卡德鲁斯在角落里拉手风琴。",
+        "费尔南靠在门框上，没有入席。唐格拉尔的位置空着，桌上留着一只没人碰的杯子。",
+        "一支舞跳完，莫雷尔敲了敲杯子。众人安静下来。老唐泰斯把儿子的手放在梅尔塞苔丝手上。",
+        "敲门声响起。一个宪兵队长走进来，皮靴在木地板上停住。他身后跟着两个宪兵。",
+        "莫雷尔把一枚旧怀表塞进唐泰斯手里，说是给船长的礼物。",
+        "老唐泰斯背过身去，用袖子擦眼睛。",
+        "梅尔塞苔丝把一枚戒指戴在唐泰斯手上，戒指有点松。"
+      ],
+      "dialogue": [
+        {
+          "character": "莫雷尔",
+          "line": "为唐泰斯船长，为梅尔塞苔丝。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "我儿子。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我敬我的父亲，敬莫雷尔先生，敬梅尔塞苔丝。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "敬我们。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "卡德鲁斯",
+          "line": "敬法老号！",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "敬你们的幸福。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "费尔南，进来喝一杯。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "我站着就好。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "孩子，我把她交给你了。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我会用一辈子还您。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "别说一辈子。先说今晚。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "今晚谁也不许谈船。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "谁是爱德蒙·唐泰斯？",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "法老号交给你，我放心。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我不会让您失望。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "这块表走得准吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "比马赛的钟准。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 21,
+        "sentence_end": 26,
+        "char_start": 528,
+        "char_end": 641,
+        "chapter_ids": [
+          "CH005"
+        ],
+        "paragraph_ids": [
+          "P0005"
+        ],
+        "excerpt": "唐泰斯与梅尔塞苔丝的订婚宴在河边的小厅举行。 莫雷尔、老唐泰斯、卡德鲁斯和邻居们都来了。 烛光、歌声、祝福。 唐泰斯举杯，说自己会做一个配得上梅尔塞苔丝的人。 费尔南站在门口，没有入席。 一个宪兵队长走进来，问：“谁是爱德蒙·唐泰斯？”"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S006",
+      "episode": 1,
+      "index_in_episode": 6,
+      "beat": "turn",
+      "beat_label": "转折",
+      "target_seconds": 120.0,
+      "estimated_seconds": 102.3,
+      "heading": {
+        "int_ext": "INT",
+        "location": "河边小厅门口",
+        "time": "NIGHT"
+      },
+      "action": [
+        "音乐停了。唐泰斯放下酒杯，往前走了一步。梅尔塞苔丝的手还停在他袖子上。",
+        "宪兵队长展开一张纸，没有念。两个宪兵站在他身后，手按着佩刀。",
+        "莫雷尔挡在唐泰斯前面，老唐泰斯从座位上站起来，椅子倒在地上。",
+        "门关上时，宴会厅里只剩蜡烛燃烧的细响。梅尔塞苔丝追到门口，被宪兵拦住。",
+        "费尔南弯腰捡起唐泰斯掉在地上的杯子，杯口已经缺了一块。",
+        "老唐泰斯想冲上去，被卡德鲁斯从后面抱住。",
+        "梅尔塞苔丝的手从唐泰斯袖子上滑下来，指尖只抓到空气。",
+        "宪兵队长把纸条收回口袋，纸角露出一截火漆印。"
+      ],
+      "dialogue": [
+        {
+          "character": "爱德蒙",
+          "line": "我是。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "跟我们走。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "为什么？他做了什么？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "检察官的命令。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "我是船主，我可以担保——",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "先生，请不要妨碍公务。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "梅尔塞苔丝，别怕。我会回来的。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "爱德蒙！",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "费尔南",
+          "line": "他会回来的。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "莫雷尔",
+          "line": "唐泰斯！我这就去找检察官！",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "你们不能这样带走他！",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "让开。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "至少让我跟他说一句话。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "一句话。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "我儿子犯了什么罪？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "我只是奉命行事。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "父亲，照顾好梅尔塞苔丝。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "你回来自己照顾她！",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 27,
+        "sentence_end": 32,
+        "char_start": 654,
+        "char_end": 799,
+        "chapter_ids": [
+          "CH006"
+        ],
+        "paragraph_ids": [
+          "P0006"
+        ],
+        "excerpt": "唐泰斯放下酒杯，说：“我是。”宪兵没有解释，只让他跟他们走。 梅尔塞苔丝抓住他的袖子，被轻轻推开。 老唐泰斯想上前，被卡德鲁斯拦住；费尔南站在门口。 莫雷尔上前交涉，宪兵队长说这是检察官的命令。 唐泰斯回头看了梅尔塞苔丝一眼，说：“别怕，我会回来的。”门在他身后关上。 宴会厅里只剩下蜡烛燃烧的声音。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S007",
+      "episode": 1,
+      "index_in_episode": 7,
+      "beat": "turn",
+      "beat_label": "转折",
+      "target_seconds": 120.0,
+      "estimated_seconds": 112.8,
+      "heading": {
+        "int_ext": "INT",
+        "location": "法院审讯室",
+        "time": "NIGHT"
+      },
+      "action": [
+        "审讯室里只有一张桌子、两支蜡烛。维尔福坐在桌后，领结工整，手指轻轻敲着桌面。",
+        "唐泰斯站在他面前，衣服上还留着订婚宴的褶皱。窗外的马赛在夜里发白。",
+        "维尔福翻开记录本，先问姓名、年龄、职业，像在核对一件货物。",
+        "当唐泰斯提到厄尔巴岛，维尔福的笔停了。烛芯爆了一声，蜡油滴在纸上。",
+        "维尔福把信接过去，没有立刻拆。他先看了看信封，又看了看唐泰斯的脸。",
+        "维尔福把信放在烛台边，信封边缘被火苗烤得发黄。",
+        "唐泰斯看见他的手指在抖，却以为那是夜里的凉意。",
+        "窗外有马车经过，车轮碾过石板，声音很长。"
+      ],
+      "dialogue": [
+        {
+          "character": "维尔福",
+          "line": "你从厄尔巴岛回来。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "法老号在那里停靠。船长病了，我替他办事。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "维尔福",
+          "line": "你见了谁？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我见了皇帝。他问我船上的事，还让我带一封信回马赛。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "维尔福",
+          "line": "信呢？",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "在这里。收信人是诺瓦蒂埃先生。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "维尔福",
+          "line": "诺瓦蒂埃。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "您认识他？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "你为什么不早说？",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我以为这很重要。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "你在厄尔巴岛还见了谁？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "只有皇帝。还有几个穿便服的人，我没有问名字。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "便服。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "先生，我做错什么了吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "你认识诺瓦蒂埃先生？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "不认识。我只知道信封上的名字。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "这封信，你看过内容吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "没有。船长的信，我不拆。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 33,
+        "sentence_end": 38,
+        "char_start": 812,
+        "char_end": 926,
+        "chapter_ids": [
+          "CH007"
+        ],
+        "paragraph_ids": [
+          "P0007"
+        ],
+        "excerpt": "维尔福在法院审讯唐泰斯。 唐泰斯讲述法老号的航线、老船长的病逝、他在厄尔巴岛停留的原因。 维尔福起初漫不经心，直到唐泰斯提到那封从厄尔巴岛带回的信。 维尔福问信是给谁的。 唐泰斯说，信封上写着“巴黎，诺瓦蒂埃先生”。 维尔福的手停在纸上。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S008",
+      "episode": 1,
+      "index_in_episode": 8,
+      "beat": "complication",
+      "beat_label": "复杂化",
+      "target_seconds": 120.0,
+      "estimated_seconds": 105.55,
+      "heading": {
+        "int_ext": "INT",
+        "location": "维尔福办公室",
+        "time": "NIGHT"
+      },
+      "action": [
+        "维尔福让宪兵把唐泰斯带下去。门一关，他靠在椅背上，过了很久才拆开信。",
+        "信纸很薄，只有几行字。收信人是他的父亲诺瓦蒂埃。字迹苍老，语气却亲近。",
+        "维尔福走到壁炉前，把信的一角放进火里。火苗沿着纸边爬，字一个个卷起来。",
+        "他盯着火光，直到最后一角变成灰。然后他打开门，叫来宪兵队长。",
+        "桌上摊着唐泰斯的审讯记录。维尔福拿起笔，在“处置意见”一栏停住，笔尖悬了很久。",
+        "维尔福把烧剩的纸灰拨散，又用脚踩了踩。",
+        "他重新坐回桌前，把审讯记录翻到第一页，从头看了一遍。",
+        "宪兵队长在门外等，帽檐压得很低。"
+      ],
+      "dialogue": [
+        {
+          "character": "维尔福",
+          "line": "父亲，你为什么要写这种信？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "只要这封信存在，我就完了。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "一个水手，和一个代理检察官。马赛会相信谁？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "对不起，唐泰斯。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "先生？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "把他带到伊夫堡。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "伊夫堡？那是政治犯的地方。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "政治犯。不许探视。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "需要记录吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "记录写：爱德蒙·唐泰斯，危险分子。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "他的未婚妻在外面。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "让她回去。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "要不要告诉她？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "不用。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "先生，要通知船主吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "不必。政治犯不需要船主。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "宪兵队长",
+          "line": "他的未婚妻——",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "维尔福",
+          "line": "我说了，不必。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 39,
+        "sentence_end": 46,
+        "char_start": 940,
+        "char_end": 1096,
+        "chapter_ids": [
+          "CH008"
+        ],
+        "paragraph_ids": [
+          "P0008"
+        ],
+        "excerpt": "维尔福让唐泰斯先下去。 他独自坐在办公室里，拆开那封信。 收信人是他的父亲诺瓦蒂埃，一个拿破仑党人。 信里没有什么大阴谋，只有几行问候和一件旧事的嘱托。 可是这封信一旦公开，维尔福的仕途就完了。 他叫来宪兵队长，又让他先出去；然后看着烛火，把信的一角放到火苗上。 纸张卷曲、发黑。 他对自己说：“为了我的父亲，也为了我自己。”"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S009",
+      "episode": 1,
+      "index_in_episode": 9,
+      "beat": "complication",
+      "beat_label": "复杂化",
+      "target_seconds": 120.0,
+      "estimated_seconds": 101.85,
+      "heading": {
+        "int_ext": "EXT",
+        "location": "马赛外海 / 伊夫堡",
+        "time": "NIGHT"
+      },
+      "action": [
+        "一艘没有灯的小船离开马赛。唐泰斯坐在船底，手腕被绳子勒红。",
+        "船绕过伊夫堡的礁石。城堡的黑影从海面升起来，像一块没有窗的石头。",
+        "狱卒把唐泰斯推上石阶。铁门打开，又合上。走廊里只有火把，墙上渗着水。",
+        "唐泰斯扑到铁窗前。窗外是海，远处马赛的灯火越来越小。",
+        "狱卒把一盏灯挂在门边，灯芯很细。唐泰斯的手从铁栏间伸出去，什么也抓不到。",
+        "小船靠岸时，浪把船头推得撞在石阶上，唐泰斯踉跄了一下。",
+        "狱卒搜走他的钱袋、小刀和那枚有点松的戒指。",
+        "铁门合拢，走廊尽头的火把晃了一下。"
+      ],
+      "dialogue": [
+        {
+          "character": "爱德蒙",
+          "line": "我们去哪里？",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "狱卒",
+          "line": "到了你就知道。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我要见检察官！我是无辜的！",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "狱卒",
+          "line": "每一个进来的人都这么说。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "告诉莫雷尔先生！告诉梅尔塞苔丝！",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "狱卒",
+          "line": "省点力气吧。",
+          "parenthetical": "",
+          "basis": "adapted"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我会出去的。我一定会出去。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "狱卒",
+          "line": "那就留着这句话，过几年再说。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "你叫什么名字？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "狱卒",
+          "line": "在这里，名字没用。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "我有名字。我叫爱德蒙·唐泰斯。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "狱卒",
+          "line": "睡吧，唐泰斯先生。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "那枚戒指还给我。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "狱卒",
+          "line": "这里的东西都不是你的了。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "爱德蒙",
+          "line": "那是我未婚妻的。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "狱卒",
+          "line": "那就更不属于你了。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 47,
+        "sentence_end": 52,
+        "char_start": 1110,
+        "char_end": 1214,
+        "chapter_ids": [
+          "CH009"
+        ],
+        "paragraph_ids": [
+          "P0009"
+        ],
+        "excerpt": "夜里，唐泰斯被押上一艘小船。 他问去哪里，没有人回答。 船绕过伊夫堡的礁石，靠上码头。 狱卒把他推进门里，铁门在身后合拢。 唐泰斯隔着铁窗喊：“我是无辜的！我要见检察官！”回答他的只有海浪。 远处，马赛的灯火越来越小。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    },
+    {
+      "id": "S010",
+      "episode": 1,
+      "index_in_episode": 10,
+      "beat": "cliffhanger",
+      "beat_label": "结尾卡点",
+      "target_seconds": 120.0,
+      "estimated_seconds": 102.8,
+      "heading": {
+        "int_ext": "INT",
+        "location": "唐泰斯家阁楼 / 马赛",
+        "time": "DAY"
+      },
+      "action": [
+        "清晨。梅尔塞苔丝坐在老唐泰斯对面，桌上放着两碗没有动过的汤。",
+        "楼下，费尔南站在街角，抬头看着那扇小窗。梅尔塞苔丝没有看他。",
+        "唐格拉尔在账房里写下新的数字，笔尖很稳。维尔福对着镜子整理领结，准备去参加升迁的仪式。",
+        "镜头越过马赛的屋顶，落在伊夫堡的石墙上。海浪一遍遍撞上去。字幕：十四年后。",
+        "老唐泰斯把手放在梅尔塞苔丝手背上，像在确认两个人还坐在一起。",
+        "梅尔塞苔丝把汤碗推到老唐泰斯面前，老人拿起勺子，又放下。",
+        "费尔南在街角站了很久，直到教堂的钟敲响。",
+        "维尔福的马车从楼下经过，车帘拉得严严实实。"
+      ],
+      "dialogue": [
+        {
+          "character": "老唐泰斯",
+          "line": "他会回来吗？",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "会。",
+          "parenthetical": "",
+          "basis": "source"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "我等他。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "我们一起等。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "梅尔塞苔丝。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "你走吧。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "我会照顾你。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "我不需要。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "你每天来，是想替他尽孝吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "我只是……",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "你只是希望他别回来。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "费尔南",
+          "line": "我从来没有这么说。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "那就别站在这里。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "十四年后，他还会认得我们吗？",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "他走的时候，穿的还是订婚的衣服。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "我给他做了一件新的。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "老唐泰斯",
+          "line": "他回来就能穿。",
+          "parenthetical": "",
+          "basis": "invented"
+        },
+        {
+          "character": "梅尔塞苔丝",
+          "line": "他回来就能穿。",
+          "parenthetical": "",
+          "basis": "invented"
+        }
+      ],
+      "transition": "",
+      "source": {
+        "sentence_start": 53,
+        "sentence_end": 56,
+        "char_start": 1227,
+        "char_end": 1334,
+        "chapter_ids": [
+          "CH010"
+        ],
+        "paragraph_ids": [
+          "P0010"
+        ],
+        "excerpt": "梅尔塞苔丝站在唐泰斯父亲的阁楼里，老唐泰斯问她：“他会回来吗？”她说：“会。”费尔南在楼下等她，她没有看他。 唐格拉尔在账本上写下新的数字。 维尔福在办公室里整理领结，准备升迁。 镜头停在伊夫堡的石墙上，字幕：十四年后。"
+      },
+      "writer": {
+        "provider": "human-demo",
+        "model": "manual"
+      },
+      "notes": ""
+    }
+  ]
+}
