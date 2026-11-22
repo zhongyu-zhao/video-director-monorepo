@@ -8,13 +8,14 @@
 
 `video-director-monorepo` 是视频导演 Agent 的 monorepo：把创作意图变成可核对、可编辑、可导出的视频产物。
 
-当前拆成两个独立子 repo，架构、实现和文档各自独立，边界见 [`docs/decisions/proposed/architecture/2026-11-21-two-agent-subrepos.md`](docs/decisions/proposed/architecture/2026-11-21-two-agent-subrepos.md)：
+当前拆成三个独立子 repo，架构、实现和文档各自独立，边界见 [`docs/decisions/proposed/architecture/2026-11-22-three-agent-subrepos.md`](docs/decisions/proposed/architecture/2026-11-22-three-agent-subrepos.md)：
 
 - `agents/auto-shot/`：自动拉片——切分镜头，并逐镜分析视听语言。规则见 [`agents/auto-shot/AGENTS.md`](agents/auto-shot/AGENTS.md)。
 - `agents/video-director/`：视频制作——从创作意图到可编辑时间线和成片。规则见 [`agents/video-director/AGENTS.md`](agents/video-director/AGENTS.md)。
+- `agents/screenplay-adapter/`：剧本改编——把小说或大纲扩写、改编成可核对的场次剧本。规则见 [`agents/screenplay-adapter/AGENTS.md`](agents/screenplay-adapter/AGENTS.md)。
 
 - **当前阶段：研究 → MVP。** 实现前先读 `docs/research/` 下的调研；它们定义了问题、参考架构和选型，不要绕过。
-- 两个子 repo 已有 M0 骨架和可运行的检查；命令见第 9 节。不要为“以后可能用到”的结构提前写规则。
+- 三个子 repo 已有 M0 骨架和可运行的检查；命令见第 9 节。不要为“以后可能用到”的结构提前写规则。
 - 调研是带日期的快照，不是当前实现说明。实现与调研冲突时，以代码和决策记录为准，并回头修正文档。
 
 ## 1. 协作模型：人定方向，Agent 执行
@@ -114,7 +115,7 @@
 
 ## 9. 命令与目录
 
-两个子 repo 都只依赖 Python 3.12+ 与 `ffmpeg`/`ffprobe`（视频相关集成测试在缺少 ffmpeg 时自动跳过）。依赖和入口以各自的 `pyproject.toml` 为准；这里只写跨仓库的检查入口：
+三个子 repo 都只依赖 Python 3.12+；视频相关的 `auto-shot`/`video-director` 另需 `ffmpeg`/`ffprobe`（集成测试在缺少 ffmpeg 时自动跳过），`screenplay-adapter` 不需要。依赖和入口以各自的 `pyproject.toml` 为准；这里只写跨仓库的检查入口：
 
 ```bash
 # auto-shot
@@ -122,12 +123,16 @@
 
 # video-director
 (cd agents/video-director && python3 -m unittest discover -v)
+
+# screenplay-adapter
+(cd agents/screenplay-adapter && python3 -m unittest discover -v)
 ```
 
 目录：
 
 - `agents/auto-shot/`：自动拉片子 repo；文档入口 `agents/auto-shot/README.md`。
 - `agents/video-director/`：视频制作子 repo；文档入口 `agents/video-director/README.md`。
+- `agents/screenplay-adapter/`：剧本改编子 repo；文档入口 `agents/screenplay-adapter/README.md`。
 - `docs/research/`：带日期的调研快照。
 - `docs/decisions/`：仓库级/跨子 repo 决策；子 repo 决策在各自 `docs/decisions/`。
 
