@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "kind": "screenplay-adapter-report",
+  "stage": "screenplay",
+  "status": "warn",
+  "stats": {
+    "scene_count": 10,
+    "episode_count": 1,
+    "dialogue_lines": 171,
+    "action_blocks": 80,
+    "characters_speaking": [
+      "莫雷尔",
+      "爱德蒙",
+      "唐格拉尔",
+      "老唐泰斯",
+      "梅尔塞苔丝",
+      "费尔南",
+      "卡德鲁斯",
+      "宪兵队长",
+      "维尔福",
+      "狱卒"
+    ],
+    "dialogue_basis": {
+      "source": 14,
+      "adapted": 42,
+      "invented": 115
+    },
+    "estimated_seconds": 1122.6,
+    "target_seconds": 1200.0,
+    "average_scene_seconds": 112.26,
+    "source_sentences": 57,
+    "covered_sentences": 57,
+    "planned_seconds": 1200.0,
+    "plan_status": "pass"
+  },
+  "gates": [
+    {
+      "id": "P001",
+      "status": "pass",
+      "message": "schema_version 1, 10 scenes",
+      "scenes": []
+    },
+    {
+      "id": "P002",
+      "status": "pass",
+      "message": "source c350428befde…, 1335 chars",
+      "scenes": []
+    },
+    {
+      "id": "P003",
+      "status": "pass",
+      "message": "all 57 sentences covered exactly once",
+      "scenes": []
+    },
+    {
+      "id": "P004",
+      "status": "pass",
+      "message": "10 sequential scenes",
+      "scenes": []
+    },
+    {
+      "id": "P005",
+      "status": "pass",
+      "message": "all 1 episodes have scenes",
+      "scenes": []
+    },
+    {
+      "id": "P006",
+      "status": "pass",
+      "message": "1200s across 10 scenes",
+      "scenes": []
+    },
+    {
+      "id": "P007",
+      "status": "pass",
+      "message": "10 characters, scene references resolve",
+      "scenes": []
+    },
+    {
+      "id": "P008",
+      "status": "pass",
+      "message": "per-episode beats are monotonic",
+      "scenes": []
+    },
+    {
+      "id": "P009",
+      "status": "pass",
+      "message": "10 source chapters referenced",
+      "scenes": []
+    },
+    {
+      "id": "P010",
+      "status": "pass",
+      "message": "no planner warnings",
+      "scenes": []
+    },
+    {
+      "id": "P011",
+      "status": "pass",
+      "message": "plan_hash 8f6940d167cc…",
+      "scenes": []
+    },
+    {
+      "id": "S001",
+      "status": "pass",
+      "message": "10 scenes",
+      "scenes": []
+    },
+    {
+      "id": "S002",
+      "status": "pass",
+      "message": "screenplay is linked to the current plan and source",
+      "scenes": []
+    },
+    {
+      "id": "S003",
+      "status": "pass",
+      "message": "all scenes match the plan order and anchors",
+      "scenes": []
+    },
+    {
+      "id": "S004",
+      "status": "pass",
+      "message": "scene headings are well-formed",
+      "scenes": []
+    },
+    {
+      "id": "S005",
+      "status": "pass",
+      "message": "every scene has action or dialogue",
+      "scenes": []
+    },
+    {
+      "id": "S006",
+      "status": "pass",
+      "message": "all dialogue speakers resolve to the cast",
+      "scenes": []
+    },
+    {
+      "id": "S007",
+      "status": "pass",
+      "message": "dialogue provenance is labelled",
+      "scenes": []
+    },
+    {
+      "id": "S008",
+      "status": "pass",
+      "message": "runtime estimate 1122.6s / 1200s",
+      "scenes": []
+    },
+    {
+      "id": "S009",
+      "status": "pass",
+      "message": "every scene has dialogue",
+      "scenes": []
+    },
+    {
+      "id": "S010",
+      "status": "warn",
+      "message": "115/171 dialogue lines are marked invented (67%); review for plot drift and character voice",
+      "scenes": []
+    },
+    {
+      "id": "S011",
+      "status": "pass",
+      "message": "draft speakers are consistent with planned scene cast",
+      "scenes": []
+    }
+  ]
+}
