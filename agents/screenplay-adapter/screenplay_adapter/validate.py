@@ -80,6 +80,9 @@ def make_report(stage: str, gates: list[Gate], stats: dict[str, Any]) -> Report:
 
 
 def validate_plan(plan: AdaptationPlan, document: SourceDocument) -> Report:
+    brief_gate = _gate_brief(plan)
+    if brief_gate.status == FAIL:
+        return make_report("plan", [brief_gate], {"scene_count": len(plan.scenes)})
     gates = [
         _gate_schema(plan),
         _gate_source(plan, document),
@@ -92,7 +95,6 @@ def validate_plan(plan: AdaptationPlan, document: SourceDocument) -> Report:
         _gate_chapters(plan, document),
         _gate_plan_warnings(plan),
         _gate_plan_hash(plan, document),
-        _gate_brief(plan),
     ]
     stats = {
         "scene_count": len(plan.scenes),

@@ -48,6 +48,16 @@ class PlanValidationTest(unittest.TestCase):
         self.assertEqual(report.status, FAIL)
         self.assertIn("P005", [gate.id for gate in report.failures])
 
+    def test_invalid_brief_format_reports_instead_of_crashing(self) -> None:
+        document, plan = make_plan()
+        broken = copy.deepcopy(plan)
+        broken.brief = replace(broken.brief, format="podcast")
+
+        report = validate_plan(broken, document)
+
+        self.assertEqual(report.status, FAIL)
+        self.assertEqual(report.failures[0].id, "P012")
+
     def test_stale_plan_hash_fails(self) -> None:
         document, plan = make_plan()
         broken = copy.deepcopy(plan)
