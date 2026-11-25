@@ -59,7 +59,7 @@ class ReviewPageTest(unittest.TestCase):
                     "start": 0.0,
                     "end": 4.0,
                     "shot_ids": ["S001", "S002"],
-                    "stats": {"shot_count": 2, "scale": {"close": 1}, "camera": {"static": 1}, "brightness": 0.4, "motion": 0.1},
+                    "stats": {"shot_count": 2, "scale": {"close": 1}, "angle": {"eye-level": 1}, "camera": {"static": 1}, "brightness": 0.4, "motion": 0.1},
                 }
             ]
         }
@@ -84,6 +84,9 @@ class ReviewPageTest(unittest.TestCase):
         self.assertIn("SC001", page)
         self.assertIn("scene-card", page)
         self.assertIn("close", page)
+        self.assertIn("eye-level", page)
+        self.assertIn("<th>角度</th>", page)
+        self.assertIn("角度 eye-level 1", page)
         self.assertIn("女孩抬头", page)
         self.assertIn("brightness", page)
 

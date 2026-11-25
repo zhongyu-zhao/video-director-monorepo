@@ -61,6 +61,9 @@ class SceneBuildTest(unittest.TestCase):
 
         self.assertEqual(payload["stats"]["labeled_shots"], 1)
         self.assertEqual(payload["stats"]["scale"]["close"], 1)
+        self.assertEqual(payload["stats"]["angle"]["eye-level"], 1)
+        self.assertEqual(payload["scenes"][0]["stats"]["angle"]["eye-level"], 1)
+        self.assertIn("角度", report)
         self.assertAlmostEqual(payload["stats"]["brightness"], 0.4)
         self.assertIn("S001.jpg", report)
 

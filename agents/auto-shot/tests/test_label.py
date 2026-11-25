@@ -73,6 +73,8 @@ class PromptAndValidationTest(unittest.TestCase):
         self.assertIn("camera", prompt)
         self.assertIn("三帧", prompt)
         self.assertIn("unknown", prompt)
+        self.assertIn("角度按被摄主体相对机位", prompt)
+        self.assertIn("point-of-view", prompt)
 
     def test_valid_response_is_normalized(self) -> None:
         normalized = validate_response(VALID_RESPONSE)
