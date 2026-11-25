@@ -296,6 +296,7 @@ def _scene_stats(
         "mean_shot_duration": round(duration / len(shots), 3) if shots else 0.0,
         "cuts_per_minute": round(len(shots) / (duration / 60.0), 2) if duration > 0 else 0.0,
         "scale": _distribution(label_entries, "scale"),
+        "angle": _distribution(label_entries, "angle"),
         "camera": _distribution(label_entries, "camera"),
         "lighting": _distribution(label_entries, "lighting"),
         "color": _distribution(label_entries, "color"),
@@ -397,7 +398,7 @@ def _render_report(
         "## 标签分布",
         "",
     ]
-    for field, label in (("scale", "景别"), ("camera", "运镜"), ("lighting", "光线"), ("color", "色彩")):
+    for field, label in (("scale", "景别"), ("angle", "角度"), ("camera", "运镜"), ("lighting", "光线"), ("color", "色彩")):
         counts = stats.get(field, {})
         lines.append(f"- {label}：{_format_distribution(counts)}")
     lines += [
@@ -418,9 +419,10 @@ def _render_report(
             "",
             summary,
         ]
-        if scene["stats"].get("scale") or scene["stats"].get("camera"):
+        if scene["stats"].get("scale") or scene["stats"].get("angle") or scene["stats"].get("camera"):
             lines.append(
                 f"景别：{_format_distribution(scene['stats'].get('scale', {}))}；"
+                f"角度：{_format_distribution(scene['stats'].get('angle', {}))}；"
                 f"运镜：{_format_distribution(scene['stats'].get('camera', {}))}"
             )
         lines.append("")

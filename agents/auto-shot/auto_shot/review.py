@@ -183,7 +183,7 @@ def _scene_summary(scene: dict[str, Any] | None) -> str:
         return ""
     stats = scene.get("stats", {})
     parts = []
-    for field, label in (("scale", "景别"), ("camera", "运镜"), ("lighting", "光线"), ("color", "色彩")):
+    for field, label in (("scale", "景别"), ("angle", "角度"), ("camera", "运镜"), ("lighting", "光线"), ("color", "色彩")):
         counts = stats.get(field, {})
         if counts:
             top = "、".join(f"{key} {value}" for key, value in list(counts.items())[:3])
@@ -450,7 +450,7 @@ _TEMPLATE = """<!doctype html>
     </div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>误切</th><th>场景</th><th>镜号</th><th>入点</th><th>出点</th><th>时长</th><th>景别</th><th>运镜</th><th>光线</th><th>色彩</th></tr></thead>
+        <thead><tr><th>误切</th><th>场景</th><th>镜号</th><th>入点</th><th>出点</th><th>时长</th><th>景别</th><th>角度</th><th>运镜</th><th>光线</th><th>色彩</th></tr></thead>
         <tbody id="rows"></tbody>
       </table>
     </div>
@@ -541,7 +541,7 @@ function render() {
       header.className = 'scene-row';
       header.id = 'scene-' + item.scene_id;
       const cell = document.createElement('td');
-      cell.colSpan = 10;
+      cell.colSpan = 11;
       cell.textContent = `${item.scene_title}${item.scene_summary ? ' · ' + item.scene_summary : ''}`;
       header.appendChild(cell);
       fragment.appendChild(header);
@@ -574,7 +574,7 @@ function render() {
     durCell.className = 'dur' + (shot.duration < 0.5 ? ' very-short' : (shot.duration < 1 ? ' short' : ''));
     durCell.textContent = shot.duration.toFixed(3) + 's';
     tr.appendChild(durCell);
-    for (const key of ['scale', 'camera', 'lighting', 'color']) {
+    for (const key of ['scale', 'angle', 'camera', 'lighting', 'color']) {
       const value = labelValue(shot, key);
       const cell = document.createElement('td');
       cell.className = 'label' + (value === '—' || value === 'unknown' ? ' unknown' : '');

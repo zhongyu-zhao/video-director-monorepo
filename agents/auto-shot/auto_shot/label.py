@@ -82,6 +82,7 @@ def build_prompt(shot: Shot) -> str:
 }}
 
 规则：
+- 角度按被摄主体相对机位：eye-level 平视，high-angle 俯拍，low-angle 仰拍，birds-eye 正上方，dutch 倾斜，over-the-shoulder 过肩，point-of-view 主观；不确定填 "unknown"。
 - 三帧可用于判断运镜；如果三帧机位稳定、只有主体微动，选 static；不确定时填 "unknown"。
 - 不确定的维度填 "unknown"，不要猜。
 - action 必须描述画面里可看见的内容，不写“氛围感/高级感/视觉冲击”这类空话。
